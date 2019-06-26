@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Scheduler_App.Models;
+using Scheduler_App.Models.Domain;
 
 namespace Scheduler_App
 {
@@ -72,7 +73,7 @@ namespace Scheduler_App
                 Subject = "Security Code",
                 BodyFormat = "Your security code is {0}"
             });
-            //manager.EmailService = new EmailService();
+            manager.EmailService = new Email();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
