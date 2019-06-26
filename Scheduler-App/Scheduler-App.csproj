@@ -180,6 +180,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Domain\ClassRoom.cs" />
+    <Compile Include="Models\Domain\Course.cs" />
+    <Compile Include="Models\Domain\Instructor.cs" />
+    <Compile Include="Models\Domain\SchoolProgram.cs" />
+    <Compile Include="Models\Domain\Student.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -244,6 +249,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\ViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
