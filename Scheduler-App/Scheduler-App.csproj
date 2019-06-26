@@ -179,12 +179,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Domain\ClassRoom.cs" />
     <Compile Include="Models\Domain\Course.cs" />
     <Compile Include="Models\Domain\Instructor.cs" />
     <Compile Include="Models\Domain\SchoolProgram.cs" />
     <Compile Include="Models\Domain\Student.cs" />
+    <Compile Include="Models\Enum\UserRoles.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
