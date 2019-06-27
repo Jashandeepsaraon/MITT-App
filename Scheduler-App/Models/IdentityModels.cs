@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Scheduler_App.Models.Domain;
 
 namespace Scheduler_App.Models
 {
@@ -24,6 +25,10 @@ namespace Scheduler_App.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
+
+        public DbSet<SchoolProgram> SchoolPrograms { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Student> Students { get; set; }
 
         public static ApplicationDbContext Create()
         {
