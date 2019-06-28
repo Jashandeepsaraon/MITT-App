@@ -190,6 +190,10 @@
     <Compile Include="Models\Enum\UserRoles.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModel\CreateEditSchoolProgramViewModel.cs" />
+    <Compile Include="Models\ViewModel\InstructorViewModel.cs" />
+    <Compile Include="Models\ViewModel\SchoolProgramViewModel.cs" />
+    <Compile Include="Models\ViewModel\StudentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -360,8 +364,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\ViewModel\" />
     <Folder Include="obj\Debug\" />
+    <Folder Include="Views\SchoolProgram\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
