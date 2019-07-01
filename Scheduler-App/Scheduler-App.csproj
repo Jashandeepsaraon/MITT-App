@@ -2069,11 +2069,11 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\SchoolPrograms\CreateProgram.cshtml" />
-    <Content Include="Views\SchoolPrograms\Delete.cshtml" />
-    <Content Include="Views\SchoolPrograms\Details.cshtml" />
-    <Content Include="Views\SchoolPrograms\Edit.cshtml" />
-    <Content Include="Views\SchoolPrograms\Index.cshtml" />
+    <Content Include="Views\Program\CreateProgram.cshtml" />
+    <Content Include="Views\Program\Delete.cshtml" />
+    <Content Include="Views\Program\Details.cshtml" />
+    <Content Include="Views\Program\Edit.cshtml" />
+    <Content Include="Views\Program\Index.cshtml" />
     <Content Include="Template\.DS_Store" />
     <Content Include="Template\assets\fonts\nucleo\nucleo-icons.eot" />
     <Content Include="Template\assets\fonts\nucleo\nucleo-icons.ttf" />
@@ -2299,7 +2299,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="obj\Debug\" />
-    <Folder Include="Views\Program\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
