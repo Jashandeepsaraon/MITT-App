@@ -2072,7 +2072,7 @@
     <Content Include="Views\SchoolPrograms\CreateProgram.cshtml" />
     <Content Include="Views\SchoolPrograms\Delete.cshtml" />
     <Content Include="Views\SchoolPrograms\Details.cshtml" />
-    <Content Include="Views\SchoolPrograms\Edit.cshtml" />
+    <Content Include="Views\SchoolPrograms\EditProgram.cshtml" />
     <Content Include="Views\SchoolPrograms\Index.cshtml" />
     <Content Include="Template\.DS_Store" />
     <Content Include="Template\assets\fonts\nucleo\nucleo-icons.eot" />
