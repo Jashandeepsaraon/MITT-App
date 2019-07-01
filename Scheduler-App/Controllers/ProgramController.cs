@@ -51,9 +51,6 @@ namespace Scheduler_App.Controllers
             return SaveProgram(null, formData);
 
         }
-
-
-
         private ActionResult SaveProgram(int? id, CreateEditSchoolProgramViewModel formData)
 
         {
@@ -111,6 +108,55 @@ namespace Scheduler_App.Controllers
 
             return RedirectToAction(nameof(ProgramController.Index));
 
+        }
+
+        //GET: EditProgram
+        [HttpGet]
+
+        [Authorize(Roles = "Admin")]
+
+        public ActionResult EditProgram(int? id)
+
+        {
+
+            if (!id.HasValue)
+
+            {
+
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            }
+
+
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+
+
+
+            if (program == null)
+
+            {
+
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            }
+
+            var model = new CreateEditSchoolProgramViewModel();
+
+            model.Name = program.Name;
+
+            return View(model);
+
+        }
+        //POST:
+        [HttpPost]
+
+        [Authorize(Roles = "Admin")]
+
+        public ActionResult EditProgram(int id, CreateEditSchoolProgramViewModel formData)
+
+        {
+            return SaveProgram(id, formData);
         }
     }
 }
