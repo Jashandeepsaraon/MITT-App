@@ -12,7 +12,7 @@ namespace Scheduler_App.Models.Domain
         public string LastName { get; set; }
         public int StudentNumber { get; set; }
         public string Email { get; set; }
-        public virtual SchoolProgram SchoolProgram { get; set; }
+        public virtual Program SchoolProgram { get; set; }
         public int SchoolProgramId { get; set; }
 
     }

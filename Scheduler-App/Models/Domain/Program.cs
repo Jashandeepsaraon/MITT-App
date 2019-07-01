@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Scheduler_App.Models.Domain
 {
-    public class SchoolProgram
+    public class Program
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -13,7 +13,7 @@ namespace Scheduler_App.Models.Domain
         public virtual List<Student> Students { get; set; }
         public DateTime StartDate { get; set; }
 
-        public SchoolProgram()
+        public Program()
         {
             Instructors = new List<Instructor>();
             Students = new List<Student>();

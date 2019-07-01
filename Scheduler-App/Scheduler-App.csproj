@@ -176,7 +176,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\SchoolProgramsController.cs" />
+    <Compile Include="Controllers\ProgramController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -186,7 +186,7 @@
     <Compile Include="Models\Domain\Course.cs" />
     <Compile Include="Models\Domain\Email.cs" />
     <Compile Include="Models\Domain\Instructor.cs" />
-    <Compile Include="Models\Domain\SchoolProgram.cs" />
+    <Compile Include="Models\Domain\Program.cs" />
     <Compile Include="Models\Domain\Student.cs" />
     <Compile Include="Models\Enum\UserRoles.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -2069,7 +2069,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\SchoolPrograms\Create.cshtml" />
+    <Content Include="Views\SchoolPrograms\CreateProgram.cshtml" />
     <Content Include="Views\SchoolPrograms\Delete.cshtml" />
     <Content Include="Views\SchoolPrograms\Details.cshtml" />
     <Content Include="Views\SchoolPrograms\Edit.cshtml" />
@@ -2299,6 +2299,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="obj\Debug\" />
+    <Folder Include="Views\Program\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

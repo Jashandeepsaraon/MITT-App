@@ -19,7 +19,7 @@ namespace Scheduler_App.Models.ViewModel
 
         }
 
-        public SchoolProgramViewModel(SchoolProgram program)
+        public SchoolProgramViewModel(Program program)
         {
             Id = program.Id;
             Name = program.Name;
