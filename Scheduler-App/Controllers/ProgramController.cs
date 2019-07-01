@@ -29,8 +29,19 @@ namespace Scheduler_App.Controllers
             return View();
         }
 
+        //GET : CreateProgram
+        [HttpGet]
+
+        [Authorize(Roles = "Admin")]
+
+        public ActionResult CreateProgram()
+
+        {
+            return View();
+        }
 
         [HttpPost]
+
         [Authorize(Roles = "Admin")]
 
         public ActionResult CreateProgram (CreateEditSchoolProgramViewModel formData)
@@ -46,17 +57,12 @@ namespace Scheduler_App.Controllers
         private ActionResult SaveProgram(int? id, CreateEditSchoolProgramViewModel formData)
 
         {
-
             if (!ModelState.IsValid)
-
             {
 
                 return View();
 
             }
-
-
-
             Program program;
 
             var userId = User.Identity.GetUserId();
@@ -80,16 +86,12 @@ namespace Scheduler_App.Controllers
                 // project.Users.Add(applicationUser);
 
                 DbContext.ProgramDatabase.Add(program);
-
             }
 
             else
 
             {
-
                 program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
-
-
 
                 if (program == null)
 
@@ -106,8 +108,6 @@ namespace Scheduler_App.Controllers
             program.StartDate = DateTime.Now;
 
             DbContext.SaveChanges();
-
-
 
             return RedirectToAction(nameof(ProgramController.Index));
 
