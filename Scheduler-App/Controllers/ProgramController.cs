@@ -20,7 +20,7 @@ namespace Scheduler_App.Controllers
         {
             DbContext = new ApplicationDbContext();
         }
-       
+
         public ActionResult Index()
         {
             var model = DbContext.ProgramDatabase
@@ -43,7 +43,7 @@ namespace Scheduler_App.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult CreateProgram (CreateEditSchoolProgramViewModel formData)
+        public ActionResult CreateProgram(CreateEditSchoolProgramViewModel formData)
         {
             return SaveProgram(null, formData);
         }

@@ -1,0 +1,33 @@
+﻿@model CreateEditSchoolProgramViewModel
+
+@{
+
+    ViewBag.Title = "Edit";
+
+}
+
+
+
+<form method="post">
+
+    @Html.ValidationSummary(false)
+
+
+
+    <div class="form-group">
+
+        @Html.LabelFor(p => p.Name, "Program Name:")
+
+        @Html.TextAreaFor(p => p.Name, new { @class = "form-control", placeholder = "Program Name" })
+
+    </div>
+
+
+
+    <div class="">
+
+        <button type="submit" class="btn btn-default">Submit</button>
+
+    </div>
+
+</form>
