@@ -28,8 +28,9 @@ namespace Scheduler_App.Controllers
         {
             return View();
         }
-        [HttpPost]
 
+
+        [HttpPost]
         [Authorize(Roles = "Admin")]
 
         public ActionResult CreateProgram (CreateEditSchoolProgramViewModel formData)
