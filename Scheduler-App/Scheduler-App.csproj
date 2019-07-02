@@ -191,6 +191,7 @@
     <Compile Include="Models\Enum\UserRoles.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModel\CourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditSchoolProgramViewModel.cs" />
     <Compile Include="Models\ViewModel\InstructorViewModel.cs" />
     <Compile Include="Models\ViewModel\SchoolProgramViewModel.cs" />

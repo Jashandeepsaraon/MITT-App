@@ -17,13 +17,16 @@
         @Html.LabelFor(p => p.Name, "Name:")
 
         @Html.TextBoxFor(p => p.Name, new { @class = "form-control", placeholder = "Program Name" })
-
+        @Html.LabelFor(model => model.StartDate, "Start Date", new { @class = "form-control-label" })
+        <div class="input-group input-group-alternative">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-time-alarm"></i></span>
+            </div>
+            <input type="date" name="StartDate" />
+        </div>
+        <br />
+        <div class="">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
     </div>
-
-    <div class="">
-
-        <button type="submit" class="btn btn-default">Submit</button>
-
-    </div>
-
 </form>
