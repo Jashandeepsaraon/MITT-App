@@ -1,22 +1,14 @@
 ﻿@model CreateEditSchoolProgramViewModel
 
 @{
-
     ViewBag.Title = "CreateProgram";
-
 }
 
-
-
 <h2>CreateProgram</h2>
-
-
 
 <form method="post">
 
     @Html.ValidationSummary(false)
-
-
 
     <div class="form-group">
 
@@ -24,13 +16,11 @@
 
         @Html.TextBoxFor(p => p.Name, new { @class = "form-control", placeholder = "Program Name" })
 
-    </div>
+        <div class="">
 
-    <div class="">
+            <button type="submit" class="btn btn-default">Submit</button>
 
-        <button type="submit" class="btn btn-default">Submit</button>
-
+        </div>
     </div>
 
 </form>
-    }
