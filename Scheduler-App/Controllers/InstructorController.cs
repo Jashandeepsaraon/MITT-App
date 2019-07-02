@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -18,11 +20,19 @@ namespace Scheduler_App.Controllers
         {
             DbContext = new ApplicationDbContext();
         }
-       
+
+        //Method to get list of Instructors
         public ActionResult Index()
         {
-            return View();
+            var model = DbContext
+                .ProgramDatabase
+                .ProjectTo<InstructorViewModel>()
+                .ToList();
+            return View(model);
+
         }
+
+        //GET : Create Instructor
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public ActionResult CreateInstructor()
@@ -43,39 +53,52 @@ namespace Scheduler_App.Controllers
             {
                 return View();
             }
-
-            Instructor instructor;
-            var userId = User.Identity.GetUserId();
+            var instructor = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
-                instructor = new Instructor();
-                //var applicationUser = DbContext.Users.FirstOrDefault(user => user.Id == userId);
-
-                //if (applicationUser == null)
-
-                //{
-
-                //    return RedirectToAction(nameof(HomeController.Index));
-
-                //}
-
-                // project.Users.Add(applicationUser);
-
-                DbContext.Instructors.Add(instructor);
+                DbContext..Add(program);
+                DbContext.SaveChanges();
             }
+
             else
             {
-                instructor = DbContext.Instructors.FirstOrDefault(p => p.Id == id);
-                if (instructor == null)
+                program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+                if (program == null)
                 {
                     return RedirectToAction(nameof(ProgramController.Index));
                 }
             }
-            instructor.FirstName = formData.FirstName;
-            instructor.LastName = formData.LastName;
+            program.Name = formData.Name;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Index));
         }
 
+        //GET: EditProgram
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditProgram(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+
+            if (program == null)
+            {
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+
+            var model = new CreateEditSchoolProgramViewModel();
+            model.Name = program.Name;
+            return View(model);
+        }
+        //POST:
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditProgram(int id, CreateEditSchoolProgramViewModel formData)
+        {
+            return SaveProgram(id, formData);
+        }
     }
 }

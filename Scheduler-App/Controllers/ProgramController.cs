@@ -26,13 +26,10 @@ namespace Scheduler_App.Controllers
         //Method to get list of Programs
         public ActionResult Index()
         {
-            var model = DbContext.ProgramDatabase
-                .Select(p => new CreateEditSchoolProgramViewModel
-                {
-                    Name = p.Name,
-                    StartDate = p.StartDate
-                }).ToList();
-
+            var model = DbContext
+                .ProgramDatabase
+                .ProjectTo<CreateEditSchoolProgramViewModel>()
+                .ToList();
             return View(model);
 
         }
@@ -74,6 +71,7 @@ namespace Scheduler_App.Controllers
                 }
             }
             program.Name = formData.Name;
+            program.StartDate = formData.StartDate;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Index));
         }
