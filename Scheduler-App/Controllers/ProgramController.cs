@@ -116,5 +116,26 @@ namespace Scheduler_App.Controllers
         {
             return SaveProgram(id, formData);
         }
+
+        [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            if (!id.HasValue)
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            var userId = User.Identity.GetUserId();
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p =>
+            p.Id == id.Value);
+
+            if (program == null)
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            var allPrograms = new SchoolProgramViewModel();
+            allPrograms.Name = program.Name;
+            allPrograms.StartDate = program.StartDate;
+
+            return View(allPrograms);
+        }
     }
 }
