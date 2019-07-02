@@ -15,22 +15,13 @@ namespace Scheduler_App.Models.ViewModel
         [Required]
         public string LastName { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
+        public virtual ApplicationUser Instructor { get; set; }
 
-        public virtual SchoolProgramViewModel SchoolProgram { get; set; }
-        public int SchoolProgramId { get; set; }
 
-        public InstructorViewModel()
-        {
+        //public virtual SchoolProgramViewModel SchoolProgram { get; set; }
+        //public int SchoolProgramId { get; set; }
 
-        }
-
-        public InstructorViewModel(Instructor instructor)
-        {
-            Id = instructor.Id;
-            FirstName = instructor.FirstName;
-            LastName = instructor.LastName;
-            SchoolProgramId = instructor.SchoolProgramId;
-        }
     }
 }
