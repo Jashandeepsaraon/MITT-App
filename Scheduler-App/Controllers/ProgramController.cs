@@ -26,6 +26,7 @@ namespace Scheduler_App.Controllers
             var model = DbContext.ProgramDatabase
                 .Select(p => new CreateEditSchoolProgramViewModel
                 {
+                    Id = p.Id,
                     Name = p.Name,
                     StartDate = p.StartDate
                 }).ToList();
