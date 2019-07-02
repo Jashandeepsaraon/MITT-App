@@ -1,34 +1,27 @@
-﻿@model Scheduler_App.Models.Domain.SchoolProgram
-
+﻿@model SchoolProgramViewModel
 @{
     ViewBag.Title = "Details";
 }
 
 <h2>Details</h2>
 
-<div>
-    <h4>SchoolProgram</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-
-    </dl>
+<div class="container" style="margin-left: 10px;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <hr class="bottom-line">
+        </div>
+        <table class="table table-condensed no-border" id="sample-datatables">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <th>Start date</th>
+                    <td>@Model.StartDate</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -23,18 +21,19 @@ namespace Scheduler_App.Controllers
             DbContext = new ApplicationDbContext();
         }
 
-        //Method to get list of Programs
         public ActionResult Index()
         {
-            var model = DbContext
-                .ProgramDatabase
-                .ProjectTo<CreateEditSchoolProgramViewModel>()
-                .ToList();
+            var model = DbContext.ProgramDatabase
+                .Select(p => new CreateEditSchoolProgramViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    StartDate = p.StartDate
+                }).ToList();
 
             return View(model);
-
         }
-      
+
         //GET : CreateProgram
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -56,13 +55,26 @@ namespace Scheduler_App.Controllers
             {
                 return View();
             }
-             var program = Mapper.Map<Program>(formData);
+
+            Program program;
+            var userId = User.Identity.GetUserId();
             if (!id.HasValue)
             {
-                DbContext.ProgramDatabase.Add(program);
-                DbContext.SaveChanges();
-            }
+                program = new Program();
+                //var applicationUser = DbContext.Users.FirstOrDefault(user => user.Id == userId);
 
+                //if (applicationUser == null)
+
+                //{
+
+                //    return RedirectToAction(nameof(HomeController.Index));
+
+                //}
+
+                // project.Users.Add(applicationUser);
+
+                DbContext.ProgramDatabase.Add(program);
+            }
             else
             {
                 program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
@@ -72,6 +84,7 @@ namespace Scheduler_App.Controllers
                 }
             }
             program.Name = formData.Name;
+            program.StartDate = DateTime.Now;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Index));
         }
@@ -102,6 +115,27 @@ namespace Scheduler_App.Controllers
         public ActionResult EditProgram(int id, CreateEditSchoolProgramViewModel formData)
         {
             return SaveProgram(id, formData);
+        }
+
+        [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            if (!id.HasValue)
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            var userId = User.Identity.GetUserId();
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p =>
+            p.Id == id.Value);
+
+            if (program == null)
+                return RedirectToAction(nameof(ProgramController.Index));
+
+            var allPrograms = new SchoolProgramViewModel();
+            allPrograms.Name = program.Name;
+            allPrograms.StartDate = program.StartDate;
+
+            return View(allPrograms);
         }
     }
 }
