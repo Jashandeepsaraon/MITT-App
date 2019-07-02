@@ -25,11 +25,10 @@ namespace Scheduler_App.Controllers
         public ActionResult Index()
         {
             var model = DbContext
-                .ProgramDatabase
+                .InstructorDatabase
                 .ProjectTo<InstructorViewModel>()
                 .ToList();
             return View(model);
-
         }
 
         //GET : Create Instructor
@@ -44,61 +43,68 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateInstructor(InstructorViewModel formData)
         {
-            return SaveProgram(null, formData);
+
+            return SaveInstructor(null, formData);
         }
 
-        private ActionResult SaveProgram(int? id, InstructorViewModel formData)
+        private ActionResult SaveInstructor(int? id, InstructorViewModel formData)
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
-            var instructor = Mapper.Map<Program>(formData);
+           
+            var instructor = Mapper.Map<Instructor>(formData);
+            //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
-                DbContext..Add(program);
+                DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
             }
 
             else
             {
-                program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
-                if (program == null)
+                instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
+                if (instructor == null)
                 {
-                    return RedirectToAction(nameof(ProgramController.Index));
+                    return RedirectToAction(nameof(InstructorController.Index));
                 }
             }
-            program.Name = formData.Name;
+            instructor.FirstName = formData.FirstName;
+            instructor.LastName = formData.LastName;
+            instructor.Email = formData.Email;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Index));
+            return RedirectToAction(nameof(InstructorController.Index));
         }
 
         //GET: EditProgram
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditProgram(int? id)
+        public ActionResult EditInstructor(int? id)
         {
             if (!id.HasValue)
             {
-                return RedirectToAction(nameof(ProgramController.Index));
+                return RedirectToAction(nameof(InstructorController.Index));
             }
-            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
 
-            if (program == null)
+            if (instructor == null)
             {
-                return RedirectToAction(nameof(ProgramController.Index));
+                return RedirectToAction(nameof(InstructorController.Index));
             }
 
-            var model = new CreateEditSchoolProgramViewModel();
-            model.Name = program.Name;
+            var model = new InstructorViewModel();
+            model.FirstName = instructor.FirstName;
+            model.LastName = instructor.LastName;
+            model.Email = instructor.Email;
             return View(model);
         }
-        //POST:
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditProgram(int id, CreateEditSchoolProgramViewModel formData)
+        public ActionResult EditProgram(int id, InstructorViewModel formData)
         {
-            return SaveProgram(id, formData);
+            return SaveInstructor(id, formData);
         }
     }
 }

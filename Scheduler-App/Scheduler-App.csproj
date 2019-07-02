@@ -2306,11 +2306,13 @@
     <Content Include="Views\Program\Details.cshtml" />
     <Content Include="Views\Program\EditProgram.cshtml" />
     <Content Include="Views\Program\Index.cshtml" />
+    <Content Include="Views\Instructor\Index.cshtml" />
+    <Content Include="Views\Instructor\CreateInstructor.cshtml" />
+    <Content Include="Views\Instructor\EditInstructor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="obj\Debug\" />
-    <Folder Include="Views\Instructor\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

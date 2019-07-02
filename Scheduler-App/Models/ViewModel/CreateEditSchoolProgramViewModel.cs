@@ -17,11 +17,5 @@ namespace Scheduler_App.Models.ViewModel
         public DateTime StartDate { get; set; }
         public virtual List<Instructor> Instructors { get; set; }
         public virtual List<StudentViewModel> Students { get; set; }
-
-        public CreateEditSchoolProgramViewModel()
-        {
-            StartDate = DateTime.Now;
-        }
-
     }
 }
