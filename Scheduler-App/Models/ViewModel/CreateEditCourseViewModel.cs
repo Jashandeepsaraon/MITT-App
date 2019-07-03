@@ -12,8 +12,10 @@ namespace Scheduler_App.Models.ViewModel
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public SelectList Programs { get; set; }
-        public SelectList Instructors { get; set; }
+        public List<SelectListItem> ProgramList { get; set; }
+        public List<SelectListItem> InstructorList { get; set; }
         public TimeSpan Hours { get; set; }
+        public int? ProgramId { get; set; }
+        public int? InstructorId { get; set; }
     }
 }
