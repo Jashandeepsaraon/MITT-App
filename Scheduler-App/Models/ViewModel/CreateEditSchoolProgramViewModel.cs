@@ -9,12 +9,13 @@ namespace Scheduler_App.Models.ViewModel
 {
     public class CreateEditSchoolProgramViewModel
     {
-        [Required]
+        
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public DateTime StartDate { get; set; }
         public virtual List<Instructor> Instructors { get; set; }
         public virtual List<StudentViewModel> Students { get; set; }
-
     }
 }

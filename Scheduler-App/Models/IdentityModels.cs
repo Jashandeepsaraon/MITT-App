@@ -27,8 +27,9 @@ namespace Scheduler_App.Models
         }
 
         public DbSet<Program> ProgramDatabase { get; set; }
-        public DbSet<Instructor> Instructors { get; set; }
-        public DbSet<Student> Students { get; set; }
+        public DbSet<Instructor> InstructorDatabase { get; set; }
+        public DbSet<Student> StudentDatabase { get; set; }
+        public DbSet<Course> CourseDatabase { get; set; }
 
         public static ApplicationDbContext Create()
         {

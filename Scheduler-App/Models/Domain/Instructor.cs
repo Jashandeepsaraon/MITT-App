@@ -10,8 +10,8 @@ namespace Scheduler_App.Models.Domain
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int InstructorNumber { get; set; }
-        public virtual Program SchoolProgram { get; set; }
-        public int SchoolProgramId { get; set; }
+        public string Email { get; set; }
+        public virtual ApplicationUser instructor { get; set; }
+        //public virtual Program SchoolProgram { get; set; }
     }
 }
