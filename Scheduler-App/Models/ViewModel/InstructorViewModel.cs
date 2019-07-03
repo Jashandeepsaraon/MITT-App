@@ -17,9 +17,13 @@ namespace Scheduler_App.Models.ViewModel
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        public virtual ApplicationUser Instructor { get; set; }
+        public string Password { get; set; }
+        //public virtual ApplicationUser Instructor { get; set; }
 
-
+        public InstructorViewModel()
+        {
+            Password = "Password-1";
+        }
         //public virtual SchoolProgramViewModel SchoolProgram { get; set; }
         //public int SchoolProgramId { get; set; }
 
