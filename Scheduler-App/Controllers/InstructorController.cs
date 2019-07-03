@@ -66,7 +66,7 @@ namespace Scheduler_App.Controllers
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
-                var callbackUrl = Url.Action("ChangePassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
                      "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
             }
@@ -111,7 +111,7 @@ namespace Scheduler_App.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditProgram(int id, InstructorViewModel formData)
+        public ActionResult EditInstructor(int id, InstructorViewModel formData)
         {
             return SaveInstructor(id, formData);
         }
