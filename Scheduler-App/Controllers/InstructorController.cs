@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -53,13 +54,21 @@ namespace Scheduler_App.Controllers
             {
                 return View();
             }
-           
+            var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
+            var result =userManager.CreateAsync(user, formData.Password);
+            var userId = user.Id;
+            
             var instructor = Mapper.Map<Instructor>(formData);
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
+                string code = userManager.GenerateEmailConfirmationToken(user.Id);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                userManager.SendEmail(userId, "Notification",
+                     "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
             }
 
             else
@@ -102,7 +111,7 @@ namespace Scheduler_App.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditProgram(int id, InstructorViewModel formData)
+        public ActionResult EditInstructor(int id, InstructorViewModel formData)
         {
             return SaveInstructor(id, formData);
         }
