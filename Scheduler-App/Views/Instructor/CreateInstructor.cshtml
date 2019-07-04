@@ -1,27 +1,43 @@
 ﻿@model InstructorViewModel
 
 
+<p>
+    @Html.ActionLink("Create Through CSV", "ImportInstructor")
+</p>
+
 <form method="post">
 
-    @Html.ValidationSummary(false)
 
-    <div class="form-group">
-        @Html.LabelFor(p => p.FirstName, "First Name:")
-        @Html.TextAreaFor(p => p.FirstName, new { @class = "form-control", placeholder = "First Name" })
+    @Html.ValidationSummary(false)
+    <div class="col-md-12">
+        @using (Html.BeginForm("SaveInstructor", "Instructor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="form-group">
+                <label for="attachment">Select a Csv File</label>
+                <label class="btn btn-default btn-file">
+                    <input type="file" name="PostedFile" id="attachmentcsv">
+                </label>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(p => p.FirstName, "First Name:")
+                @Html.TextAreaFor(p => p.FirstName, new { @class = "form-control", placeholder = "First Name" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(p => p.LastName, "Last Name:")
+                @Html.TextAreaFor(p => p.LastName, new { @class = "form-control", placeholder = "Last Name" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(p => p.Email, "Email:")
+                @Html.TextBoxFor(p => p.Email, new { @class = "form-control", placeholder = "Email" })
+            </div>
+
+            <button type="submit" class="btn btn-primary">Upload</button>
+        }
     </div>
-    <div class="form-group">
-        @Html.LabelFor(p => p.LastName, "Last Name:")
-        @Html.TextAreaFor(p => p.LastName, new { @class = "form-control", placeholder = "Last Name" })
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(p => p.Email, "Email:")
-        @Html.TextBoxFor(p => p.Email, new { @class = "form-control", placeholder = "Email" })
-    </div>
-    @*<div class="form-group">
-        @Html.LabelFor(p => p.Instructor, "Instructor:")
-        @Html.TextBoxFor(p => p.Instructor, new { @class = "form-control", placeholder = "Instructor" })
-    </div>*@
-    <div class="">
-        <button type="submit" class="btn btn-default">Submit</button>
-    </div>
+
+
+    @*<div class="">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>*@
 </form>

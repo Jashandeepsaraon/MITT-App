@@ -7,6 +7,7 @@ using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -49,17 +50,20 @@ namespace Scheduler_App.Controllers
         }
 
         private ActionResult SaveInstructor(int? id, InstructorViewModel formData)
+
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
+
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result =userManager.CreateAsync(user, formData.Password);
+            var result = userManager.CreateAsync(user, formData.Password);
             var userId = user.Id;
-            
+
             var instructor = Mapper.Map<Instructor>(formData);
+
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
@@ -114,6 +118,56 @@ namespace Scheduler_App.Controllers
         public ActionResult EditInstructor(int id, InstructorViewModel formData)
         {
             return SaveInstructor(id, formData);
+        }
+
+        [HttpGet]
+        public ActionResult ImportInstructor()
+        {
+            return View(new List<InstructorViewModel>());
+        }
+
+        [HttpPost]
+        public ActionResult ImportInstructor(HttpPostedFileBase postedFile)
+        {
+            var instructor = new List<Instructor>();
+            string filePath = string.Empty;
+            if (postedFile != null)
+            {
+                string path = Server.MapPath("~/Uploads/");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                filePath = path + Path.GetFileName(postedFile.FileName);
+                string extension = Path.GetExtension(postedFile.FileName);
+                postedFile.SaveAs(filePath);
+
+                //Read the contents of CSV file.
+                string csvData = System.IO.File.ReadAllText(filePath);
+
+                //Execute a loop over the rows.
+                foreach (string row in csvData.Split('\n'))
+                {
+                    if (!string.IsNullOrEmpty(row))
+                    {
+                        var instructors = (new Instructor
+                        {
+                            //Id = Convert.ToInt32(row.Split(',')[0]),
+                            FirstName = row.Split(',')[0],
+                            LastName = row.Split(',')[1],
+                            Email = row.Split(',')[2]
+                        });
+                        var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                        var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
+                        var result = userManager.CreateAsync(user, instructors.Password);
+                        var userId = user.Id;
+                        DbContext.InstructorDatabase.Add(instructors);
+                        DbContext.SaveChanges();
+                    }
+                }
+            }
+            return View();
         }
     }
 }
