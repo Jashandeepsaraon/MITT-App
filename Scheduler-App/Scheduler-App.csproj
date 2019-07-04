@@ -186,6 +186,7 @@
     <Compile Include="Controllers\InstructorController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProgramController.cs" />
+    <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -2308,6 +2309,9 @@
     <Content Include="Views\Instructor\Index.cshtml" />
     <Content Include="Views\Instructor\CreateInstructor.cshtml" />
     <Content Include="Views\Instructor\EditInstructor.cshtml" />
+    <Content Include="Views\Students\CreateStudent.cshtml" />
+    <Content Include="Views\Students\Index.cshtml" />
+    <Content Include="Views\Students\EditStudent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
