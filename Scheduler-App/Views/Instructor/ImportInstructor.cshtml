@@ -1,0 +1,38 @@
+﻿@model List<InstructorViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    @using (Html.BeginForm("ImportInstructor", "Instructor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="postedFile" />
+        <input type="submit" value="Import" />
+    }
+
+    <hr />
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>Email</th>
+        </tr>
+        @foreach (InstructorViewModel instructor in Model)
+        {
+            <tr>
+                <td>@instructor.FirstName</td>
+                <td>@instructor.LastName</td>
+                <td>@instructor.Email</td>
+            </tr>
+        }
+    </table>
+
+</body>
+</html>

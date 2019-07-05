@@ -1,0 +1,37 @@
+﻿@model StudentViewModel
+
+@{
+    ViewBag.Title = "CreateStudent";
+}
+<h2>Create New Student</h2>
+<form method="post">
+    @Html.ValidationSummary(false)
+    <div class="form-group">
+        @Html.LabelFor(p => p.FirstName, "FirstName:")
+        @Html.TextBoxFor(p => p.FirstName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(p => p.LastName, "LastName:")
+        @Html.TextBoxFor(p => p.LastName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(p => p.StudentNumber, "StudentNumber:")
+        @Html.TextBoxFor(p => p.StudentNumber, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(p => p.Email, "Email:")
+        @Html.TextBoxFor(p => p.Email, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(p => p.ProgramId, Model.Programs)
+    </div>
+    
+    <br />
+    <div class="">
+        <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+</form>

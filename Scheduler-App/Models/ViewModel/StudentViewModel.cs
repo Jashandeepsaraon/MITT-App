@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Scheduler_App.Models.ViewModel
 {
@@ -13,22 +14,13 @@ namespace Scheduler_App.Models.ViewModel
         public string LastName { get; set; }
         public int StudentNumber { get; set; }
         public string Email { get; set; }
-        public virtual SchoolProgramViewModel SchoolProgram { get; set; }
-        public int SchoolProgramId { get; set; }
-
+        public string Password { get; set; }
+        public string ProgramName { get; set; }
+        public int? ProgramId { get; set; }
+        public List<SelectListItem> Programs { get; set; }
         public StudentViewModel()
         {
-
-        }
-
-        public StudentViewModel(Student student)
-        {
-            Id = student.Id;
-            FirstName = student.FirstName;
-            LastName = student.LastName;
-            StudentNumber = student.StudentNumber;
-            Email = student.Email;
-            SchoolProgramId = student.SchoolProgramId;
+            Password = "Password-1";
         }
     }
 }
