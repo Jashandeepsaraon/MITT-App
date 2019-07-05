@@ -58,6 +58,7 @@ namespace Scheduler_App.Controllers
              var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
+                program.StartDate = formData.StartDate;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
             }

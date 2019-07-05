@@ -380,6 +380,7 @@
     <Content Include="Template\img\brand\logo.svg" />
     <Content Include="Template\img\brand\sygnet.svg" />
     <Content Include="Template\img\favicon.ico" />
+    <Content Include="Template\img\mittlogo.jpg" />
     <Content Include="Template\index.html" />
     <Content Include="Template\js\charts.js" />
     <Content Include="Template\js\colors.js" />
