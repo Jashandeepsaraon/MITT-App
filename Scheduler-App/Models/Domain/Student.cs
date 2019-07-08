@@ -12,8 +12,13 @@ namespace Scheduler_App.Models.Domain
         public string LastName { get; set; }
         public int StudentNumber { get; set; }
         public string Email { get; set; }
-        public virtual Program SchoolProgram { get; set; }
-        public int SchoolProgramId { get; set; }
+        public string ProgramName { get;set; }
+        public virtual Program Program { get; set; }
+
+        //public Student()
+        //{
+        //    Program = new List<Program>();
+        //}
 
     }
 }

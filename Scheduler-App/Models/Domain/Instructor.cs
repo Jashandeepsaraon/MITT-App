@@ -11,7 +11,12 @@ namespace Scheduler_App.Models.Domain
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public virtual ApplicationUser instructor { get; set; }
+        public string Password { get; set; }
         //public virtual Program SchoolProgram { get; set; }
+
+        public Instructor()
+        {
+            Password = "Password-1";
+        }
     }
 }

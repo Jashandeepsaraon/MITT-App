@@ -18,6 +18,7 @@ namespace Scheduler_App.Models.ViewModel
         [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
+       
         //public virtual ApplicationUser Instructor { get; set; }
 
         public InstructorViewModel()
