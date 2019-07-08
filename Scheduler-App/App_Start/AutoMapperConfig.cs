@@ -17,6 +17,11 @@ namespace Scheduler_App.App_Start
                 cfg.CreateMap<Program, CreateEditSchoolProgramViewModel>().ReverseMap();
                 cfg.CreateMap<CreateEditSchoolProgramViewModel, Program>().ReverseMap();
                 cfg.CreateMap<Instructor, InstructorViewModel>().ReverseMap();
+                cfg.CreateMap<Course, CourseViewModel>().ReverseMap();
+                cfg.CreateMap<CourseViewModel, Course>().ReverseMap();
+                cfg.CreateMap<Course, CreateEditCourseViewModel>().ReverseMap();
+                cfg.CreateMap<CreateEditCourseViewModel, Course>().ReverseMap();
+
             });
         }
     }

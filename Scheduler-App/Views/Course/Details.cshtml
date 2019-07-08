@@ -1,7 +1,51 @@
 ﻿@model CourseViewModel
 @{
-    ViewBag.Title = "Details";
+   ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div>
+    <section class="section-padding wow fadeInUp delay-05s">
+        <div class="container" style="margin-left: 10px;">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="service-title pad-bt15">Detail</h2>
+                    <hr class="bottom-line">
+                </div>
+ 
+                <table class="table table-striped" id="sample-datatables">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Program Name</th>
+                            <td>@Model.ProgramName</td>
+                        </tr>
+                        <tr>
+                            <th>Instructor Name</th>
+                            <td>@Model.InstructorName</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    @*<thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Program Name</th>
+                            <th>Instructor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.Name</td>
+                            <td>@Model.ProgramName</td>
+                            <td>@Model.InstructorName</td>
+                        </tr>
+                    </tbody>*@
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
 
