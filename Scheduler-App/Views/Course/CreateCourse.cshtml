@@ -10,7 +10,8 @@
             <h2>Create Course</h2>
         </div>
         <div class="card-body">
-            @Html.ValidationSummary(false, "", new { @class = "text-danger small" })
+            <form method="post">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger small" })
                 @Html.AntiForgeryToken()
                 <div class="form-group mb-3">
                     @Html.LabelFor(model => model.Name, "Course Name", new { @class = "form-control-label" })
@@ -42,20 +43,22 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.InstructorId, "Instructors", new { @class = "form-control-label" })
+                    @Html.LabelFor(model => model.InstructorsId, "Instructors", new { @class = "form-control-label" })
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-app"></i></span>
                         </div>
-                        @Html.DropDownListFor(model => model.InstructorId, Model.InstructorList, "--- Select a Instructors ---", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.InstructorId, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.InstructorsId, Model.InstructorList, "--- Select a Instructors ---", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.InstructorsId, "", new { @class = "text-danger" })
                     </div>
                 </div>
+
                 <div class="form-inline row">
                     <div class="text-center col">
                         <button type="submit" class="btn btn-primary my-4">Create Course</button>
                     </div>
                 </div>
+            </form>
         </div>
     </div>
 </div>

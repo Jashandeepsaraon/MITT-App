@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -21,13 +23,18 @@ namespace Scheduler_App.Controllers
         // GET: Course
         public ActionResult Index()
         {
-            var model = DbContext.CourseDatabase
-                .Select(p => new CreateEditCourseViewModel
-                {
-                     Id = p.Id,
-                    Name = p.Name,
-                    Hours = p.Hours,
-                }).ToList();
+            //var model = DbContext.CourseDatabase
+            //    .Select(p => new CreateEditCourseViewModel
+            //    {
+            //         Id = p.Id,
+            //        Name = p.Name,
+            //        Hours = p.Hours,
+            //    }).ToList();
+            //return View(model);
+            var model = DbContext
+                .CourseDatabase
+                .ProjectTo<CourseViewModel>()
+                .ToList();
             return View(model);
         }
 
@@ -43,7 +50,7 @@ namespace Scheduler_App.Controllers
                    Value = p.Id.ToString(),
                }).ToList();
 
-            var allInstroctor = DbContext.InstructorDatabase
+            var allInstructor = DbContext.InstructorDatabase
                 .Select(p => new SelectListItem()
                 {
                     Text = p.FirstName,
@@ -51,7 +58,7 @@ namespace Scheduler_App.Controllers
                 }).ToList();
             var model = new CreateEditCourseViewModel();
             model.ProgramList = allProgram;
-            model.InstructorList = allInstroctor;
+            model.InstructorList = allInstructor;
             return View(model);
         }
 
@@ -71,7 +78,7 @@ namespace Scheduler_App.Controllers
                     Value = p.Id.ToString(),
                 }).ToList();
 
-            var allInstroctor = DbContext.InstructorDatabase
+            var allInstructor = DbContext.InstructorDatabase
                 .Select(p => new SelectListItem()
                 {
                     Text = p.FirstName,
@@ -81,15 +88,25 @@ namespace Scheduler_App.Controllers
             if (!ModelState.IsValid)
             {
                 formData.ProgramList = allProgram;
-                formData.InstructorList = allInstroctor;
+                formData.InstructorList = allInstructor;
                 return View(formData);
             }
 
-           Course course;
+            if (DbContext.CourseDatabase.Any(p =>
+            p.Name == formData.Name &&
+            (!id.HasValue || p.Id != id.Value)))
+            {
+                ModelState.AddModelError(nameof(CreateEditCourseViewModel.Name),
+                    "Course Name should be unique");
+                formData.InstructorList = allInstructor;
+                formData.ProgramList = allProgram;
+                return View(formData);
+            }
+
+            var course = Mapper.Map<Course>(formData);
 
             if (!id.HasValue)
             {
-                course = new Course();
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
             }
@@ -104,8 +121,10 @@ namespace Scheduler_App.Controllers
             
             course.Name = formData.Name;
             course.Hours = formData.Hours;
-            course.SchoolProgram = DbContext.ProgramDatabase.FirstOrDefault(p => p.Name == formData.Name);
-            course.Instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.FirstName == formData.Name);
+            course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+            course.Instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == formData.InstructorsId);
+            course.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+            course.InstructorName = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == formData.InstructorsId).FirstName;
 
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
@@ -172,8 +191,28 @@ namespace Scheduler_App.Controllers
 
             var allCourses = new CourseViewModel();
             allCourses.Name = course.Name;
-            allCourses.Hours = course.Hours;
+            allCourses.InstructorName = course.InstructorName;
+            allCourses.ProgramName = course.ProgramName;
             return View(allCourses);
+        }
+
+        // Delete Method for course
+        [HttpPost]
+        public ActionResult DeleteCourse(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(CourseController.Index));
+            }
+
+            var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
+
+            if (course != null)
+            {
+                DbContext.CourseDatabase.Remove(course);
+                DbContext.SaveChanges();
+            }
+            return RedirectToAction(nameof(CourseController.Index));
         }
     }
 }
