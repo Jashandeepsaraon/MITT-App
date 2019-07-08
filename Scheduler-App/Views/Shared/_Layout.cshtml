@@ -41,28 +41,7 @@
     @RenderSection("css", required: false)
 </head>
 
-<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
-    @*<div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    </ul>
-                    @Html.Partial("_LoginPartial")
-                </div>
-            </div>
-        </div>*@
-
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">   
     <header class="app-header navbar" style="height:110px; font-size:22px">
         <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
             <span class="navbar-toggler-icon"></span>
@@ -178,18 +157,24 @@
                         </ul>
                     </li>
 
-                    <li class="nav-title">Theme</li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="colors.html">
-                            <i class="nav-icon icon-drop"></i> Colors
+                    <li class="nav-title">Instructor</li>
+                    <li class="nav-item nav-dropdown">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="nav-icon icon-star"></i> Pages
                         </a>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index","Instructor")" target="_top">
+                                    <i class="nav-icon icon-star"></i> View Instructors
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("CreateInstructor", "Instructor")" target="_top">
+                                    <i class="nav-icon icon-star"></i> Create Instructor
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="typography.html">
-                            <i class="nav-icon icon-pencil"></i> Typography
-                        </a>
-                    </li>
-
 
                     <li class="nav-title"></li>
                     <li class="nav-item nav-dropdown">

@@ -970,6 +970,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Program\CreateProgram.cshtml" />
+    <Content Include="Views\Program\Delete.cshtml" />
     <Content Include="Views\Program\Details.cshtml" />
     <Content Include="Views\Program\EditProgram.cshtml" />
     <Content Include="Views\Program\Index.cshtml" />
@@ -1002,15 +1003,17 @@
     <Content Include="Template\vendors\simple-line-icons\fonts\Simple-Line-Icons.ttf" />
     <Content Include="Template\vendors\simple-line-icons\fonts\Simple-Line-Icons.woff" />
     <Content Include="Template\vendors\simple-line-icons\fonts\Simple-Line-Icons.woff2" />
+    <Content Include="Views\Course\CreateCourse.cshtml" />
+    <Content Include="Views\Course\Details.cshtml" />
+    <Content Include="Views\Course\EditCourse.cshtml" />
     <Content Include="Views\Students\CreateStudent.cshtml" />
     <Content Include="Views\Students\EditStudent.cshtml" />
     <Content Include="Views\Students\Index.cshtml" />
+    <Content Include="Views\Instructor\ImportInstructor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="obj\Debug\" />
-    <Folder Include="Uploads\" />
-    <Folder Include="Views\SchoolProgram\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
