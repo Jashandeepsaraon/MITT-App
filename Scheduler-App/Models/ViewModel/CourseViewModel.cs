@@ -11,6 +11,8 @@ namespace Scheduler_App.Models.ViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ProgramName { get; set; }
+        public string InstructorName { get; set; }
         //public TimeSpan ClassStartTime { get; set; }
         //public TimeSpan ClassEndTime { get; set; }
         //public virtual ClassRoom ClassRoom { get; set; }
@@ -19,6 +21,6 @@ namespace Scheduler_App.Models.ViewModel
         public List<SelectListItem> InstructorList { get; set; }
         public TimeSpan Hours { get; set; }
         public int? ProgramId { get; set; }
-        public int? InstructorId { get; set; }
+        public int? InstructorsId { get; set; }
     }
 }
