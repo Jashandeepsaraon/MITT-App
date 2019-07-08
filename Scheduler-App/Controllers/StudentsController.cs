@@ -38,7 +38,16 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-            return View();
+            
+            var program =DbContext.ProgramDatabase 
+               .Select(p => new SelectListItem()
+               {
+                   Text = p.Name,
+                   Value = p.Id.ToString(),
+               }).ToList();
+            var model = new StudentViewModel();
+            model.Programs = program;
+            return View(model);
         }
 
         [HttpPost]
@@ -58,8 +67,9 @@ namespace Scheduler_App.Controllers
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
             var result = userManager.CreateAsync(user, formData.Password);
             var userId = user.Id;
+            var program = DbContext.ProgramDatabase.ToList();
             var student = Mapper.Map<Student>(formData);
-            var allProgram = DbContext.ProgramDatabase
+            formData.Programs = program
                 .Select(p => new SelectListItem()
                 {
                    Text = p.Name,
@@ -67,11 +77,12 @@ namespace Scheduler_App.Controllers
                 }).ToList();
             if (!id.HasValue)
             {
-                allProgram = formData.Program;
+                student.ProgramName = program.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+                student.Program.StartDate = program.FirstOrDefault(p => p.Id == formData.ProgramId).StartDate;
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
-                String code = userManager.GenerateEmailConfirmationToken(user.Id);
-                var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                 //String code = userManager.GenerateEmailConfirmationToken(user.Id);
+                //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",
                 //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
             }
@@ -89,7 +100,6 @@ namespace Scheduler_App.Controllers
             student.LastName = formData.LastName;
             student.StudentNumber = formData.StudentNumber;
             student.Email = formData.Email;
-            student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Name == formData.Program.Any(k =>  );
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }
