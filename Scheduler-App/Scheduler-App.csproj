@@ -203,6 +203,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ViewModel\CourseViewModel.cs" />
+    <Compile Include="Models\ViewModel\CreateEditCourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditSchoolProgramViewModel.cs" />
     <Compile Include="Models\ViewModel\InstructorViewModel.cs" />
     <Compile Include="Models\ViewModel\SchoolProgramViewModel.cs" />
@@ -969,7 +970,6 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Program\CreateProgram.cshtml" />
-    <Content Include="Views\Program\Delete.cshtml" />
     <Content Include="Views\Program\Details.cshtml" />
     <Content Include="Views\Program\EditProgram.cshtml" />
     <Content Include="Views\Program\Index.cshtml" />
@@ -1009,6 +1009,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="obj\Debug\" />
+    <Folder Include="Uploads\" />
     <Folder Include="Views\SchoolProgram\" />
   </ItemGroup>
   <ItemGroup>

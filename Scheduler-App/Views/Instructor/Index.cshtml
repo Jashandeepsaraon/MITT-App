@@ -1,4 +1,4 @@
-﻿@model IEnumerable<InstructorViewModel>
+﻿@model List<InstructorViewModel>
 
 <h2>Instructors</h2>
 <p>
@@ -38,6 +38,10 @@
             <td>
                 @Html.ActionLink("Edit", "EditInstructor", new { id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.Id })|
+
+                <form method="post" action="@Url.Action("Delete", "Instructor", new { id = item.Id })">
+                    <button class="btn-delete"><i title="Delete" class="fas cui-trash"></i></button>
+                </form>
             </td>
         </tr>
 

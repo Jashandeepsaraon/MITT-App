@@ -120,6 +120,23 @@ namespace Scheduler_App.Controllers
             return SaveInstructor(id, formData);
         }
 
+        [HttpPost]
+        public ActionResult Delete(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(InstructorController.Index));
+            }
+            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
+            if (instructor != null)
+            {
+                DbContext.InstructorDatabase.Remove(instructor);
+                DbContext.SaveChanges();
+                return RedirectToAction(nameof(InstructorController.Index));
+            }
+            return RedirectToAction(nameof(InstructorController.Index));
+        }
+
         [HttpGet]
         public ActionResult ImportInstructor()
         {
@@ -129,7 +146,8 @@ namespace Scheduler_App.Controllers
         [HttpPost]
         public ActionResult ImportInstructor(HttpPostedFileBase postedFile)
         {
-            var instructor = new List<Instructor>();
+
+            List<Instructor> instructor = new List<Instructor>();
             string filePath = string.Empty;
             if (postedFile != null)
             {
@@ -162,12 +180,13 @@ namespace Scheduler_App.Controllers
                         var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
+                        instructor.Add(instructors);
                         DbContext.InstructorDatabase.Add(instructors);
                         DbContext.SaveChanges();
                     }
                 }
             }
-            return View();
+            return View(instructor);
         }
     }
 }
