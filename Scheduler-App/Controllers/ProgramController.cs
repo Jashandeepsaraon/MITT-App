@@ -55,7 +55,17 @@ namespace Scheduler_App.Controllers
             {
                 return View();
             }
-             var program = Mapper.Map<Program>(formData);
+
+            if (DbContext.ProgramDatabase.Any(p =>
+            p.Name == formData.Name &&
+            (!id.HasValue || p.Id != id.Value)))
+            {
+                ModelState.AddModelError(nameof(CreateEditCourseViewModel.Name),
+                    "Program Name should be unique");
+                return View();
+            }
+
+            var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
                 program.StartDate = formData.StartDate;
@@ -104,6 +114,24 @@ namespace Scheduler_App.Controllers
         {
             return SaveProgram(id, formData);
         }
+
+        [HttpPost]
+        public ActionResult Delete(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+            if (program != null)
+            {
+                DbContext.ProgramDatabase.Remove(program);
+                DbContext.SaveChanges();
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+            return RedirectToAction(nameof(ProgramController.Index));
+        }
+
 
         [HttpGet]
         public ActionResult Details(int? id)
