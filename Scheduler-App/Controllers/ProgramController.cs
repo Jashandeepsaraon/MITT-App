@@ -115,6 +115,24 @@ namespace Scheduler_App.Controllers
             return SaveProgram(id, formData);
         }
 
+        [HttpPost]
+        public ActionResult Delete(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
+            if (program != null)
+            {
+                DbContext.ProgramDatabase.Remove(program);
+                DbContext.SaveChanges();
+                return RedirectToAction(nameof(ProgramController.Index));
+            }
+            return RedirectToAction(nameof(ProgramController.Index));
+        }
+
+
         [HttpGet]
         public ActionResult Details(int? id)
         {

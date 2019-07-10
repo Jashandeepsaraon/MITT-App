@@ -32,7 +32,7 @@
 
 @if (!Model.Any())
 {
-    <div>
+    <div style="margin-bottom:600px">
         <p><strong>No Program Available</strong></p>
     </div>
 }
@@ -65,7 +65,7 @@ else
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <form method="post" action="@Url.Action("DeleteProgram", "Program", new { id = program.Id })">
+                            <form method="post" action="@Url.Action("Delete", "Program", new { id = program.Id })">
                                 <button class="btn-delete"><i title="Delete" class="fas cui-trash"></i></button>
                             </form>
                         }
