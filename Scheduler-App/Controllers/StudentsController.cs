@@ -8,6 +8,7 @@ using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -133,24 +134,31 @@ namespace Scheduler_App.Controllers
         {
             return SaveStudent(id, formData);
         }
-        //POST:
-        [HttpPost]
         public ActionResult Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id == null)
             {
-                return RedirectToAction(nameof(StudentsController.Index));
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
-
-            if (student != null)
+            Student student = DbContext.StudentDatabase.Find(id);
+            if (student == null)
             {
-                DbContext.StudentDatabase.Remove(student);
-                DbContext.SaveChanges();
+                return HttpNotFound();
             }
-            return RedirectToAction(nameof(StudentsController.Index));
+            return View(student);
         }
+
+        // POST:Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            Student student = DbContext.StudentDatabase.Find(id);
+            DbContext.StudentDatabase.Remove(student);
+            DbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         //Get:
         [HttpGet]
         public ActionResult Details(int? id)
