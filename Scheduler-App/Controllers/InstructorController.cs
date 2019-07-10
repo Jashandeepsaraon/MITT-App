@@ -151,23 +151,24 @@ namespace Scheduler_App.Controllers
                 {
                     if (!string.IsNullOrEmpty(row))
                     {
-                        var instructors = (new Instructor
+                        var instructors = new Instructor
                         {
                             //Id = Convert.ToInt32(row.Split(',')[0]),
                             FirstName = row.Split(',')[0],
                             LastName = row.Split(',')[1],
                             Email = row.Split(',')[2]
-                        });
+                        };
                         var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                         var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
                         DbContext.InstructorDatabase.Add(instructors);
+                        instructor.Add(instructors);
                         DbContext.SaveChanges();
                     }
                 }
             }
-            return View();
+            return View("Index");
         }
     }
 }
