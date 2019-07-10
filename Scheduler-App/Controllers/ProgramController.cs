@@ -55,7 +55,17 @@ namespace Scheduler_App.Controllers
             {
                 return View();
             }
-             var program = Mapper.Map<Program>(formData);
+
+            if (DbContext.ProgramDatabase.Any(p =>
+            p.Name == formData.Name &&
+            (!id.HasValue || p.Id != id.Value)))
+            {
+                ModelState.AddModelError(nameof(CreateEditCourseViewModel.Name),
+                    "Program Name should be unique");
+                return View();
+            }
+
+            var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
                 program.StartDate = formData.StartDate;

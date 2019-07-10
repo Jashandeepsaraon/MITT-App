@@ -55,7 +55,7 @@
                                 <td>
                                     @if (User.IsInRole("Admin"))
                                     {
-                                        <form method="post" action="@Url.Action("DeleteCourse", "Course", new { id = record.Id })">
+                                        <form method="post" action="@Url.Action("Delete", "Course", new { id = record.Id })">
                                             <button>Delete</button>
                                         </form>
                                     }
