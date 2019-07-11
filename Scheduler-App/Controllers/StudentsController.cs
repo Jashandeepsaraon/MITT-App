@@ -45,19 +45,19 @@ namespace Scheduler_App.Controllers
                    Text = p.Name,
                    Value = p.Id.ToString(),
                }).ToList();
-            var model = new StudentViewModel();
+            var model = new CreateEditStudentViewModel();
             model.Programs = program;
             return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult CreateStudent(StudentViewModel formData)
+        public ActionResult CreateStudent(CreateEditStudentViewModel formData)
         {
             return SaveStudent(null, formData);
         }
 
-        private ActionResult SaveStudent(int? id, StudentViewModel formData)
+        private ActionResult SaveStudent(int? id, CreateEditStudentViewModel formData)
         {
             if (!ModelState.IsValid)
             {
@@ -119,7 +119,7 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(StudentsController.Index));
             }
 
-            var model = new StudentViewModel();
+            var model = new CreateEditStudentViewModel();
             model.FirstName = student.FirstName;
             model.LastName = student.LastName;
             model.Email = student.Email;
@@ -129,7 +129,7 @@ namespace Scheduler_App.Controllers
         //POST:
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditStudent(int id, StudentViewModel formData)
+        public ActionResult EditStudent(int id, CreateEditStudentViewModel formData)
         {
             return SaveStudent(id, formData);
         }

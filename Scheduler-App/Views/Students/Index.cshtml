@@ -1,56 +1,89 @@
-﻿@model IEnumerable<StudentViewModel>
-<h2>Student</h2>
-<p>
-    @Html.ActionLink("Create New", "CreateStudent")
-</p>
+﻿@model List<StudentViewModel>
 
-<table id="sample-datatables" class="table table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@{
+    ViewBag.Title = "Index";
+}
+
+@section css {
+    <link rel="stylesheet"
+          href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+}
+
+@section Scripts {
+    <script type="text/javascript"
+            src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sample-datatables').DataTable();
+        });
+    </script>
+}
+
+<h2>List of Students</h2>
+
+@Html.ValidationSummary(false)
+<h5>
+    <strong>
+        @Html.ActionLink("Create New", "CreateStudent")
+    </strong>
+</h5>
+
+@if (!Model.Any() || Model == null)
+{
+    <div style="margin-bottom:600px">
+        <p><strong>No Student Available</strong></p>
+    </div>
+}
+else
+{
+    <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-
-                <td>
-                    @Html.ActionLink("Edit", "EditStudent", new { id = item.Id })|
-                    @Html.ActionLink("Details", "Details", new { id = item.Id })|
-                    <form method="post" action="@Url.Action("Delete", "Students", new { id = item.Id })">
-                        <button>Delete</button>
-                    </form>
-                </td>
-
+                <th></th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th></th>
+                <th></th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form action="@Url.Action("Details", "Students", new { id = student.Id })">
+                                <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                            </form>
+                        }
+                    </td>
 
-        }
-
-
-
-    </tbody>
-
-</table>
-
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td>@student.Email</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("EditStudent", "Students", new { id = student.Id })">
+                                <i title="Edit Student" class="fas fa-pencil-square-o"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form method="post" action="@Url.Action("Delete", "Students", new { id = student.Id })">
+                                <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

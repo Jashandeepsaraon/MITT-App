@@ -205,6 +205,7 @@
     <Compile Include="Models\ViewModel\CourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditCourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditSchoolProgramViewModel.cs" />
+    <Compile Include="Models\ViewModel\CreateEditStudentViewModel.cs" />
     <Compile Include="Models\ViewModel\InstructorViewModel.cs" />
     <Compile Include="Models\ViewModel\SchoolProgramViewModel.cs" />
     <Compile Include="Models\ViewModel\StudentViewModel.cs" />
@@ -1011,6 +1012,7 @@
     <Content Include="Views\Students\CreateStudent.cshtml" />
     <Content Include="Views\Students\EditStudent.cshtml" />
     <Content Include="Views\Students\Index.cshtml" />
+    <Content Include="Views\Students\details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
