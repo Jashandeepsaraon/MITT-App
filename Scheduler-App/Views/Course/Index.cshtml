@@ -60,9 +60,9 @@ else
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <form action="@Url.Action("Details", "Course", new { id = course.Id })">
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">
                                 <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
-                            </form>
+                            </a>
                         }
                     </td>
 

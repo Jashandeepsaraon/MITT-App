@@ -19,7 +19,6 @@ namespace Scheduler_App.Models.ViewModel
         public string Password { get; set; }
 
         public int? ProgramId { get; set; }
-        [Required]
-        public List<SelectListItem> Programs { get; set; }
+        public List<SelectListItem> ProgramList { get; set; }
     }
 }
