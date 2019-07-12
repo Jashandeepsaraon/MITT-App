@@ -186,7 +186,7 @@ namespace Scheduler_App.Controllers
                     }
                 }
             }
-            return View(instructor);
+            return RedirectToAction("Index");
         }
     }
 }
