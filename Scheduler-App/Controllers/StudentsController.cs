@@ -18,11 +18,9 @@ namespace Scheduler_App.Controllers
     {
         private ApplicationDbContext DbContext;
         public StudentsController()
-
         {
             DbContext = new ApplicationDbContext();
         }
-
         //List of Students
         public ActionResult Index()
         {
@@ -31,7 +29,6 @@ namespace Scheduler_App.Controllers
                 .ProjectTo<StudentViewModel>()
                 .ToList();
             return View(model);
-
         }
 
         //GET : CreateStudent
@@ -39,7 +36,6 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-
             var program = DbContext.ProgramDatabase
                .Select(p => new SelectListItem()
                {
@@ -78,7 +74,7 @@ namespace Scheduler_App.Controllers
                 }).ToList();
             if (!id.HasValue)
             {
-                student.ProgramName = program.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+                //student.ProgramName = program.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                 student.Program.StartDate = program.FirstOrDefault(p => p.Id == formData.ProgramId).StartDate;
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
@@ -150,7 +146,6 @@ namespace Scheduler_App.Controllers
 
         // POST:Delete
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
             Student student = DbContext.StudentDatabase.Find(id);
@@ -165,15 +160,10 @@ namespace Scheduler_App.Controllers
         {
             if (!id.HasValue)
                 return RedirectToAction(nameof(StudentsController.Index));
-
             var userId = User.Identity.GetUserId();
-
-            var allstudent = DbContext.StudentDatabase.FirstOrDefault(p =>
-            p.Id == id.Value);
-
+            var allstudent = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id.Value);
             if (allstudent == null)
                 return RedirectToAction(nameof(StudentsController.Index));
-
             var student = new StudentViewModel();
             student.FirstName = student.FirstName;
             student.LastName = student.LastName;
