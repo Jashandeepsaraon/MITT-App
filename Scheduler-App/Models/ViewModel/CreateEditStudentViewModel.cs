@@ -1,25 +1,24 @@
-﻿using Scheduler_App.Models.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace Scheduler_App.Models.ViewModel
 {
-    public class StudentViewModel
+    public class CreateEditStudentViewModel
     {
         public int Id { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
         public string Email { get; set; }
         public string Password { get; set; }
-        public string ProgramName { get; set; }
+
         public int? ProgramId { get; set; }
         public List<SelectListItem> ProgramList { get; set; }
-        public StudentViewModel()
-        {
-            Password = "Password-1";
-        }
     }
 }

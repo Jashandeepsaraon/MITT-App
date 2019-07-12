@@ -7,6 +7,7 @@
 @section css {
     <link rel="stylesheet"
           href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 }
 
 @section Scripts {
@@ -41,6 +42,7 @@ else
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>
+                <th></th>
                 <th>Program</th>
                 <th>Start Date</th>
                 <th></th>
@@ -51,6 +53,11 @@ else
             @foreach (var program in Model)
             {
                 <tr>
+                    <td>
+                        <a href="@Url.Action("Details", "Program", new { id = program.Id} )">
+                            <i title="Details" class="fas fa-info-circle" style='font-size:20px;color:lightseagreen'></i>
+                        </a>
+                    </td>
                     <td>@program.Name</td>
                     <td>@program.StartDate</td>
 
@@ -58,7 +65,7 @@ else
                         @if (User.IsInRole("Admin"))
                         {
                             <a href="@Url.Action("EditProgram", "Program", new { id = program.Id })">
-                                <i title="Edit Program" class="fas icon-action-undo"></i>
+                                <i title="Edit Program" class="fas fa-pencil-square-o"></i>
                             </a>
                         }
                     </td>

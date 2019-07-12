@@ -23,14 +23,6 @@ namespace Scheduler_App.Controllers
         // GET: Course
         public ActionResult Index()
         {
-            //var model = DbContext.CourseDatabase
-            //    .Select(p => new CreateEditCourseViewModel
-            //    {
-            //         Id = p.Id,
-            //        Name = p.Name,
-            //        Hours = p.Hours,
-            //    }).ToList();
-            //return View(model);
             var model = DbContext
                 .CourseDatabase
                 .ProjectTo<CourseViewModel>()
@@ -175,6 +167,7 @@ namespace Scheduler_App.Controllers
             return SaveCourse(id, formData);
         }
 
+        //GET: Details of the Course
         [HttpGet]
         public ActionResult Details(int? id)
         {
@@ -198,7 +191,7 @@ namespace Scheduler_App.Controllers
 
         // Delete Method for course
         [HttpPost]
-        public ActionResult DeleteCourse(int? id)
+        public ActionResult Delete(int? id)
         {
             if (!id.HasValue)
             {

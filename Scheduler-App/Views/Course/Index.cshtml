@@ -1,71 +1,158 @@
 ﻿@model List<CourseViewModel>
-@using Microsoft.AspNet.Identity;
+
 @{
     ViewBag.Title = "Index";
-    var userId = User.Identity.GetUserId();
+    //var userId = User.Identity.GetUserId();
 }
 
-<div>
-    <section class="section-padding wow fadeInUp delay-05s">
-        <div class="container" style="margin-left: 10px;">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h2 class="service-title pad-bt15">Latest Course</h2>
-                    <hr class="bottom-line">
-                </div>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a href="@Url.Action("CreateCourse", "Course")">Create New+</a>
-                }
+@section css {
+    <link rel="stylesheet"
+          href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 
-                <table class="table table-striped" id="sample-datatables">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Program Name</th>
-                            <th>Instructor</th>
-                            <th>Hours</th>
-                            <th>Edit</th>
-                            <th>Details</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var record in Model)
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+}
+
+@section Scripts {
+    <script type="text/javascript"
+            src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sample-datatables').DataTable();
+        });
+    </script>
+}
+
+<h2>List of Courses</h2>
+
+@Html.ValidationSummary(false)
+<h5>
+    <strong>
+        @Html.ActionLink("Create New", "CreateCourse")
+    </strong>
+</h5>
+
+@if (!Model.Any() || Model == null)
+{
+    <div style="margin-bottom:600px">
+        <p><strong>No Course Available</strong></p>
+    </div>
+}
+else
+{
+
+    <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Program Name</th>
+                <th>Instructor</th>
+                <th>Hours</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td>
+                        @if (User.IsInRole("Admin"))
                         {
-                            <tr>
-                                <td>@record.Name</td>
-                                <td>@record.ProgramName</td>
-                                <td>@record.InstructorName</td>
-                                <td>@record.Hours</td>
-                                <td>
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <a href="@Url.Action("EditCourse", "Course", new { id = record.Id })">Edit Course</a>
-                                    }
-                                </td>
-                                <td>
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <form action="@Url.Action("Details", "Course", new { id = record.Id })">
-                                            <button>Details</button>
-                                        </form>
-                                    }
-                                </td>
-                                <td>
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <form method="post" action="@Url.Action("DeleteCourse", "Course", new { id = record.Id })">
-                                            <button>Delete</button>
-                                        </form>
-                                    }
-                                </td>
-                            </tr>
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">
+                                <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                            </a>
                         }
-                    </tbody>
-                </table>
+                    </td>
+
+                    <td>@course.Name</td>
+                    <td>@course.ProgramName</td>
+                    <td>@course.InstructorName</td>
+                    <td>@course.Hours</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
+                                <i title="Edit Course" class="fas fa-pencil-square-o"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form method="post" action="@Url.Action("Delete", "Course", new { id = course.Id })">
+                                <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@*<div>
+        <section class="section-padding wow fadeInUp delay-05s">
+            <div class="container" style="margin-left: 10px;">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h2 class="service-title pad-bt15">Latest Course</h2>
+                        <hr class="bottom-line">
+                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("CreateCourse", "Course")">Create New+</a>
+                    }
+
+                    <table class="table table-striped" id="sample-datatables">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Program Name</th>
+                                <th>Instructor</th>
+                                <th>Hours</th>
+                                <th>Edit</th>
+                                <th>Details</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model)
+                            {
+                                <tr>
+                                    <td>@course.Name</td>
+                                    <td>@course.ProgramName</td>
+                                    <td>@course.InstructorName</td>
+                                    <td>@course.Hours</td>
+                                    <td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">Edit Course</a>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <form action="@Url.Action("Details", "Course", new { id = course.Id })">
+                                                <button>Details</button>
+                                            </form>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <form method="post" action="@Url.Action("Delete", "Course", new { id = course.Id })">
+                                                <button>Delete</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>*@
 

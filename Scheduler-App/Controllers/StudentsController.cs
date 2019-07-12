@@ -30,7 +30,6 @@ namespace Scheduler_App.Controllers
                 .ProjectTo<StudentViewModel>()
                 .ToList();
             return View(model);
-
         }
 
         //GET : CreateStudent
@@ -38,47 +37,48 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-
             var program = DbContext.ProgramDatabase
                .Select(p => new SelectListItem()
                {
                    Text = p.Name,
                    Value = p.Id.ToString(),
                }).ToList();
-            var model = new StudentViewModel();
-            model.Programs = program;
+            var model = new CreateEditStudentViewModel();
+            model.ProgramList = program;
             return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult CreateStudent(StudentViewModel formData)
+        public ActionResult CreateStudent(CreateEditStudentViewModel formData)
         {
             return SaveStudent(null, formData);
         }
 
-        private ActionResult SaveStudent(int? id, StudentViewModel formData)
+        private ActionResult SaveStudent(int? id, CreateEditStudentViewModel formData)
         {
+            var program = DbContext.ProgramDatabase
+               .Select(p => new SelectListItem()
+               {
+                   Text = p.Name,
+                   Value = p.Id.ToString(),
+               }).ToList();
+
             if (!ModelState.IsValid)
             {
-                return View();
+                formData.ProgramList = program;
+                return View(formData);
             }
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
             var result = userManager.CreateAsync(user, formData.Password);
             var userId = user.Id;
-            var program = DbContext.ProgramDatabase.ToList();
             var student = Mapper.Map<Student>(formData);
-            formData.Programs = program
-                .Select(p => new SelectListItem()
-                {
-                    Text = p.Name,
-                    Value = p.Id.ToString(),
-                }).ToList();
+
             if (!id.HasValue)
             {
-                student.ProgramName = program.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                student.Program.StartDate = program.FirstOrDefault(p => p.Id == formData.ProgramId).StartDate;
+                student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+                student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
                 //String code = userManager.GenerateEmailConfirmationToken(user.Id);
@@ -86,19 +86,17 @@ namespace Scheduler_App.Controllers
                 //userManager.SendEmail(userId, "Notification",
                 //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
             }
-
             else
             {
                 student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
-                if (student
-                    == null)
+                if (student == null)
                 {
                     return RedirectToAction(nameof(StudentsController.Index));
                 }
             }
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
-            student.Email = formData.Email;
+            student.Email = formData.Email;           
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }
@@ -119,7 +117,7 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(StudentsController.Index));
             }
 
-            var model = new StudentViewModel();
+            var model = new CreateEditStudentViewModel();
             model.FirstName = student.FirstName;
             model.LastName = student.LastName;
             model.Email = student.Email;
@@ -129,7 +127,7 @@ namespace Scheduler_App.Controllers
         //POST:
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditStudent(int id, StudentViewModel formData)
+        public ActionResult EditStudent(int id, CreateEditStudentViewModel formData)
         {
             return SaveStudent(id, formData);
         }
@@ -160,19 +158,19 @@ namespace Scheduler_App.Controllers
 
             var userId = User.Identity.GetUserId();
 
-            var allstudent = DbContext.StudentDatabase.FirstOrDefault(p =>
+            var student = DbContext.StudentDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
 
-            if (allstudent == null)
+            if (student == null)
                 return RedirectToAction(nameof(StudentsController.Index));
 
-            var student = new StudentViewModel();
-            student.FirstName = student.FirstName;
-            student.LastName = student.LastName;
-            student.Email = student.Email;
-            student.ProgramName = student.ProgramName;
+            var allStudent = new StudentViewModel();
+            allStudent.FirstName = student.FirstName;
+            allStudent.LastName = student.LastName;
+            allStudent.Email = student.Email;
+            allStudent.ProgramName = student.ProgramName;
 
-            return View(student);
+            return View(allStudent);
         }
     }
 }
