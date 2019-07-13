@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -120,20 +121,29 @@ namespace Scheduler_App.Controllers
             return SaveInstructor(id, formData);
         }
 
-        [HttpPost]
+        // GET:
         public ActionResult Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id == null)
             {
-                return RedirectToAction(nameof(InstructorController.Index));
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
-            if (instructor != null)
+            Instructor instructor= DbContext.InstructorDatabase.Find(id);
+            if (instructor == null)
             {
-                DbContext.InstructorDatabase.Remove(instructor);
-                DbContext.SaveChanges();
-                return RedirectToAction(nameof(InstructorController.Index));
+                return HttpNotFound();
             }
+            return View(instructor);
+        }
+
+        // POST: Delete
+        [HttpPost, ActionName("Delete")]
+
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            DbContext.InstructorDatabase.Remove(instructor);
+            DbContext.SaveChanges();
             return RedirectToAction(nameof(InstructorController.Index));
         }
 

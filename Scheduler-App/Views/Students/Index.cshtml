@@ -53,36 +53,31 @@ else
         <tbody>
             @foreach (var student in Model)
             {
-                <tr>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("Details", "Students", new { id = student.Id })">
-                                <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
-                            </a>
-                        }
-                    </td>
+            <tr>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("Details", "Students", new { id = student.Id })">
+                            <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                        </a>
+                    }
+                </td>
 
-                    <td>@student.FirstName</td>
-                    <td>@student.LastName</td>
-                    <td>@student.Email</td>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("EditStudent", "Students", new { id = student.Id })">
-                                <i title="Edit Student" class="fas fa-pencil-square-o"></i>
-                            </a>
-                        }
-                    </td>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <form method="post" action="@Url.Action("Delete", "Students", new { id = student.Id })">
-                                <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
-                            </form>
-                        }
-                    </td>
-                </tr>
+                <td>@student.FirstName</td>
+                <td>@student.LastName</td>
+                <td>@student.Email</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("EditStudent", "Students", new { id = student.Id })">
+                            <i title="Edit Student" class="fas fa-pencil-square-o"></i>
+                        </a>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = student.Id})
+                </td>
+            </tr>
             }
         </tbody>
     </table>

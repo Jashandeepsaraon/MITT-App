@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -114,23 +115,32 @@ namespace Scheduler_App.Controllers
         {
             return SaveProgram(id, formData);
         }
-
-        [HttpPost]
+        // GET:
         public ActionResult Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id == null)
             {
-                return RedirectToAction(nameof(ProgramController.Index));
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == id);
-            if (program != null)
+            Program program = DbContext.ProgramDatabase.Find(id);
+            if (program == null)
             {
-                DbContext.ProgramDatabase.Remove(program);
-                DbContext.SaveChanges();
-                return RedirectToAction(nameof(ProgramController.Index));
+                return HttpNotFound();
             }
+            return View(program);
+        }
+
+        // POST: Delete
+        [HttpPost, ActionName("Delete")]
+
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Program program = DbContext.ProgramDatabase.Find(id);
+            DbContext.ProgramDatabase.Remove(program);
+            DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Index));
         }
+
 
 
         [HttpGet]

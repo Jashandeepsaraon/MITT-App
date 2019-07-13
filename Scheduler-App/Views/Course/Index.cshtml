@@ -79,13 +79,9 @@ else
                         }
                     </td>
                     <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <form method="post" action="@Url.Action("Delete", "Course", new { id = course.Id })">
-                                <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
-                            </form>
-                        }
+                        @Html.ActionLink("Delete", "Delete", new { id = course.Id })
                     </td>
+
                 </tr>
             }
         </tbody>
