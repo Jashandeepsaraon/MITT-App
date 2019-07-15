@@ -76,9 +76,7 @@ else
                         </a>
                     </td>
                     <td>
-                        <form method="post" action="@Url.Action("Delete", "Instructor", new { id = instructor.Id })">
-                            <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
-                        </form>
+                        @Html.ActionLink("Delete", "Delete", new { id = instructor.Id })
                     </td>
                 </tr>
             }
