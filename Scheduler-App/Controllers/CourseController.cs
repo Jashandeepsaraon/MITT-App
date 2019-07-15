@@ -7,6 +7,7 @@ using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -110,7 +111,7 @@ namespace Scheduler_App.Controllers
                     return RedirectToAction(nameof(CourseController.Index));
                 }
             }
-            
+
             course.Name = formData.Name;
             course.Hours = formData.Hours;
             course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
@@ -190,21 +191,29 @@ namespace Scheduler_App.Controllers
         }
 
         // Delete Method for course
-        [HttpPost]
+        // GET:
         public ActionResult Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
-
-            if (course != null)
+            Course course = DbContext.CourseDatabase.Find(id);
+            if (course == null)
             {
-                DbContext.CourseDatabase.Remove(course);
-                DbContext.SaveChanges();
+                return HttpNotFound();
             }
+            return View(course);
+        }
+
+        // POST: Delete
+        [HttpPost, ActionName("Delete")]
+
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Course course = DbContext.CourseDatabase.Find(id);
+            DbContext.CourseDatabase.Remove(course);
+            DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
     }

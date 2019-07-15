@@ -60,9 +60,9 @@ else
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <form action="@Url.Action("Details", "Course", new { id = course.Id })">
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">
                                 <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
-                            </form>
+                            </a>
                         }
                     </td>
 
@@ -79,13 +79,9 @@ else
                         }
                     </td>
                     <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <form method="post" action="@Url.Action("Delete", "Course", new { id = course.Id })">
-                                <button class="btn-delete"><i title="Delete" class="fas fa-trash"></i></button>
-                            </form>
-                        }
+                        @Html.ActionLink("Delete", "Delete", new { id = course.Id })
                     </td>
+
                 </tr>
             }
         </tbody>

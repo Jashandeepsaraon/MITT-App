@@ -1,4 +1,33 @@
-﻿
+﻿@model StudentViewModel
+@{
+    ViewBag.Title = "Details";
+}
 
-
-
+<div class="body-content" style="margin-bottom:480px; width:600px">
+    <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
+        <div class="card-header">
+            <h2>Details</h2>
+        </div>
+        <table class="table table-condensed no-border" id="sample-datatables">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <td>@Model.FirstName</td>
+                </tr>
+                <tr>
+                    <th>Last Name</th>
+                    <td>@Model.LastName</td>
+                </tr>
+                <tr>
+                    <th>Program Name</th>
+                    <td>@Model.ProgramName</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>@Model.Email</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

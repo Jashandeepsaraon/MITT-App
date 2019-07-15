@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -67,8 +68,14 @@ namespace Scheduler_App.Controllers
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
+                DbContext.Users.Add(user);
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
+
+                if (!userManager.IsInRole(user.Id, "Instructor"))
+                {
+                    userManager.AddToRole(user.Id, "Instructor");
+                }
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
@@ -120,20 +127,29 @@ namespace Scheduler_App.Controllers
             return SaveInstructor(id, formData);
         }
 
-        [HttpPost]
+        // GET:
         public ActionResult Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id == null)
             {
-                return RedirectToAction(nameof(InstructorController.Index));
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
-            if (instructor != null)
+            Instructor instructor= DbContext.InstructorDatabase.Find(id);
+            if (instructor == null)
             {
-                DbContext.InstructorDatabase.Remove(instructor);
-                DbContext.SaveChanges();
-                return RedirectToAction(nameof(InstructorController.Index));
+                return HttpNotFound();
             }
+            return View(instructor);
+        }
+
+        // POST: Delete
+        [HttpPost, ActionName("Delete")]
+
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            DbContext.InstructorDatabase.Remove(instructor);
+            DbContext.SaveChanges();
             return RedirectToAction(nameof(InstructorController.Index));
         }
 
@@ -180,6 +196,7 @@ namespace Scheduler_App.Controllers
                         var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
+                        DbContext.Users.Add(user);
                         instructor.Add(instructors);
                         DbContext.InstructorDatabase.Add(instructors);
                         DbContext.SaveChanges();

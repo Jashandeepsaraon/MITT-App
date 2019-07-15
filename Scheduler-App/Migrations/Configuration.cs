@@ -38,6 +38,11 @@ namespace Scheduler_App.Migrations
                 roleManager.Create(instructorRole);
             }
 
+            //if (!userManager.IsInRole(user.Id, "Developer"))
+            //{
+            //    userManager.AddToRole(developerUser.Id, "Developer");
+            //}
+
             if (!context.Roles.Any(p => p.Name == nameof(UserRoles.Student)))
             {
                 var studentRole = new IdentityRole(nameof(UserRoles.Student));

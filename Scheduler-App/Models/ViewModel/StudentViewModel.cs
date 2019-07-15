@@ -16,7 +16,9 @@ namespace Scheduler_App.Models.ViewModel
         public string Password { get; set; }
         public string ProgramName { get; set; }
         public int? ProgramId { get; set; }
-        public List<SelectListItem> Programs { get; set; }
+        public string CourseName { get; set; }
+        public int? CourseId { get; set; }
+        public List<SelectListItem> ProgramList { get; set; }
         public StudentViewModel()
         {
             Password = "Password-1";
