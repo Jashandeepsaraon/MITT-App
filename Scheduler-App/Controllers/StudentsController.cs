@@ -43,9 +43,27 @@ namespace Scheduler_App.Controllers
                    Text = p.Name,
                    Value = p.Id.ToString(),
                }).ToList();
+            ViewBag.program = program;
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            }).ToList();
+            ViewBag.course = course;
             var model = new CreateEditStudentViewModel();
             model.ProgramList = program;
+            model.CourseList = course;
             return View(model);
+        }
+
+        public JsonResult GetCourses(int ProgramId)
+        {
+            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
+            {
+                Name = c.Name,
+                Id = c.Id,
+            }).ToList();
+            return Json(courseList, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -169,6 +187,7 @@ namespace Scheduler_App.Controllers
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
             allStudent.ProgramName = student.ProgramName;
+            allStudent.CourseName = student.CourseName;
 
             return View(allStudent);
         }

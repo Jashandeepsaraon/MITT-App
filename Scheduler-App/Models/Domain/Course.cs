@@ -17,7 +17,7 @@ namespace Scheduler_App.Models.Domain
         //public TimeSpan ClassStartTime { get; set; }
         //public TimeSpan ClassEndTime { get; set; }
         public virtual Program Program { get; set; }
-        //public int ProgramId { get; set; }
+        public int ProgramId { get; set; }
         //public virtual ClassRoom ClassRoom { get; set; }
         //public int ClassRoomId { get; set; }
         public virtual Instructor Instructor { get; set; }

@@ -13,6 +13,9 @@ namespace Scheduler_App.Models.Domain
         public string Email { get; set; }
         public string ProgramName { get;set; }
         public virtual Program Program { get; set; }
+        public string CourseName { get; set; }
+        public virtual Course Course { get; set; }
+
 
         //public Student()
         //{
