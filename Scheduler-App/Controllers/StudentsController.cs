@@ -98,6 +98,7 @@ namespace Scheduler_App.Controllers
             {
                 student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                 student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+                DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
                 //String code = userManager.GenerateEmailConfirmationToken(user.Id);

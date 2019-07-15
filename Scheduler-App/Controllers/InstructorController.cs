@@ -68,8 +68,14 @@ namespace Scheduler_App.Controllers
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
+                DbContext.Users.Add(user);
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
+
+                if (!userManager.IsInRole(user.Id, "Instructor"))
+                {
+                    userManager.AddToRole(user.Id, "Instructor");
+                }
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
@@ -190,6 +196,7 @@ namespace Scheduler_App.Controllers
                         var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
+                        DbContext.Users.Add(user);
                         instructor.Add(instructors);
                         DbContext.InstructorDatabase.Add(instructors);
                         DbContext.SaveChanges();

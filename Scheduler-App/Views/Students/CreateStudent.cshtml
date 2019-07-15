@@ -60,7 +60,7 @@
        // Dropdown list change event.
        $('#ProgramId').change(function () {
            $('#CourseId option').remove();
-           $.getJSON('/students/GetCourses', { ProgramId: $('#CourseList').val() }, function (data) {
+           $.getJSON('/students/GetCourses', { ProgramId: $('#ProgramId').val() }, function (data) {
                $.each(data, function () {
                    $('#CourseId').append('<option value=' +
                        this.Id + '>' + this.Name + '</option>');
