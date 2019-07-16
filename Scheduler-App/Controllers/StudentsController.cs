@@ -7,6 +7,7 @@ using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -45,25 +46,30 @@ namespace Scheduler_App.Controllers
                    Value = p.Id.ToString(),
                }).ToList();
             ViewBag.program = program;
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new 
+            SelectListItem
             {
                 Text = c.Name,
                 Value = c.Id.ToString(),
             }).ToList();
+
             ViewBag.course = course;
             var model = new CreateEditStudentViewModel();
             model.ProgramList = program;
             model.CourseList = course;
+            ;
             return View(model);
         }
 
-        public JsonResult GetCourses(int ProgramId)
+        public JsonResult GetCourses(int ProgramId, CreateEditStudentViewModel model)
         {
             var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
             {
                 Name = c.Name,
                 Id = c.Id,
             }).ToList();
+            
+            //ViewBag.c = new MultiSelectList(courseList,"Id", "Name");
             return Json(courseList, JsonRequestBehavior.AllowGet);
         }
 
@@ -98,6 +104,8 @@ namespace Scheduler_App.Controllers
             {
                 student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                 student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+                student.CourseName = student.Program.Courses.FirstOrDefault(p => p.Id == formData.CourseId).Name;
+                
                 DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
@@ -201,6 +209,59 @@ namespace Scheduler_App.Controllers
             allStudent.CourseName = student.CourseName;
 
             return View(allStudent);
+        }
+        [HttpGet]
+        public ActionResult ImportStudent()
+        {
+            return View(new List<StudentViewModel>());
+        }
+
+        [HttpPost]
+        public ActionResult ImportStudent(HttpPostedFileBase postedFile)
+        {
+
+            List<Student> student  = new List<Student>();
+            string filePath = string.Empty;
+            if (postedFile != null)
+            {
+                string path = Server.MapPath("~/Uploads/");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                filePath = path + Path.GetFileName(postedFile.FileName);
+                string extension = Path.GetExtension(postedFile.FileName);
+                postedFile.SaveAs(filePath);
+
+                //Read the contents of CSV file.
+                string csvData = System.IO.File.ReadAllText(filePath);
+
+                //Execute a loop over the rows.
+                foreach (string row in csvData.Split('\n'))
+                {
+                    if (!string.IsNullOrEmpty(row))
+                    {
+                        var students = (new Student
+                        {
+                            //Id = Convert.ToInt32(row.Split(',')[0]),
+                            FirstName = row.Split(',')[0],
+                            LastName = row.Split(',')[1],
+                            Email = row.Split(',')[2],
+                            ProgramName = row.Split(',')[3],
+                        });
+                        var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                        var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
+                        var result = userManager.CreateAsync(user, students.Password);
+                        var userId = user.Id;
+                        DbContext.Users.Add(user);
+                        student.Add(students);
+                        DbContext.StudentDatabase.Add(students);
+                        DbContext.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("Index");
         }
     }
 }

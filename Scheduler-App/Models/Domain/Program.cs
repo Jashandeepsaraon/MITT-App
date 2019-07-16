@@ -11,7 +11,7 @@ namespace Scheduler_App.Models.Domain
         public string Name { get; set; }
         public virtual List<Instructor> Instructors { get; set; }
         public virtual List<Student> Students { get; set; }
-        public virtual IEnumerable<Course> Courses { get; set; }
+        public virtual List<Course> Courses { get; set; }
         public int StudentId { get; set; }
         public DateTime StartDate { get; set; }
 
@@ -19,6 +19,7 @@ namespace Scheduler_App.Models.Domain
         {
             Instructors = new List<Instructor>();
             Students = new List<Student>();
+            Courses = new List<Course>();
         }
     }
 }
