@@ -15,7 +15,7 @@ namespace Scheduler_App.Models.ViewModel
         public string Name { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
-        public virtual List<Instructor> Instructors { get; set; }
-        public virtual List<StudentViewModel> Students { get; set; }
+        //public virtual List<Instructor> Instructors { get; set; }
+        //public virtual List<StudentViewModel> Students { get; set; }
     }
 }
