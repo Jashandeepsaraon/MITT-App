@@ -38,34 +38,34 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-            var program = DbContext.ProgramDatabase
-               .Select(p => new SelectListItem()
-               {
-                   Text = p.Name,
-                   Value = p.Id.ToString(),
-               }).ToList();
-            ViewBag.program = program;
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            }).ToList();
-            ViewBag.course = course;
-            var model = new CreateEditStudentViewModel();
-            model.ProgramList = program;
-            model.CourseList = course;
-            return View(model);
+            //var program = DbContext.ProgramDatabase
+            //   .Select(p => new SelectListItem()
+            //   {
+            //       Text = p.Name,
+            //       Value = p.Id.ToString(),
+            //   }).ToList();
+            //ViewBag.program = program;
+            //var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem
+            //{
+            //    Text = c.Name,
+            //    Value = c.Id.ToString(),
+            //}).ToList();
+            //ViewBag.course = course;
+            //var model = new CreateEditStudentViewModel();
+            //model.ProgramList = program;
+            //model.CourseList = course;
+            return View();
         }
 
-        public JsonResult GetCourses(int ProgramId)
-        {
-            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
-            {
-                Name = c.Name,
-                Id = c.Id,
-            }).ToList();
-            return Json(courseList, JsonRequestBehavior.AllowGet);
-        }
+        //public JsonResult GetCourses(int ProgramId)
+        //{
+        //    var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
+        //    {
+        //        Name = c.Name,
+        //        Id = c.Id,
+        //    }).ToList();
+        //    return Json(courseList, JsonRequestBehavior.AllowGet);
+        //}
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -123,11 +123,11 @@ namespace Scheduler_App.Controllers
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
             student.Email = formData.Email;
-            student.Course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId);
-            student.Course.Name = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId).Name;
-            var prgrm = student.Course.Program;
-            prgrm = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
-            prgrm.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+            //student.Course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId);
+            //student.Course.Name = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId).Name;
+            ////var prgrm = student.Course.Program;
+            //prgrm = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+            //prgrm.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }
@@ -224,8 +224,8 @@ namespace Scheduler_App.Controllers
             allStudent.FirstName = student.FirstName;
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
-            allStudent.ProgramName = student.Course.Program.Name;
-            allStudent.CourseName = student.Course.Name;
+            //allStudent.ProgramName = student.Course.Program.Name;
+            //allStudent.CourseName = student.Course.Name;
 
             return View(allStudent);
         }
