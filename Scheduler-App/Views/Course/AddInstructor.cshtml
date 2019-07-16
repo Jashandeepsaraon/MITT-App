@@ -1,0 +1,65 @@
+﻿@model List<InstructorViewModel>
+@{
+    ViewBag.Title = "Manage Instructors";
+}
+
+@section css {
+    <link rel="stylesheet"
+          href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+}
+
+@section Scripts {
+    <script type="text/javascript"
+            src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sample-datatables').DataTable();
+        });
+    </script>
+}<h2>List of Instructors</h2>
+
+@Html.ValidationSummary(false)
+
+@if (!Model.Any() || Model == null)
+{
+    <div style="margin-bottom:600px">
+        <p><strong>No Instructors Available</strong></p>
+    </div>
+}
+else
+{
+    <div>
+        <div class="row">
+            <table class="table table-striped" id="sample-datatables" style="margin-bottom:400px">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>User Name</th>
+                        <th>Instructor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var record in Model)
+                    {
+                        <tr>
+                            <td>@record.FirstName</td>
+                            <td>@record.Email</td>
+                            <td>
+                                @*@if (record.Roles.Contains("Admin"))*@
+                                {<span>✔</span>}
+                            </td>
+                            @*<td>
+                                    <a href="@Url.Action("EditRoles", "Projects", new {Id = @record.Id})">Edit Roles</a>
+                                </td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+

@@ -20,8 +20,8 @@ namespace Scheduler_App.Models.Domain
         public int ProgramId { get; set; }
         //public virtual ClassRoom ClassRoom { get; set; }
         //public int ClassRoomId { get; set; }
-        //public virtual Instructor Instructor { get; set; }
-        //public int InstructorId { get; set; }
+        public virtual Instructor Instructor { get; set; }
+        public int InstructorId { get; set; }
         public int Hours { get; set; }
     }
 }
