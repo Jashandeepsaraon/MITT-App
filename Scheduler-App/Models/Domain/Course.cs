@@ -10,8 +10,8 @@ namespace Scheduler_App.Models.Domain
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string ProgramName { get; set; }
-        public string InstructorName { get; set; }
+        //public string ProgramName { get; set; }
+        //public string InstructorName { get; set; }
         //public DateTime StartDate { get; set; }
         //public DateTime EndDate { get; set; }
         //public TimeSpan ClassStartTime { get; set; }
@@ -21,7 +21,7 @@ namespace Scheduler_App.Models.Domain
         //public virtual ClassRoom ClassRoom { get; set; }
         //public int ClassRoomId { get; set; }
         public virtual Instructor Instructor { get; set; }
-        //public string InstructorId { get; set; }
-        public TimeSpan Hours { get; set; }
+        public string InstructorId { get; set; }
+        public int Hours { get; set; }
     }
 }

@@ -117,8 +117,8 @@ namespace Scheduler_App.Controllers
             course.Hours = formData.Hours;
             course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
             course.Instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == formData.InstructorsId);
-            course.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-            course.InstructorName = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == formData.InstructorsId).FirstName;
+            course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+            course.Instructor.FirstName = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == formData.InstructorsId).FirstName;
 
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
@@ -184,11 +184,11 @@ namespace Scheduler_App.Controllers
             if (course == null)
                 return RedirectToAction(nameof(CourseController.Index));
 
-            var allCourses = new CourseViewModel();
-            allCourses.Name = course.Name;
-            allCourses.InstructorName = course.InstructorName;
-            allCourses.ProgramName = course.ProgramName;
-            return View(allCourses);
+            var courseDetail = new CourseViewModel();
+            courseDetail.Name = course.Name;
+            courseDetail.InstructorName = course.Instructor.FirstName;
+            courseDetail.ProgramName = course.Program.Name;
+            return View(courseDetail);
         }
 
         // Delete Method for course
