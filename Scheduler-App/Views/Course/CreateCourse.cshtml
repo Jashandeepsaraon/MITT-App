@@ -30,17 +30,17 @@
                         <input type="number" min="0" name="@nameof(Model.Hours)" value="Hours" class="form-control" placeholder="Course Hours" />
                     </div>
                 </div>
-                @*<div class="form-group">
+                <div class="form-group">
                     @Html.LabelFor(model => model.ProgramId, "Program", new { @class = "form-control-label" })
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-app"></i></span>
                         </div>
                         @Html.DropDownListFor(model => model.ProgramId, Model.ProgramList, "---- Select Program ----", new { @class = "form-control" })
-                        Html.ValidationMessageFor(m => m.ProgramId, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(m => m.ProgramId, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     @Html.LabelFor(model => model.InstructorsId, "Instructors", new { @class = "form-control-label" })
                     <div class="input-group input-group-alternative">
                         <div class="input-group-prepend">
