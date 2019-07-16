@@ -12,9 +12,11 @@ namespace Scheduler_App.Models.Domain
         public string LastName { get; set; }
         public string Email { get; set; }
         public string ProgramName { get;set; }
-        public virtual Program Program { get; set; }
-        public string CourseName { get; set; }
+        //public virtual Program Program { get; set; }
+        //public int ProgramId { get; set; }
+        //public string CourseName { get; set; }
         public virtual Course Course { get; set; }
+        public int CourseId { get; set; }
 
 
         //public Student()

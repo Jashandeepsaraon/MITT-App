@@ -21,7 +21,7 @@ namespace Scheduler_App.Models.Domain
         //public virtual ClassRoom ClassRoom { get; set; }
         //public int ClassRoomId { get; set; }
         public virtual Instructor Instructor { get; set; }
-        public string InstructorId { get; set; }
+        public int InstructorId { get; set; }
         public int Hours { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Scheduler_App.Models.Domain
         //public virtual List<Instructor> Instructors { get; set; }
         //public virtual List<Student> Students { get; set; }
         public virtual List<Course> Courses { get; set; }
-        public int StudentId { get; set; }
+        //public int StudentId { get; set; }
         public DateTime StartDate { get; set; }
 
         public Program()

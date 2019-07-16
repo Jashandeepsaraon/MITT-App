@@ -45,10 +45,8 @@ else
         <thead>
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Program Name</th>
-                <th>Instructor</th>
-                <th>Hours</th>
+                <th>Course</th>
+                <th>Total Hours</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -67,9 +65,7 @@ else
                     </td>
 
                     <td>@course.Name</td>
-                    <td>@course.ProgramName</td>
-                    <td>@course.InstructorName</td>
-                    <td>@course.Hours</td>
+                    <td>@course.Hours Hours</td>
                     <td>
                         @if (User.IsInRole("Admin"))
                         {

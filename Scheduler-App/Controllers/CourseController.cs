@@ -101,7 +101,7 @@ namespace Scheduler_App.Controllers
             if (!id.HasValue)
             {
                 DbContext.CourseDatabase.Add(course);
-                DbContext.SaveChanges();
+                //DbContext.SaveChanges();
             }
             else
             {
@@ -146,7 +146,7 @@ namespace Scheduler_App.Controllers
                     Value = p.Id.ToString(),
                 }).ToList();
 
-            var allInstroctor = DbContext.InstructorDatabase
+            var allInstructor = DbContext.InstructorDatabase
                 .Select(p => new SelectListItem()
                 {
                     Text = p.FirstName,
@@ -156,7 +156,7 @@ namespace Scheduler_App.Controllers
             model.Name = course.Name;
             model.Hours = course.Hours;
             model.ProgramList = allProgram;
-            model.InstructorList = allInstroctor;
+            model.InstructorList = allInstructor;
             return View(model);
         }
 

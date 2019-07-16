@@ -1,24 +1,89 @@
 ﻿@model CreateEditStudentViewModel
-
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "EditStudent";
 }
 
-<form method="post">
-    <div class="form-group">
+<div class="body-content" style="margin-bottom:360px">
+    <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
+        <div class="card-header">
+            <h2>Edit Student</h2>
+        </div>
 
-        @Html.LabelFor(p => p.FirstName, "FirstName:")
-        @Html.TextAreaFor(p => p.FirstName, new { @class = "form-control" })
+        <div class="card-body" style="width:500px">
+            @Html.ValidationSummary(false, "", new { @class = "text-danger small" })
+            <form method="post">
+                <div class="form-group">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.FirstName, "First Name", new { @class = "form-control-label", })
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "First Name", style = "padding-left:5px;" })
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.LastName, "Last Name", new { @class = "form-control-label" })
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            @Html.TextBoxFor(p => p.LastName, new { @class = "form-control", placeholder = "Last Name" })
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.Email, "Email", new { @class = "form-control-label" })
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-mail-forward"></i></span>
+                            </div>
+                            @Html.TextBoxFor(p => p.Email, new { @class = "form-control", placeholder = "Email Address" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ProgramId, "Program", new { @class = "form-control-label" })
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-app"></i></span>
+                            </div>
+                            @Html.DropDownListFor(p => p.ProgramId, Model.ProgramList, "--- Select Program ---", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CourseId, "Course", new { @class = "form-control-label" })
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-app"></i></span>
+                            </div>
+                            @Html.DropDownListFor(p => p.CourseId, Model.CourseList, "--- Select Course ---", new { @class = "form-control" })
+                        </div>
+                    </div>
 
-        @Html.LabelFor(p => p.LastName, "LastName:")
-        @Html.TextAreaFor(p => p.LastName, new { @class = "form-control" })
-
-        @Html.LabelFor(p => p.Email, "Email:")
-        @Html.TextBoxFor(p => p.Email, new { @class = "form-control" })
+                    <div class="form-inline row">
+                        <div class="text-center col">
+                            <button type="submit" class="btn btn-success my-4">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-    <br />
-    <div class="">
-        <button type="submit" class="btn btn-default">Submit</button>
-    </div>
+</div>
 
-</form>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Dropdown list change event.
+        $('#ProgramId').change(function () {
+            $('#CourseId option').remove();
+            $.getJSON('/students/GetCourses', { ProgramId: $('#ProgramId').val() }, function (data) {
+                $.each(data, function () {
+                    $('#CourseId').append('<option value=' +
+                        this.Id + '>' + this.Name + '</option>');
+                });
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert('Error getting courses!');
+            });
+        });
+    });
+</script>

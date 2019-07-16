@@ -83,9 +83,17 @@ namespace Scheduler_App.Controllers
                    Value = p.Id.ToString(),
                }).ToList();
 
+            var course = DbContext.CourseDatabase.Select(c => new SelectListItem
+            {
+
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            }).ToList();
+
             if (!ModelState.IsValid)
             {
                 formData.ProgramList = program;
+                formData.CourseList = course;
                 return View(formData);
             }
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -96,8 +104,6 @@ namespace Scheduler_App.Controllers
 
             if (!id.HasValue)
             {
-                student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                 DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
@@ -116,7 +122,12 @@ namespace Scheduler_App.Controllers
             }
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
-            student.Email = formData.Email;           
+            student.Email = formData.Email;
+            student.Course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId);
+            student.Course.Name = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.CourseId).Name;
+            var prgrm = student.Course.Program;
+            prgrm = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+            prgrm.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }
@@ -137,10 +148,26 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(StudentsController.Index));
             }
 
+            var programList = DbContext.ProgramDatabase
+              .Select(p => new SelectListItem()
+              {
+                  Text = p.Name,
+                  Value = p.Id.ToString(),
+              }).ToList();
+
+            var courseList = DbContext.CourseDatabase
+              .Select(p => new SelectListItem()
+              {
+                  Text = p.Name,
+                  Value = p.Id.ToString(),
+              }).ToList();
+
             var model = new CreateEditStudentViewModel();
             model.FirstName = student.FirstName;
             model.LastName = student.LastName;
             model.Email = student.Email;
+            model.ProgramList = programList;
+            model.CourseList = courseList;
 
             return View(model);
         }
@@ -197,8 +224,8 @@ namespace Scheduler_App.Controllers
             allStudent.FirstName = student.FirstName;
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
-            allStudent.ProgramName = student.ProgramName;
-            allStudent.CourseName = student.CourseName;
+            allStudent.ProgramName = student.Course.Program.Name;
+            allStudent.CourseName = student.Course.Name;
 
             return View(allStudent);
         }
