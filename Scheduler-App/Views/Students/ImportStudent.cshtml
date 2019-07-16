@@ -1,0 +1,40 @@
+﻿@model List<StudentViewModel>
+
+@{
+    ViewBag.Title = "Import Student";
+}
+<div style="margin-bottom:600px">
+    <div class="card-header">
+        <h2>Create Student through CSV</h2>
+    </div>
+
+    <div style="margin-top:20px">
+        @using (Html.BeginForm("ImportStudent", "Students", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="postedFile" />
+            <button type="submit" class="btn btn-success my-4">Import</button>
+        }
+
+        <table id="sample-datatables" class="table table-striped" style="margin-top:40px" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                    <th>Email</th>
+                    <th>ProgramName</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (StudentViewModel student in Model)
+                {
+                    <tr>
+                        <td>@student.FirstName</td>
+                        <td>@student.LastName</td>
+                        <td>@student.Email</td>
+                        <td>@student.ProgramName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

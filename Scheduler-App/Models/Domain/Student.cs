@@ -11,6 +11,7 @@ namespace Scheduler_App.Models.Domain
         public string FirstName { get;set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
         public string ProgramName { get;set; }
         //public virtual Program Program { get; set; }
         //public int ProgramId { get; set; }
@@ -19,10 +20,10 @@ namespace Scheduler_App.Models.Domain
         public int CourseId { get; set; }
 
 
-        //public Student()
-        //{
-        //    Program = new List<Program>();
-        //}
+        public Student()
+        {
+            Password = "Password-1";
+        }
 
     }
 }

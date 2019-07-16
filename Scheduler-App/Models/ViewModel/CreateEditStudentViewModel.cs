@@ -22,5 +22,8 @@ namespace Scheduler_App.Models.ViewModel
         public List<SelectListItem> ProgramList { get; set; }
         public int? CourseId { get; set; }
         public List<SelectListItem> CourseList { get; set; }
+        //public IEnumerable<string> SelectedCourse { set; get; }
+        //public MultiSelectList> Courses { get; set; }
+
     }
 }
