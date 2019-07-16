@@ -100,7 +100,7 @@ namespace Scheduler_App.Controllers
 
             if (!id.HasValue)
             {
-                course.Program.Courses.Add(course);
+                //course.Program.Courses.Add(course);
                 DbContext.CourseDatabase.Add(course);
                 //DbContext.SaveChanges();
             }
