@@ -72,10 +72,10 @@ namespace Scheduler_App.Controllers
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
 
-                if (!userManager.IsInRole(user.Id, "Instructor"))
-                {
-                    userManager.AddToRole(user.Id, "Instructor");
-                }
+                //if (!userManager.IsInRole(user.Id, "Instructor"))
+                //{
+                //    userManager.AddToRole(user.Id, "Instructor");
+                //}
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
