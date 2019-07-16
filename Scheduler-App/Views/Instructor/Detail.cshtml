@@ -1,4 +1,4 @@
-﻿@model StudentViewModel
+﻿@model InstructorViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -8,7 +8,9 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
-       
+        <h5 style="margin-left:20px; margin-top:15px">
+           <a href="@Url.Action("AssignCourse", "Instructor")">Add Course</a>
+        </h5>
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -20,16 +22,8 @@
                     <td>@Model.LastName</td>
                 </tr>
                 <tr>
-                    <th>Program Name</th>
-                    <td>@Model.ProgramName</td>
-                </tr>
-                <tr>
-                    <th>Email</th>
+                    <th>Last Name</th>
                     <td>@Model.Email</td>
-                </tr>
-                <tr>
-                    <th>Course Name</th>
-                    <td>@Model.CourseName</td>
                 </tr>
             </thead>
             <tbody></tbody>
