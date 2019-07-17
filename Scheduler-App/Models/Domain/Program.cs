@@ -14,12 +14,12 @@ namespace Scheduler_App.Models.Domain
         public virtual List<Course> Courses { get; set; }
         //public int StudentId { get; set; }
         public DateTime StartDate { get; set; }
-     
+
         public Program()
         {
-        //    //Instructors = new List<Instructor>();
-        //    //Students = new List<Student>();
-           Courses = new List<Course>();
+            //Instructors = new List<Instructor>();
+            //Students = new List<Student>();
+            Courses = new List<Course>();
         }
     }
 }
