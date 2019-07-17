@@ -7,7 +7,11 @@
     <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
         <div class="card-header">
             <h2>Details</h2>
+            <strong>
+                <a href="@Url.Action("CreateCourse", "Course" )">Create New Course</a>
+            </strong>
         </div>
+
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -17,6 +21,13 @@
                 <tr>
                     <th>Start date</th>
                     <td>@Model.StartDate</td>
+                </tr>
+                <tr>
+                    <th>Course Name</th>
+                    @foreach (var record in Model.Courses)
+                    {
+                        <td>@record.Name</td>
+                    }
                 </tr>
             </thead>
             <tbody></tbody>
