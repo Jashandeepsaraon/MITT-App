@@ -36,14 +36,14 @@ namespace Scheduler_App.Controllers
 
         //GET : Create Instructor
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        ////[Authorize(Roles = "Admin")]
         public ActionResult CreateInstructor()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateInstructor(InstructorViewModel formData)
         {
 
@@ -93,13 +93,14 @@ namespace Scheduler_App.Controllers
             instructor.FirstName = formData.FirstName;
             instructor.LastName = formData.LastName;
             instructor.Email = formData.Email;
+            instructor.Courses.Find(p => p.Id == formData.CourseId);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(InstructorController.Index));
         }
 
         //GET: EditProgram
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult EditInstructor(int? id)
         {
             if (!id.HasValue)
@@ -121,7 +122,7 @@ namespace Scheduler_App.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult EditInstructor(int id, InstructorViewModel formData)
         {
             return SaveInstructor(id, formData);
@@ -203,7 +204,67 @@ namespace Scheduler_App.Controllers
                     }
                 }
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details");
         }
+
+        //Method to get the Instructors List 
+        [HttpGet]
+        public ActionResult AssignInstructor(int id)
+        {
+            var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
+            var instructorList = DbContext.InstructorDatabase
+              .Select(p => new SelectListItem()
+              {
+                  Text = p.FirstName,
+                  Value = p.Id.ToString(),
+              }).ToList();
+
+            var model = new AssignInstructorViewModel();
+            model.InstructorList = instructorList;
+            model.CourseId = id;
+            return View(model);
+        }
+
+        // Method for the Assign Instrutor to the Course
+        [HttpPost]
+        public ActionResult AssignInstructor(AssignInstructorViewModel model)
+        {
+            var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == model.CourseId);
+            if (course == null)
+            {
+                return RedirectToAction(nameof(CourseController.Details));
+            }
+
+            if (model.AddSelectedInstructor != null)
+            {
+                var assignInstructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id.ToString() == model.AddSelectedInstructor);
+                //instructorId = model.InstructorId;
+                var courseId = assignInstructor.Courses.FirstOrDefault(p => p.Id == course.Id);
+                //courseId = model.CourseId.;
+                course.Instructor = assignInstructor;
+                assignInstructor.Courses.Add(course);
+                DbContext.SaveChanges();
+            }
+            return RedirectToAction("Details", "Course");
+
+        }
+
+        [HttpPost]
+        public ActionResult RemoveInstructor(int? courseId)
+        {
+            var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == courseId);
+            if (!courseId.HasValue)
+            {
+                return RedirectToAction(nameof(CourseController.Details));
+            }
+            var instructor = course.Instructor;
+            if (instructor != null)
+            {
+                course.Instructor = null;
+                DbContext.SaveChanges();
+            }
+            return RedirectToAction(nameof(CourseController.Details));
+        }
+
     }
 }

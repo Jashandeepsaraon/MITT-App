@@ -1,6 +1,6 @@
 ﻿@model CourseViewModel
 @{
-   ViewBag.Title = "Details";
+    ViewBag.Title = "Details";
 }
 
 <div class="body-content" style="margin-bottom:480px; width:600px">
@@ -9,7 +9,7 @@
             <h2>Details</h2>
         </div>
         <div>
-            <a href="@Url.Action("AddInstructor", "Course", new { id = Model.InstructorsId })">Add Instructor</a>
+            <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
         </div>
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
@@ -21,10 +21,28 @@
                     <th>Program Name</th>
                     <td>@Model.ProgramName</td>
                 </tr>
-                @*<tr>
+                <tr>
                     <th>Instructor Name</th>
-                    <td>@Model.InstructorName</td>
-                </tr>*@
+                    @if (Model.Instructor == null)
+                    {
+                        <td>
+                            <h2>No Instructor</h2>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Model.Instructor
+                        </td>
+                       <td>
+                            <form method="post" action="@Url.Action("RemoveInstructor","Instructor", new { courseId = ViewBag.id})">
+                                <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
+                            </form>
+                
+                       </td>
+                    }
+
+                </tr>
             </thead>
             <tbody></tbody>
         </table>

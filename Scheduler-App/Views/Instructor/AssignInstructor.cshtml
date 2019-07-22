@@ -1,0 +1,48 @@
+﻿@model AssignInstructorViewModel
+@{
+    ViewBag.Title = "Assign Instructors";
+}
+<div class="content-wrapper">
+    <section class="content">
+        <form action="@Url.Action("AssignInstructor", "Instructor")" method="post">
+            @Html.ValidationSummary(false)
+            @*<div class="form-group">
+                @Html.LabelFor(model => model.InstructorId, "Instructor", new { @class = "form-control-label" })
+                <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-app"></i></span>
+                    </div>
+                    @Html.DropDownListFor(model => model.InstructorId, Model.InstructorList, "---- Select Instructor ----", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.InstructorId, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+            @if (Model.InstructorList != null && Model.InstructorList.Any())
+            {
+                <p>Add Instructor</p>
+                <div class="form-group">
+                    @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList)
+                </div>
+            }
+            <input type="hidden" name="courseId" value="@Model.CourseId" />
+            <input type="submit" value="Submit!" />
+        </form>
+    </section>
+</div>
+@*<form>
+    <div class="form-group">
+        @Html.LabelFor(model => model.InstructorId, "Instructor", new { @class = "form-control-label" })
+        <div class="input-group input-group-alternative">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="ni ni-app"></i></span>
+            </div>
+            @Html.DropDownListFor(model => model.InstructorId, Model.InstructorList, "---- Select Instructor ----", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.InstructorId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div>
+        <input type="hidden" name="instructorId" value="@Model.InstructorId" />
+        <input type="submit" value="Submit" />
+    </div>
+</form>*@
+
+

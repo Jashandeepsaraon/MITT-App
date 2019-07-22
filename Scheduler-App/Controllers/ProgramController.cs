@@ -61,7 +61,7 @@ namespace Scheduler_App.Controllers
             p.Name == formData.Name &&
             (!id.HasValue || p.Id != id.Value)))
             {
-                ModelState.AddModelError(nameof(CreateEditCourseViewModel.Name),
+                ModelState.AddModelError(nameof(CreateEditSchoolProgramViewModel.Name),
                     "Program Name Should Be Unique");
                 return View();
             }
