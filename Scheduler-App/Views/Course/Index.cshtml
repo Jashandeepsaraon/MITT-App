@@ -47,6 +47,7 @@ else
                 <th></th>
                 <th>Course</th>
                 <th>Total Hours</th>
+                <th> Program Name</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -54,31 +55,32 @@ else
         <tbody>
             @foreach (var course in Model)
             {
-                <tr>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">
-                                <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
-                            </a>
-                        }
-                    </td>
+            <tr>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">
+                            <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                        </a>
+                    }
+                </td>
 
-                    <td>@course.Name</td>
-                    <td>@course.Hours Hours</td>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
-                                <i title="Edit Course" class="fas fa-pencil-square-o"></i>
-                            </a>
-                        }
-                    </td>
-                    <td>
-                        @Html.ActionLink("Delete", "Delete", new { id = course.Id })
-                    </td>
+                <td>@course.Name</td>
+                <td>@course.Hours Hours</td>
+                <td>@course.ProgramName</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
+                            <i title="Edit Course" class="fas fa-pencil-square-o"></i>
+                        </a>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = course.Id })
+                </td>
 
-                </tr>
+            </tr>
             }
         </tbody>
     </table>

@@ -14,6 +14,6 @@ namespace Scheduler_App.Models.ViewModel
         [Required]
         public string Name { get; set; }
         [Required]
-        public DateTime StartDate { get; set; }       
+        public DateTime StartDate { get; set; }
     }
 }

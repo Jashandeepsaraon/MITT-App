@@ -1,0 +1,46 @@
+﻿@model AssignCourseToStudentViewModel
+@{
+    ViewBag.Title = "AssignTickets";
+}
+<div class="content-wrapper">
+    <section class="content">
+        <form action="@Url.Action("AssignCourse", "Students")" method="post">
+            @Html.ValidationSummary(false)
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProgramId, "Program", new { @class = "form-control-label" })
+                <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-app"></i></span>
+                    </div>
+                    @Html.DropDownListFor(p => p.ProgramId, Model.ProgramList, "--- Select Program ---", new { @class = "form-control" })
+                </div>
+            </div>
+            @if (Model.AddCourses != null && Model.AddCourses.Any())
+            {
+                <p>Add course</p>
+                <div class="form-group">
+                    @Html.DropDownListFor(p => p.AddSelectedCourses, Model.AddCourses)
+                </div>
+            }
+            
+            <input type="hidden" name="studentId" value="@Model.StudentId" />
+            <input type="submit" value="Submit!" />
+        </form>
+    </section>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Dropdown list change event.
+        $('#ProgramId').change(function () {
+            $('#AddSelectedCourses option').remove();
+            $.getJSON('/Students/GetCourses', { ProgramId: $('#ProgramId').val() }, function (data) {
+                $.each(data, function () {
+                    $('#AddSelectedCourses').append('<option value=' +
+                        this.Id + '>' + this.Name + '</option>');
+                });
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert('Error getting courses!');
+            });
+        });
+    });</script>

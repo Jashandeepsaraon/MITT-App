@@ -19,19 +19,18 @@ namespace Scheduler_App.Models.ViewModel
         [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
-
-        public List<SelectListItem> ProgramList { get; set; }
-        public List<SelectListItem> CourseList { get; set; }
-        public List<Course> Courses { get; set; }
-
+       
         public int ProgramId { get; set; }
+        public List<SelectListItem> ProgramList { get; set; }
         public int CourseId { get; set; }
-        
+        public List<SelectListItem> CourseList { get; set; }
+
         public InstructorViewModel()
         {
             Password = "Password-1";
-            ProgramList = new List<SelectListItem>();
             CourseList = new List<SelectListItem>();
+            ProgramList = new List<SelectListItem>();
         }
+
     }
 }
