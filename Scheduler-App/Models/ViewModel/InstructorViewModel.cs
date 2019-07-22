@@ -18,15 +18,11 @@ namespace Scheduler_App.Models.ViewModel
         [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
-       
-        //public virtual ApplicationUser Instructor { get; set; }
+        public virtual List<CourseViewModel> Courses { get; set; }
 
         public InstructorViewModel()
         {
             Password = "Password-1";
         }
-        //public virtual SchoolProgramViewModel SchoolProgram { get; set; }
-        //public int SchoolProgramId { get; set; }
-
     }
 }

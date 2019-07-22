@@ -202,6 +202,7 @@
     <Compile Include="Models\Enum\UserRoles.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModel\AssignCourseToStudentViewModel.cs" />
     <Compile Include="Models\ViewModel\CourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditCourseViewModel.cs" />
     <Compile Include="Models\ViewModel\CreateEditSchoolProgramViewModel.cs" />
@@ -1017,6 +1018,7 @@
     <Content Include="Views\Course\Delete.cshtml" />
     <Content Include="Views\Instructor\Delete.cshtml" />
     <Content Include="Views\Students\ImportStudent.cshtml" />
+    <Content Include="Views\Students\AssignCourse.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

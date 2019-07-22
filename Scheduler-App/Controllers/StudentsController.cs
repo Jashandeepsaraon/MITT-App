@@ -186,30 +186,33 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(StudentsController.Index));
         }
 
-        //Get:
-        //[HttpGet]
-        //public ActionResult Details(int? id)
-        //{
-        //    if (!id.HasValue)
-        //        return RedirectToAction(nameof(StudentsController.Index));
+        
+        [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            if (!id.HasValue)
+                return RedirectToAction(nameof(StudentsController.Index));
 
-        //    var userId = User.Identity.GetUserId();
+            var userId = User.Identity.GetUserId();
 
-        //    var student = DbContext.StudentDatabase.FirstOrDefault(p =>
-        //    p.Id == id.Value);
+            var student = DbContext.StudentDatabase.FirstOrDefault(p =>
+            p.Id == id.Value);
 
-        //    if (student == null)
-        //        return RedirectToAction(nameof(StudentsController.Index));
+            if (student == null)
+                return RedirectToAction(nameof(StudentsController.Index));
 
-        //    var allStudent = new StudentViewModel();
-        //    allStudent.FirstName = student.FirstName;
-        //    allStudent.LastName = student.LastName;
-        //    allStudent.Email = student.Email;
-        //    allStudent.ProgramName = student.ProgramName;
-        //    allStudent.CourseName = student.CourseName;
-
-        //    return View(allStudent);
-        //}
+            var allStudent = new StudentViewModel();
+            allStudent.FirstName = student.FirstName;
+            allStudent.LastName = student.LastName;
+            allStudent.Email = student.Email;
+            allStudent.Courses = student.Courses;
+            //var programName = student.Courses.FirstOrDefault(p => p.Id == id).Program.Name;
+            //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
+            //allStudent.CourseName = student.Course.Name;
+            //var programName = allStudent.Courses.FirstOrDefault(p => p.Id == id).ProgramName;
+            ViewBag.id = id;
+            return View(allStudent);
+        }
         [HttpGet]
         public ActionResult ImportStudent()
         {
@@ -263,6 +266,92 @@ namespace Scheduler_App.Controllers
         //    }
         //    return RedirectToAction("Index");
         //}
+
+        [HttpGet]
+        public ActionResult AssignCourse(int? studentId)
+        {
+            var allPrograms = DbContext.ProgramDatabase
+                .Select(p => new SelectListItem()
+                {
+                    Text = p.Name,
+                    Value = p.Id.ToString(),
+                }).ToList();
+
+            ViewBag.allProgram = allPrograms;
+
+            if (!studentId.HasValue)
+            {
+                return RedirectToAction(nameof(StudentsController.Index));
+            }
+
+            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+            var model = new AssignCourseToStudentViewModel();
+            model.StudentId = student.Id;
+
+            var courseList = DbContext.CourseDatabase.ToList();
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(k => new SelectListItem()
+            {
+                Text = k.Name,
+                Value = k.Id.ToString(),
+            }).ToList();
+
+            model.AddCourses = course;
+            model.ProgramList = allPrograms;
+
+            return View(model);
+        }
+
+        public JsonResult GetCourses(int ProgramId)
+        {
+            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
+            {
+                Name = c.Name,
+                Id = c.Id,
+            }).ToList();
+            return Json(courseList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AssignCourse(AssignCourseToStudentViewModel model)
+        {
+            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == model.StudentId);
+            if (student == null)
+            {
+                return RedirectToAction(nameof(StudentsController.Details));
+            }
+            
+            if (model.AddSelectedCourses != null)
+            {
+                var assigncourse = DbContext.CourseDatabase.FirstOrDefault(p => p.Id.ToString() == model.AddSelectedCourses);
+                //var studentId = assigncourse.Students.FirstOrDefault(p => p.Id == model.StudentId).Id;
+                //studentId = student.Id;
+                assigncourse.Students.Add(student);
+                student.Courses.Add(assigncourse);
+                //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
+                DbContext.SaveChanges();
+            }
+
+            return RedirectToAction("Details");
+        }
+
+        [HttpPost]
+        public ActionResult RemoveCourse(int? id, int? studentId)
+        {
+            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(CourseController.Details));
+            }
+            var course = student.Courses.FirstOrDefault(p => p.Id == id);
+            if (course != null)
+            {
+                var AssignedCourse = student.Courses.Remove(course);
+                course.Instructor = null;
+                DbContext.SaveChanges();
+            }
+            return RedirectToAction(nameof(StudentsController.Details));
+        }
     }
 }
 

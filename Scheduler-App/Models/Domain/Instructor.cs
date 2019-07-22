@@ -12,17 +12,12 @@ namespace Scheduler_App.Models.Domain
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        
-        //public virtual Program SchoolProgram { get; set; }
-        //public int SchoolProgramId { get; set; }
-        //public virtual List<Course> Courses { get; set; }
-        //public virtual List<Student> Students { get; set; }
+        public virtual List<Course> Courses { get; set; }
 
         public Instructor()
         {
             Password = "Password-1";
-            //Courses = new List<Course>();
-            //Students = new List<Student>();
+            Courses = new List<Course>();
         }
     }
 }
