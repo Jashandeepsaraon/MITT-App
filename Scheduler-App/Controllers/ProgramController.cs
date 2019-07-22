@@ -34,7 +34,7 @@ namespace Scheduler_App.Controllers
             return View(model);
 
         }
-      
+
         //GET : CreateProgram
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -141,27 +141,31 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(ProgramController.Index));
         }
 
+   
 
-
-        [HttpGet]
+    [HttpGet]
         public ActionResult Details(int? id)
         {
             if (!id.HasValue)
                 return RedirectToAction(nameof(ProgramController.Index));
 
-            var userId = User.Identity.GetUserId();
-
             var program = DbContext.ProgramDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
 
             if (program == null)
+            {
                 return RedirectToAction(nameof(ProgramController.Index));
+            }
+               
 
-            var allPrograms = new SchoolProgramViewModel();
-            allPrograms.Name = program.Name;
-            allPrograms.StartDate = program.StartDate;
-
-            return View(allPrograms);
+            var model = new SchoolProgramViewModel();
+            {
+               model.Name = program.Name;
+                model.StartDate = program.StartDate;
+                model.Courses = program.Courses;
+            }
+           
+            return View(model);
         }
     }
 }

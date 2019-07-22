@@ -8,6 +8,9 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
+        <div>
+            <a href="@Url.Action("AddInstructor", "Course", new { id = Model.InstructorsId })">Add Instructor</a>
+        </div>
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -18,10 +21,10 @@
                     <th>Program Name</th>
                     <td>@Model.ProgramName</td>
                 </tr>
-                <tr>
+                @*<tr>
                     <th>Instructor Name</th>
                     <td>@Model.InstructorName</td>
-                </tr>
+                </tr>*@
             </thead>
             <tbody></tbody>
         </table>
