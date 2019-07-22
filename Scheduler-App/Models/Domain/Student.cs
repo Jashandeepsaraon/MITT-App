@@ -19,6 +19,5 @@ namespace Scheduler_App.Models.Domain
             Password = "Password-1";
             Courses = new List<Course>();
         }
-
     }
 }
