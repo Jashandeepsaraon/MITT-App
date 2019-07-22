@@ -94,7 +94,7 @@ namespace Scheduler_App.Controllers
 
             if (!id.HasValue)
             {
-                //course.Program.Courses.Add(course);
+               //course.Program.Courses.Add(course);
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
             }
@@ -106,6 +106,7 @@ namespace Scheduler_App.Controllers
                     return RedirectToAction(nameof(CourseController.Index));
                 }
             }
+
 
             course.Name = formData.Name;
             course.Hours = formData.Hours;

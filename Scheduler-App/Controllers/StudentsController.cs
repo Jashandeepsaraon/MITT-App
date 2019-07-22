@@ -108,7 +108,7 @@ namespace Scheduler_App.Controllers
                 
                 DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
-                DbContext.SaveChanges();
+                DbContext.SaveChanges(); 
                 //String code = userManager.GenerateEmailConfirmationToken(user.Id);
                 //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",

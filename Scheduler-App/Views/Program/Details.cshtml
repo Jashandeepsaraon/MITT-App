@@ -7,30 +7,46 @@
     <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
         <div class="card-header">
             <h2>Details</h2>
-            <strong>
-                <a href="@Url.Action("CreateCourse", "Course" )">Create New Course</a>
-            </strong>
         </div>
 
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Program Name</th>
                     <td>@Model.Name</td>
                 </tr>
                 <tr>
-                    <th>Start date</th>
+                    <th>Program Start Date</th>
                     <td>@Model.StartDate</td>
                 </tr>
                 <tr>
-                    <th>Course Name</th>
-                    @foreach (var record in Model.Courses)
-                    {
-                        <td>@record.Name</td>
+                    <th style="display:flex; justify-content:flex-start">List Of Courses </th>
+                    <td>
+                        @foreach (var record in Model.Courses)
+                        {
+                            <p>@record.Name</p>
+                            <form method="post" action="@Url.Action("DeleteProgramCourse","Program", new {id = ViewBag.id, Courseid = record.Id
+                                                   })">
+                                <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
+                            </form>
+                        
                     }
-                </tr>
+                        </td>
+                    </tr>
+                
+
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <div style="margin-top:10px; ">
+                    @Html.ActionLink("Back to List of Programs", "Index")
+                </div>
+                <div style="display:flex; justify-content:space-around">
+                    <strong>
+                        <a href="@Url.Action("ProgramCourse", "Program", new { programId = ViewBag.id})">Create Course</a>
+                    </strong>
+                    
+                </div>
+            </tbody>
         </table>
     </div>
 </div>

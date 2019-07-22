@@ -20,17 +20,17 @@ namespace Scheduler_App.Models.ViewModel
         public string Email { get; set; }
         public string Password { get; set; }
        
-        public int? ProgramId { get; set; }
+        public int ProgramId { get; set; }
         public List<SelectListItem> ProgramList { get; set; }
-        public int? CourseId { get; set; }
+        public int CourseId { get; set; }
         public List<SelectListItem> CourseList { get; set; }
 
         public InstructorViewModel()
         {
             Password = "Password-1";
+            CourseList = new List<SelectListItem>();
+            ProgramList = new List<SelectListItem>();
         }
-        //public virtual SchoolProgramViewModel SchoolProgram { get; set; }
-        //public int SchoolProgramId { get; set; }
 
     }
 }
