@@ -173,43 +173,11 @@ namespace Scheduler_App.Controllers
             allinstructor.FirstName = instructor.FirstName;
             allinstructor.LastName = instructor.LastName;
             allinstructor.Email = instructor.Email;
+            allinstructor.Courses = instructor.Courses;
+            ViewBag.id = id;
             return View(allinstructor);
         }
 
-        [HttpGet]
-        public ActionResult AssignCourse()
-        {
-             var program = DbContext.ProgramDatabase
-               .Select(p => new SelectListItem()
-               {
-                   Text = p.Name,
-                   Value = p.Id.ToString(),
-               }).ToList();
-            ViewBag.program = program;
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new
-            SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            }).ToList();
-
-            ViewBag.course = course;
-            var model = new InstructorViewModel();
-            model.ProgramList = program;
-            model.CourseList = course;
-            
-            return View(model);
-        }
-
-        public JsonResult GetCourses(int ProgramId, CreateEditStudentViewModel model)
-        {
-            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
-            {
-                Name = c.Name,
-                Id = c.Id,
-            }).ToList();
-            return Json(courseList, JsonRequestBehavior.AllowGet);
-        }
 
         [HttpPost]
         public ActionResult ImportInstructor(HttpPostedFileBase postedFile)

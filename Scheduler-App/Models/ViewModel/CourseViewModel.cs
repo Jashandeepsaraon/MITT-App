@@ -13,14 +13,11 @@ namespace Scheduler_App.Models.ViewModel
         public string Name { get; set; }
         public string ProgramName { get; set; }
         public string InstructorName { get; set; }
-        //public TimeSpan ClassStartTime { get; set; }
-        //public TimeSpan ClassEndTime { get; set; }
-        //public virtual ClassRoom ClassRoom { get; set; }
-        //public int ClassRoomId { get; set; }
+        
         public List<SelectListItem> ProgramList { get; set; }
-        public List<SelectListItem> InstructorList { get; set; }
         public int Hours { get; set; }
         public int? ProgramId { get; set; }
-        public int? InstructorsId { get; set; }
+        public virtual Instructor Instructor { get; set; }
+        public int? InstructorId { get; set; }
     }
 }

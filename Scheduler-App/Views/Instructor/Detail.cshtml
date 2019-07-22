@@ -9,7 +9,8 @@
             <h2>Details</h2>
         </div>
         <h5 style="margin-left:20px; margin-top:15px">
-           <a href="@Url.Action("AssignCourse", "Instructor")">Add Course</a>
+            @*@Html.ActionLink("Add Course",  "AssignCourse",new { instructorId = Model.Id })*@
+            <a href="@Url.Action("AssignCourse", "Course", new {instructorId = ViewBag.id})">Add Course</a>
         </h5>
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
@@ -25,8 +26,25 @@
                     <th>Last Name</th>
                     <td>@Model.Email</td>
                 </tr>
+                <tr>
+                    <th>Courses</th>
+                    @foreach (var course in Model.Courses)
+                    {
+
+                        <td>@course.Name</td>
+                        <td>
+                        @*<td>
+                            <form method="post" action="@Url.Action("Delete", "Tickets", new { id = record.Id })"><button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button> </form>
+                        </td>*@
+                        <form method="post" action="@Url.Action("RemoveCourse","Course", new { id = course.Id,InstructorId = ViewBag.id })">
+                            <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
+                        </form>
+                        </td>
+                    }
+                </tr>
             </thead>
             <tbody></tbody>
         </table>
+
     </div>
 </div>
