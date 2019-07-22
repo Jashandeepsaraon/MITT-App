@@ -1,23 +1,21 @@
 ﻿@model CreateEditSchoolProgramViewModel
 
 @{
-
     ViewBag.Title = "Create Program";
 }
-
 <div class="body-content" style="margin-bottom:360px">
     <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
         <div class="card-header">
             <h2>Create School Program</h2>
         </div>
         <div class="card-body" style="width:400px">
-
             @Html.ValidationSummary(false, "", new { @class = "text-danger small" })
 
             @using (Html.BeginForm("CreateProgram", "Program", FormMethod.Post,
                 new { @class = "form-horizontal", role = "form" }))
             {
                 @Html.AntiForgeryToken()
+
                 <div class="form-group mb-3">
                     @Html.LabelFor(model => model.Name, "School Program Name", new { @class = "form-control-label", })
                     <div class="input-group input-group-alternative">
@@ -27,6 +25,7 @@
                         @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = nameof(Model.Name), style = "padding-left:5px;" })
                     </div>
                 </div>
+
                 <div class="form-group mb-3">
                     @Html.LabelFor(model => model.StartDate, "Start Date", new { @class = "form-control-label" })
                     <div class="input-group input-group-alternative">

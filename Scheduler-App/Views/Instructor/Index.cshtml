@@ -44,6 +44,7 @@ else
         <thead>
             <tr>
                 <th></th>
+                <th></th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -56,10 +57,14 @@ else
             {
                 <tr>
                     <td>
-                        <a href="@Url.Action("Details", "Instructor", new { id = instructor.Id} )">
+                        <a href="@Url.Action("Detail", "Instructor", new { id = instructor.Id} )">
                             <i title="Details" class="fas fa-address-card" style='font-size:20px;color:lightseagreen'></i>
                         </a>
                     </td>
+                    <td>
+                        <a href="@Url.Action("AssignCourse", "Course", new { instructorId = instructor.Id} )">
+                            <i title="Details" class="fas fa-address-card" style='font-size:20px;color:lightseagreen'></i>
+                        </a>
                     <td>
                         @instructor.FirstName
                     </td>

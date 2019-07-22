@@ -160,6 +160,26 @@ namespace Scheduler_App.Controllers
             return View(new List<InstructorViewModel>());
         }
 
+        [HttpGet]
+        public ActionResult Detail(int? id)
+        {
+            if (!id.HasValue)
+                return RedirectToAction(nameof(InstructorController.Index));
+            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
+
+            if (instructor == null)
+                return RedirectToAction(nameof(InstructorController.Index));
+
+            var allinstructor = new InstructorViewModel();
+            allinstructor.FirstName = instructor.FirstName;
+            allinstructor.LastName = instructor.LastName;
+            allinstructor.Email = instructor.Email;
+            allinstructor.Courses = instructor.Courses;
+            ViewBag.id = id;
+            return View(allinstructor);
+        }
+
+
         [HttpPost]
         public ActionResult ImportInstructor(HttpPostedFileBase postedFile)
         {
