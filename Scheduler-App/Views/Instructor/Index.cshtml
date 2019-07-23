@@ -29,6 +29,9 @@
     <strong>
         @Html.ActionLink("Create New", "CreateInstructor")
     </strong>
+    <strong>
+        @Html.ActionLink("Import through CSV", "ImportInstructor")
+    </strong>
 </h5>
 
 @if (!Model.Any() || Model == null)
@@ -43,7 +46,6 @@ else
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>
-                <th></th>
                 <th></th>
                 <th>First Name</th>
                 <th>Last Name</th>

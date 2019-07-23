@@ -133,12 +133,12 @@ namespace Scheduler_App.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction(nameof(InstructorController.Index));
             }
-            Instructor instructor= DbContext.InstructorDatabase.Find(id);
+            Instructor instructor = DbContext.InstructorDatabase.Find(id);
             if (instructor == null)
             {
-                return HttpNotFound();
+                return RedirectToAction(nameof(InstructorController.Index));
             }
             return View(instructor);
         }
