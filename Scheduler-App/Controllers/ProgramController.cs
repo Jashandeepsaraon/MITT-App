@@ -133,6 +133,8 @@ namespace Scheduler_App.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Program program = DbContext.ProgramDatabase.Find(id);
+            var course = program.Courses.ToList();
+            program.Courses = null;
             DbContext.ProgramDatabase.Remove(program);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Index));

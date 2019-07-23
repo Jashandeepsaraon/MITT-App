@@ -149,6 +149,7 @@ namespace Scheduler_App.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(InstructorController.Index));
