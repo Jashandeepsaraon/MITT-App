@@ -170,13 +170,13 @@ namespace Scheduler_App.Controllers
             if (instructor == null)
                 return RedirectToAction(nameof(InstructorController.Index));
 
-            var allinstructor = new InstructorViewModel();
-            allinstructor.FirstName = instructor.FirstName;
-            allinstructor.LastName = instructor.LastName;
-            allinstructor.Email = instructor.Email;
-            allinstructor.Courses = instructor.Courses;
+            var allInstructor = new InstructorViewModel();
+            allInstructor.FirstName = instructor.FirstName;
+            allInstructor.LastName = instructor.LastName;
+            allInstructor.Email = instructor.Email;
+            allInstructor.Courses = instructor.Courses;
             ViewBag.id = id;
-            return View(allinstructor);
+            return View(allInstructor);
         }
 
 

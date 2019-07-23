@@ -24,12 +24,14 @@ namespace Scheduler_App.Models.ViewModel
         public List<SelectListItem> ProgramList { get; set; }
         public int CourseId { get; set; }
         public List<SelectListItem> CourseList { get; set; }
+        public virtual List<Course> Courses { get; set; }
 
         public InstructorViewModel()
         {
             Password = "Password-1";
             CourseList = new List<SelectListItem>();
             ProgramList = new List<SelectListItem>();
+            Courses = new List<Course>();
         }
 
     }

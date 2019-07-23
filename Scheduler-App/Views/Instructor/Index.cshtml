@@ -62,10 +62,6 @@ else
                         </a>
                     </td>
                     <td>
-                        <a href="@Url.Action("AssignCourse", "Course", new { instructorId = instructor.Id} )">
-                            <i title="Details" class="fas fa-address-card" style='font-size:20px;color:lightseagreen'></i>
-                        </a>
-                    <td>
                         @instructor.FirstName
                     </td>
                     <td>
@@ -74,7 +70,6 @@ else
                     <td>
                         @instructor.Email
                     </td>
-
                     <td>
                         <a href="@Url.Action("EditInstructor", "Instructor", new { id = instructor.Id })">
                             <i title="Edit Instructor" class="fas fa-pencil-square-o"></i>
