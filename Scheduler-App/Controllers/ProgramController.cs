@@ -118,12 +118,12 @@ namespace Scheduler_App.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction(nameof(ProgramController.Index));
             }
             Program program = DbContext.ProgramDatabase.Find(id);
             if (program == null)
             {
-                return HttpNotFound();
+                return RedirectToAction(nameof(ProgramController.Index));
             }
             return View(program);
         }

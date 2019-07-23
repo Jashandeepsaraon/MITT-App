@@ -1026,6 +1026,7 @@
     <Content Include="Views\Instructor\AssignInstructor.cshtml" />
     <Content Include="Views\Program\ProgramCourse.cshtml" />
     <Content Include="Views\Students\AssignCourse.cshtml" />
+    <Content Include="Views\Course\Instructor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

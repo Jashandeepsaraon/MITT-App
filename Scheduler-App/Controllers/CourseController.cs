@@ -282,7 +282,16 @@ namespace Scheduler_App.Controllers
         // GET:
         public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction(nameof(CourseController.Index));
+            }
+            Course course = DbContext.CourseDatabase.Find(id);
+            if (course == null)
+            {
+                return RedirectToAction(nameof(CourseController.Index));
+            }
+            return View(course);
         }
 
         // POST: Delete
@@ -290,6 +299,7 @@ namespace Scheduler_App.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Course course = DbContext.CourseDatabase.Find(id);
+            course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
