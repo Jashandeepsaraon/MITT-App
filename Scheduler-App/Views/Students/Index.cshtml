@@ -42,9 +42,7 @@ else
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>
-                <th></th>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th></th>
                 <th></th>
@@ -53,31 +51,27 @@ else
         <tbody>
             @foreach (var student in Model)
             {
-            <tr>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
+                <tr>
+                    <td>
                         <a href="@Url.Action("Details", "Students", new { id = student.Id })">
-                            <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                            @student.FirstName @student.LastName
                         </a>
-                    }
-                </td>
+                    </td>
 
-                <td>@student.FirstName</td>
-                <td>@student.LastName</td>
-                <td>@student.Email</td>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a href="@Url.Action("EditStudent", "Students", new { id = student.Id })">
-                            <i title="Edit Student" class="fas fa-pencil-square-o"></i>
-                        </a>
-                    }
-                </td>
-                <td>
-                    @Html.ActionLink("Delete", "Delete", new { id = student.Id})
-                </td>
-            </tr>
+
+                    <td>@student.Email</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("EditStudent", "Students", new { id = student.Id })">
+                                <i title="Edit Student" class="fas fa-pencil-square-o"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Delete", "Delete", new { id = student.Id })
+                    </td>
+                </tr>
             }
         </tbody>
     </table>

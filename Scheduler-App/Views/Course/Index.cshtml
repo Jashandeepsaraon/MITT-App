@@ -44,7 +44,6 @@ else
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>
-                <th></th>
                 <th>Course</th>
                 <th>Total Hours</th>
                 <th> Program Name</th>
@@ -55,32 +54,27 @@ else
         <tbody>
             @foreach (var course in Model)
             {
-            <tr>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
+                <tr>
+                    <td>
                         <a href="@Url.Action("Details", "Course", new { id = course.Id })">
-                            <i title="Details" class="fa fa-book" style='font-size:20px;color:lightseagreen'></i>
+                            @course.Name
                         </a>
-                    }
-                </td>
+                    </td>
+                    <td>@course.Hours Hours</td>
+                    <td>@course.ProgramName</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
+                                <i title="Edit Course" class="fas fa-pencil-square-o"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Delete", "Delete", new { id = course.Id })
+                    </td>
 
-                <td>@course.Name</td>
-                <td>@course.Hours Hours</td>
-                <td>@course.ProgramName</td>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
-                            <i title="Edit Course" class="fas fa-pencil-square-o"></i>
-                        </a>
-                    }
-                </td>
-                <td>
-                    @Html.ActionLink("Delete", "Delete", new { id = course.Id })
-                </td>
-
-            </tr>
+                </tr>
             }
         </tbody>
     </table>

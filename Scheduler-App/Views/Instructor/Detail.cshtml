@@ -8,10 +8,6 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
-        <h5 style="margin-left:20px; margin-top:15px">
-            @*@Html.ActionLink("Add Course",  "AssignCourse",new { instructorId = Model.Id })*@
-            <a href="@Url.Action("AssignCourse", "Course", new {instructorId = ViewBag.id})">Add Course</a>
-        </h5>
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -27,24 +23,35 @@
                     <td>@Model.Email</td>
                 </tr>
                 <tr>
-                    <th>Courses</th>
-                    @foreach (var course in Model.Courses)
-                    {
-
-                        <td>@course.Name</td>
-                        <td>
-                        @*<td>
-                            <form method="post" action="@Url.Action("Delete", "Tickets", new { id = record.Id })"><button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button> </form>
-                        </td>*@
-                        <form method="post" action="@Url.Action("RemoveCourse","Course", new { id = course.Id,InstructorId = ViewBag.id })">
-                            <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
-                        </form>
-                        </td>
-                    }
+                    <th style="display:flex; justify-content:flex-start">
+                        Courses
+                        (
+                        <div>
+                            <a href="@Url.Action("AssignCourse", "Course", new {instructorId = ViewBag.id})">Assign Course</a>
+                        </div>
+                        )
+                    </th>
+                    <td>
+                        @foreach (var course in Model.Courses)
+                        {
+                            <div style="display:flex; justify-content:flex-start">
+                                <p>
+                                    <a href="@Url.Action("Details", "Course", new { id = course.Id} )">
+                                        @course.Name
+                                    </a>
+                                </p>
+                                <form method="post" action="@Url.Action("RemoveCourse","Course", new { id = course.Id,InstructorId = ViewBag.id })">
+                                    <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
+                                </form>
+                            </div>
+                        }
+                    </td>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-
+        <div style="margin-left:12px; font-size:medium ">
+            @Html.ActionLink("Back to List", "Index")
+        </div>
     </div>
 </div>

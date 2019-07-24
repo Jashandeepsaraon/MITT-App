@@ -20,33 +20,37 @@
                     <td>@Model.StartDate</td>
                 </tr>
                 <tr>
-                    <th style="display:flex; justify-content:flex-start">List Of Courses </th>
+                    <th style="display:flex; justify-content:flex-start">
+                        List Of Courses
+                        (
+                        <div style="display:flex; justify-content:space-around">
+                            <a href="@Url.Action("ProgramCourse", "Program", new { programId = ViewBag.id})">Create Course</a>
+                        </div>
+                        )
+                    </th>
                     <td>
                         @foreach (var record in Model.Courses)
                         {
-                            <p>@record.Name</p>
-                            <form method="post" action="@Url.Action("DeleteProgramCourse","Program", new {id = ViewBag.id, Courseid = record.Id
-                                                   })">
-                                <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
-                            </form>
-                        
-                    }
-                        </td>
-                    </tr>
-                
+                            <div style="display:flex; justify-content:flex-start">
+                                <p>
+                                    <a href="@Url.Action("Details", "Course", new { id = record.Id} )">
+                                        @record.Name
+                                    </a>
+                                </p>
+                                <form method="post" action="@Url.Action("DeleteProgramCourse","Program", new {id = ViewBag.id, Courseid = record.Id })">
+                                    <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
+                                </form>
+                            </div>
+                        }
+                    </td>
+                </tr>
+
 
             </thead>
-            <tbody>
-                <div style="margin-top:10px; ">
-                    @Html.ActionLink("Back to List of Programs", "Index")
-                </div>
-                <div style="display:flex; justify-content:space-around">
-                    <strong>
-                        <a href="@Url.Action("ProgramCourse", "Program", new { programId = ViewBag.id})">Create Course</a>
-                    </strong>
-                    
-                </div>
-            </tbody>
+            <tbody></tbody>
         </table>
+        <div style="margin-left:12px; font-size:medium ">
+            @Html.ActionLink("Back to List", "Index")
+        </div>
     </div>
 </div>

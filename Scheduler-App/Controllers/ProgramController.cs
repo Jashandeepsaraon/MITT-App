@@ -70,6 +70,7 @@ namespace Scheduler_App.Controllers
                 program.StartDate = DateTime.Now;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
+                return RedirectToAction("Index");
             }
 
             else
@@ -83,7 +84,7 @@ namespace Scheduler_App.Controllers
             program.Name = formData.Name;
             program.StartDate = formData.StartDate;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Index));
+            return RedirectToAction("Details", new { id = program.Id });
         }
 
         //GET: EditProgram
@@ -188,7 +189,7 @@ namespace Scheduler_App.Controllers
             Courseid = courseId;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Index));
+            return RedirectToAction(nameof(ProgramController.Details), new { id = program.Id }) ;
         }
 
         //GET:

@@ -266,10 +266,11 @@ namespace Scheduler_App.Controllers
                 assignInstructor.Courses.Add(course);
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("Details", "Course");
+            return RedirectToAction("Details", "Course", new { id = model.CourseId});
 
         }
 
+        // Method for the Remove Instrutor to the Course
         [HttpPost]
         public ActionResult RemoveInstructor(int? courseId)
         {
@@ -284,8 +285,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details));
+            return RedirectToAction("Details", "Course", new { id = courseId });
         }
-
     }
 }

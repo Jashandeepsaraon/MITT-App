@@ -48,6 +48,7 @@ namespace Scheduler_App.Controllers
             return View(model);
         }
 
+        //POST : CreateCourse
         [HttpPost]
         //[Authorize(Roles = "Admin")]
         public ActionResult CreateCourse(CreateEditCourseViewModel formData)
@@ -81,7 +82,7 @@ namespace Scheduler_App.Controllers
             }
 
             var course = Mapper.Map<Course>(formData);
-            if (course.InstructorId == 0 || course.InstructorId == null)
+            if (course.InstructorId == 0 && course.InstructorId == null && !id.HasValue)
             {
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
@@ -91,6 +92,8 @@ namespace Scheduler_App.Controllers
                 if (!id.HasValue)
                 {
                     //course.Program.Courses.Add(course);
+                    course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+                    course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                     DbContext.CourseDatabase.Add(course);
                     DbContext.SaveChanges();
                 }
@@ -105,8 +108,6 @@ namespace Scheduler_App.Controllers
             }
             course.Name = formData.Name;
             course.Hours = formData.Hours;
-            course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
-            course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
@@ -154,8 +155,8 @@ namespace Scheduler_App.Controllers
         public ActionResult Details(int? id)
         {
             if (!id.HasValue)
-                return RedirectToAction(nameof(CourseController.Index));
             {
+                return RedirectToAction(nameof(CourseController.Index));
             }
 
             var userId = User.Identity.GetUserId();
@@ -169,17 +170,17 @@ namespace Scheduler_App.Controllers
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
-            //courseDetail.Instructor.FirstName = course.Instructor.FirstName;
-
-            //if(courseDetail.Instructor == null ||courseDetail.Instructor.FirstName == null)
-            //{
-            //    return View("Instructor");
-            //}
+            if (courseDetail.Instructor != null)
+            {
+                courseDetail.Instructor.FirstName = course.Instructor.FirstName;
+                courseDetail.Instructor.LastName = course.Instructor.LastName;
+            }
             courseDetail.ProgramName = course.Program.Name;
             ViewBag.id = id;
             return View(courseDetail);
         }
 
+        //Method to get the Courses List and Program List
         [HttpGet]
         public ActionResult AssignCourse(int? instructorId)
         {
@@ -190,7 +191,7 @@ namespace Scheduler_App.Controllers
                  Value = p.Id.ToString(),
              }).ToList();
 
-             ViewBag.program = program;
+            ViewBag.program = program;
 
             if (!instructorId.HasValue)
             {
@@ -221,6 +222,7 @@ namespace Scheduler_App.Controllers
             return View(model);
         }
 
+        //Method to get the Courses List in DropdownList
         public JsonResult GetCourses(int ProgramId)
         {
             var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
@@ -231,6 +233,7 @@ namespace Scheduler_App.Controllers
             return Json(courseList, JsonRequestBehavior.AllowGet);
         }
 
+        // Method for the Assign Course to the Instructor
         [HttpPost]
         public ActionResult AssignCourse(AssignCourseViewModel model)
         {
@@ -256,9 +259,10 @@ namespace Scheduler_App.Controllers
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("CreateCourse");
+            return RedirectToAction(nameof(CourseController.Details), new { id = model.CourseId });
         }
 
+        // Method for the Remove Course to the Instructor
         [HttpPost]
         public ActionResult RemoveCourse(int? id, int? instructorId)
         {
@@ -275,7 +279,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details));
+            return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
         }
 
         // Delete Method for course
