@@ -8,9 +8,9 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
-        <div>
+        @*<div>
             <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
-        </div>
+        </div>*@
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -27,19 +27,22 @@
                     {
                         <td>
                             <h2>No Instructor</h2>
+                            <div>
+                                <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
+                            </div>
                         </td>
                     }
                     else
                     {
                         <td>
-                            @Model.Instructor
+                            @Model.Instructor.FirstName @Model.Instructor.LastName
                         </td>
-                       <td>
+                        <td>
                             <form method="post" action="@Url.Action("RemoveInstructor","Instructor", new { courseId = ViewBag.id})">
                                 <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
                             </form>
-                
-                       </td>
+
+                        </td>
                     }
 
                 </tr>

@@ -165,14 +165,14 @@ namespace Scheduler_App.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction(nameof(StudentsController.Index));
             }
-            Student students = DbContext.StudentDatabase.Find(id);
-            if (students == null)
+            Student student = DbContext.StudentDatabase.Find(id);
+            if (student == null)
             {
-                return HttpNotFound();
+                return RedirectToAction(nameof(StudentsController.Index));
             }
-            return View(students);
+            return View(student);
         }
 
         // POST: Delete

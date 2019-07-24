@@ -14,33 +14,26 @@
                 <dt>
                     @Html.DisplayNameFor(model => model.Name)
                 </dt>
-
                 <dd>
                     @Html.DisplayFor(model => model.Name)
                 </dd>
-
                 <dt>
-                    Total Hours
+                    @Html.DisplayNameFor(model => model.Hours)
                 </dt>
-
                 <dd>
                     @Html.DisplayFor(model => model.Hours)
                 </dd>
-
                 <dt>
                     Program Name
                 </dt>
-
                 <dd>
                     @Html.DisplayFor(model => model.Program.Name)
                 </dd>
-
                 @*<dt>
-                    Instructor Name
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Instructor.FirstName)
+                     Program Name
+                 </dt>
+                 <dd>
+                    @Html.DisplayFor(model => model.Course.Program.Name)
                 </dd>*@
             </dl>
 
