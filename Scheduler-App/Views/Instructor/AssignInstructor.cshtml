@@ -2,47 +2,32 @@
 @{
     ViewBag.Title = "Assign Instructors";
 }
-<div class="content-wrapper">
-    <section class="content">
-        <form action="@Url.Action("AssignInstructor", "Instructor")" method="post">
-            @Html.ValidationSummary(false)
-            @*<div class="form-group">
-                @Html.LabelFor(model => model.InstructorId, "Instructor", new { @class = "form-control-label" })
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-app"></i></span>
+
+<div class="body-content" style="margin-bottom:460px">
+    <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
+        <div class="card-header">
+            <h2>Add Instructor</h2>
+        </div>
+        <div class="card-body" style="width: 400px">
+            <form action="@Url.Action("AssignInstructor", "Instructor")" method="post">
+                @Html.ValidationSummary(false)
+                @if (Model.InstructorList != null && Model.InstructorList.Any())
+                {
+                    <p>Add Instructor</p>
+                    <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+                        </div>
+                        @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList, "--- Select Instructor ---", new { @class = "form-control" })
                     </div>
-                    @Html.DropDownListFor(model => model.InstructorId, Model.InstructorList, "---- Select Instructor ----", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.InstructorId, "", new { @class = "text-danger" })
+                }
+                <input type="hidden" name="courseId" value="@Model.CourseId" />
+                <div class="form-inline row">
+                    <div class="text-center col">
+                        <button type="submit" class="btn btn-success my-4">Submit</button>
+                    </div>
                 </div>
-            </div>*@
-            @if (Model.InstructorList != null && Model.InstructorList.Any())
-            {
-                <p>Add Instructor</p>
-                <div class="form-group">
-                    @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList)
-                </div>
-            }
-            <input type="hidden" name="courseId" value="@Model.CourseId" />
-            <input type="submit" value="Submit!" />
-        </form>
-    </section>
-</div>
-@*<form>
-    <div class="form-group">
-        @Html.LabelFor(model => model.InstructorId, "Instructor", new { @class = "form-control-label" })
-        <div class="input-group input-group-alternative">
-            <div class="input-group-prepend">
-                <span class="input-group-text"><i class="ni ni-app"></i></span>
-            </div>
-            @Html.DropDownListFor(model => model.InstructorId, Model.InstructorList, "---- Select Instructor ----", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.InstructorId, "", new { @class = "text-danger" })
+            </form>
         </div>
     </div>
-    <div>
-        <input type="hidden" name="instructorId" value="@Model.InstructorId" />
-        <input type="submit" value="Submit" />
-    </div>
-</form>*@
-
-
+</div>

@@ -22,26 +22,35 @@
                     <td>@Model.ProgramName</td>
                 </tr>
                 <tr>
-                    <th>Instructor Name</th>
+                    <th style="display:flex; justify-content:flex-start">
+                        Instructor Name
+                        @if (Model.Instructor == null)
+                        {
+                            <div>
+                                (<a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>)
+                            </div>
+                        }
+
+                    </th>
                     @if (Model.Instructor == null)
                     {
                         <td>
-                            <h2>No Instructor</h2>
-                            <div>
-                                <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
-                            </div>
+                            <p><strong>No Instructor Assigned</strong></p>
                         </td>
                     }
                     else
                     {
                         <td>
-                            @Model.Instructor.FirstName @Model.Instructor.LastName
-                        </td>
-                        <td>
-                            <form method="post" action="@Url.Action("RemoveInstructor","Instructor", new { courseId = ViewBag.id})">
-                                <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
-                            </form>
-
+                            <div style="display:flex; justify-content:flex-start">
+                                <p>
+                                    <a href="@Url.Action("Detail", "Instructor", new { id = Model.Instructor.Id } )">
+                                        @Model.Instructor.FirstName @Model.Instructor.LastName
+                                    </a>
+                                </p>
+                                <form method="post" action="@Url.Action("RemoveInstructor","Instructor", new { courseId = ViewBag.id })">
+                                    <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     }
 
@@ -49,6 +58,9 @@
             </thead>
             <tbody></tbody>
         </table>
+        <div style="margin-left:12px; font-size:medium ">
+            @Html.ActionLink("Back to List", "Index")
+        </div>
     </div>
 </div>
 

@@ -332,7 +332,7 @@ namespace Scheduler_App.Controllers
                 DbContext.SaveChanges();
             }
 
-            return RedirectToAction("Details");
+            return RedirectToAction("Details", new { id = student.Id });
         }
 
         [HttpPost]
@@ -350,7 +350,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(StudentsController.Details));
+            return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
         }
     }
 }

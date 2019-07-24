@@ -259,7 +259,7 @@ namespace Scheduler_App.Controllers
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details), new { id = model.CourseId });
+            return RedirectToAction("Detail","Instructor", new { id = instructor.Id });
         }
 
         // Method for the Remove Course to the Instructor
@@ -279,7 +279,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
+            return RedirectToAction("Detail", "Instructor", new { id = instructor.Id });
         }
 
         // Delete Method for course
