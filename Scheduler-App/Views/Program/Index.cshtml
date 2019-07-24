@@ -42,7 +42,6 @@ else
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>
-                <th></th>
                 <th>Program</th>
                 <th>Start Date</th>
                 <th></th>
@@ -55,10 +54,9 @@ else
                 <tr>
                     <td>
                         <a href="@Url.Action("Details", "Program", new { id = program.Id} )">
-                            <i title="Details" class="fas fa-info-circle" style='font-size:20px;color:lightseagreen'></i>
+                            @program.Name
                         </a>
                     </td>
-                    <td>@program.Name</td>
                     <td>@program.StartDate</td>
 
                     <td>

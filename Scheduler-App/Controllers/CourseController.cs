@@ -275,7 +275,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details));
+            return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
         }
 
         // Delete Method for course

@@ -41,7 +41,7 @@
     @RenderSection("css", required: false)
 </head>
 
-<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">   
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
     <header class="app-header navbar" style="height:110px; font-size:22px">
         <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
             <span class="navbar-toggler-icon"></span>
@@ -137,84 +137,27 @@
     <div class="app-body">
         <div class="sidebar">
             <nav class="sidebar-nav" style="max-height:681px">
-                <ul class="nav" style="margin-top:55px">
-                    <li class="nav-title">Programs</li>
-                    <li class="nav-item nav-dropdown">
-                        <a class="nav-link nav-dropdown-toggle" href="#">
-                            <i class="nav-icon icon-cursor"></i> Pages
+                <ul class="nav" style="margin-top:80px">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Program")" target="_top">
+                            <i class="nav-icon icon-star"></i> Programs
                         </a>
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index","Program")" target="_top">
-                                    <i class="nav-icon icon-star"></i> View Programs
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("CreateProgram", "Program")" target="_top">
-                                    <i class="nav-icon icon-star"></i> Create Program
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-
-                    <li class="nav-title">Instructor</li>
-                    <li class="nav-item nav-dropdown">
-                        <a class="nav-link nav-dropdown-toggle" href="#">
-                            <i class="nav-icon icon-cursor"></i> Pages
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Instructor")" target="_top">
+                            <i class="nav-icon icon-star"></i> Instructors
                         </a>
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index","Instructor")" target="_top">
-                                    <i class="nav-icon icon-star"></i> View Instructors
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("CreateInstructor", "Instructor")" target="_top">
-                                    <i class="nav-icon icon-star"></i> Create Instructor
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-
-                    <li class="nav-title">Course</li>
-                    <li class="nav-item nav-dropdown">
-                        <a class="nav-link nav-dropdown-toggle" href="#">
-                            <i class="nav-icon icon-cursor"></i> Pages
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Course")" target="_top">
+                            <i class="nav-icon icon-star"></i> Courses
                         </a>
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index","Course")" target="_top">
-                                    <i class="nav-icon icon-star"></i> View Courses
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("CreateCourse", "Course")" target="_top">
-                                    <i class="nav-icon icon-star"></i> Create Course
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-
-                    <li class="nav-title">Student</li>
-                    <li class="nav-item nav-dropdown">
-                        <a class="nav-link nav-dropdown-toggle" href="#">
-                            <i class="nav-icon icon-cursor"></i> Pages
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Students")" target="_top">
+                            <i class="nav-icon icon-star"></i> Students
                         </a>
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index","Students")" target="_top">
-                                    <i class="nav-icon icon-star"></i> View Students
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("CreateStudent", "Students")" target="_top">
-                                    <i class="nav-icon icon-star"></i> Create Student
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-
-                    <li class="divider"></li>
                     <li class="nav-title">Extras</li>
                     <li class="nav-item nav-dropdown">
                         <a class="nav-link nav-dropdown-toggle" href="#">
