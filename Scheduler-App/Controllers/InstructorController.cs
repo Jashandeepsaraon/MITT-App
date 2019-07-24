@@ -80,6 +80,8 @@ namespace Scheduler_App.Controllers
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
                      "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                return RedirectToAction("Index");
             }
 
             else
@@ -95,7 +97,7 @@ namespace Scheduler_App.Controllers
             instructor.Email = formData.Email;
             instructor.Courses.Find(p => p.Id == formData.CourseId);
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(InstructorController.Index));
+            return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
         }
 
         //GET: EditProgram
