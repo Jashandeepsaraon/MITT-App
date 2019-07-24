@@ -9,7 +9,7 @@
             <h2>Details</h2>
         </div>
         <div class="brand-card-body" style="margin-right:550px; width:100%">
-            <a href="@Url.Action("Index", "Program")" style="font-weight:bold">
+            <a href="@Url.Action("AssignProgram", "Students",new { studentId = ViewBag.id})" style="font-weight:bold">
                 Add Program<i title="AllPrograms" class="icon-plus" style='font-weight:bold; margin-left:2px;'></i>
             </a>
             <a href="@Url.Action("AssignCourse", "Students", new { studentId = ViewBag.id})" style="font-weight:bold">
@@ -30,30 +30,45 @@
                     <th>Email</th>
                     <td>@Model.Email</td>
                 </tr>
-                <tr>
-                    <th style="display:flex; justify-content:flex-start">Courses Enrolled</th>
-                    <td>
-                        @foreach (var course in Model.Courses)
-                        {
-                            <div style="display:flex; justify-content:flex-start">
-                                <p>
-                                    <a href="@Url.Action("Details", "Course", new { id = course.Id} )">
-                                        @course.Name
-                                    </a>
-                                </p>
-                                <form method="post" action="@Url.Action("RemoveCourse","Students", new { id = course.Id, studentId = ViewBag.id })">
-                                    <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
-                                </form>
-                            </div>
-                        }
-                    </td>
-                </tr>
-
             </thead>
             <tbody></tbody>
         </table>
-        <div style="margin-left:12px; font-size:medium ">
-            @Html.ActionLink("Back to List", "Index")
+
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Program Name</th>
+                        <td>@Model.ProgramName.ToString();</td>
+                        @*<td>@Model.Courses.Find(p => p.ProgramId == Model.ProgramId)</td>*@
+
+                        @foreach (var course in Model.Courses)
+                        {
+                            @*if (course.Program != null)
+            {
+                <th>Enrolled Program</th>
+                if (course.Program.Name != null)
+                {
+                    <td>@course.Program.Name</td>
+                }
+            }
+            else
+            {*@
+
+
+                            <th>Courses Enrolled</th>
+                            <td>@course.Name</td>
+                            <td>
+                                <form method="post" action="@Url.Action("RemoveCourse","Students", new { id = course.Id, studentId = ViewBag.id })">
+                                    <button class="btn-delete" style=" background:none;border:none;color:dodgerblue">Delete</button>
+                                </form>
+                            </td>
+                            @*}*@
+                        }
+                    </tr>
+                </thead>
+            </table>
+
         </div>
     </div>
 </div>

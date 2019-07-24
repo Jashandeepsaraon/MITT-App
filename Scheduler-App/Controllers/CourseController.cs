@@ -82,7 +82,7 @@ namespace Scheduler_App.Controllers
             }
 
             var course = Mapper.Map<Course>(formData);
-            if (course.InstructorId == 0 || course.InstructorId == null)
+            if (course.InstructorId == 0 && course.InstructorId == null && !id.HasValue)
             {
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
@@ -92,6 +92,8 @@ namespace Scheduler_App.Controllers
                 if (!id.HasValue)
                 {
                     //course.Program.Courses.Add(course);
+                    course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+                    course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                     DbContext.CourseDatabase.Add(course);
                     DbContext.SaveChanges();
                 }
@@ -106,8 +108,6 @@ namespace Scheduler_App.Controllers
             }
             course.Name = formData.Name;
             course.Hours = formData.Hours;
-            course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
-            course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
@@ -191,7 +191,7 @@ namespace Scheduler_App.Controllers
                  Value = p.Id.ToString(),
              }).ToList();
 
-             ViewBag.program = program;
+            ViewBag.program = program;
 
             if (!instructorId.HasValue)
             {
