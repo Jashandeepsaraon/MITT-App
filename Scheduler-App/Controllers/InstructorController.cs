@@ -151,6 +151,11 @@ namespace Scheduler_App.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var courses = DbContext.CourseDatabase.FirstOrDefault(p => p.InstructorId == instructor.Id);
+             if (instructor.Courses == null /*||courses.Instructor != null*/) 
+            {
+                courses.Instructor = null;
+            }
             instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
             DbContext.SaveChanges();
@@ -221,13 +226,13 @@ namespace Scheduler_App.Controllers
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
                         DbContext.Users.Add(user);
-                        instructor.Add(instructors);
+                        //instructor.Add(instructors);
                         DbContext.InstructorDatabase.Add(instructors);
                         DbContext.SaveChanges();
                     }
                 }
             }
-            return RedirectToAction("Details");
+            return RedirectToAction("Index");
         }
 
         //Method to get the Instructors List 
@@ -268,7 +273,7 @@ namespace Scheduler_App.Controllers
                 assignInstructor.Courses.Add(course);
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("Details", "Course", new { id = model.CourseId});
+            return RedirectToAction("Details", "Course", new { id = model.CourseId });
 
         }
 

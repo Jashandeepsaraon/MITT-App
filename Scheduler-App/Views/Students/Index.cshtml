@@ -26,9 +26,10 @@
 
 @Html.ValidationSummary(false)
 <h5>
-    <strong>
-        @Html.ActionLink("Create New", "CreateStudent")
-    </strong>
+    @Html.ActionLink("Create New", "CreateStudent")
+</h5>
+<h5>
+    @Html.ActionLink("Create Through CSV", "ImportStudent")
 </h5>
 
 @if (!Model.Any() || Model == null)
