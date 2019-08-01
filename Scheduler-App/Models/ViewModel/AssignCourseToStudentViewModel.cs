@@ -14,5 +14,6 @@ namespace Scheduler_App.Models.ViewModel
         public List<SelectListItem> ProgramList { get; set; }
         public List<SelectListItem> AddCourses { get; set; }
         public string AddSelectedCourses { get; set; }
+        public string AddSelectedProgram { get; set; }
     }
 }
