@@ -56,11 +56,18 @@ namespace Scheduler_App.Controllers
         private ActionResult SaveCourse(int? id, CreateEditCourseViewModel formData)
         {
             var allProgram = DbContext.ProgramDatabase
-                .Select(p => new SelectListItem()
-                {
-                    Text = p.Name,
-                    Value = p.Id.ToString(),
-                }).ToList();
+           .Select(p => new SelectListItem()
+           {
+               Text = p.Name,
+               Value = p.Id.ToString(),
+           }).ToList();
+
+            if (formData == null)
+            {
+                ModelState.AddModelError("", "No form data found.");
+                formData.ProgramList = allProgram;
+                return View(formData);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -102,84 +109,21 @@ namespace Scheduler_App.Controllers
 
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                    if (course != null)
+                    DbContext.CourseDatabase.Add(course);
+                    DbContext.SaveChanges();
+                }
+                else
+                {
+                    course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
+                    if (course == null)
                     {
-                        //var firstCourse = course.Program.Courses.ElementAtOrDefault(0);
-                        ////var lastCourse = course.Program.Courses.Last();
-                        ////var firstCourse = course1;
-                        ////var nextCourse = firstCourse.Id + 
-                        //if (firstCourse == null)
-                        //{
-                        //    course.StartDate = course.Program.StartDate;
-                        //    var c = course.Hours / course.DailyHours;
-                        //    int workDays = 0;
-                        //    DateTime start = course.StartDate;
-                        //    //start = Convert.ToDateTime(course.EndDate);
-                        //    DateTime? end = course.EndDate;
-                        //    end = course.StartDate.AddDays(c);
-                        //    while (course.StartDate != end)
-                        //    {
-                        //        if (course.StartDate.DayOfWeek != DayOfWeek.Saturday && course.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                        //        {
-                        //            workDays++;
-                        //        }
-
-                        //        /*var t =*/ course.EndDate = course.StartDate.AddDays(workDays);
-                        //        //course.EndDate = t;
-                        //        course.StartDate = Convert.ToDateTime(end);
-                        //    }
-                        //    course.EndDate = course.StartDate.AddDays(workDays-1);
-                        //    course.StartDate = course.StartDate.AddDays(-c + 1);
-
-                        //}
-                        //else
-                        //{
-                        //    var lastCourse = course.Program.Courses.Last();
-                        //    var c = course.Hours / course.DailyHours;
-                        //    int workDays = 0;
-                        //    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                        //    //start = course.StartDate;
-                        //    //DateTime end = Convert.ToDateTime(lastCourse.EndDate);
-                        //    DateTime end = course.StartDate.AddDays(c);
-
-                        //    while (course.StartDate != end)
-                        //    {
-                        //        if (course.StartDate.DayOfWeek != DayOfWeek.Saturday && course.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                        //        {
-                        //            workDays++;
-                        //        }
-
-                        //        var t = course.StartDate = course.StartDate.AddDays(1);
-                        //        course.EndDate = t;
-                        //        //end = course.StartDate;
-                        //    }
-                        //    lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
-                        //    //if (lastCourse.EndDate != null)
-                        //    //{
-                        //    //    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                        //    //    course.StartDate = lastCourse.StartDate.AddDays(-c);
-                        //    //}
-                        //    //DateTime? d = course.StartDate;
-                        //    //DateTime? p = lastCourse.EndDate;
-                        //    //d = p;
-                        //}
-                        DbContext.CourseDatabase.Add(course);
-                        DbContext.SaveChanges();
-                    }
-
-                    else
-                    {
-                        course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
-                        if (course == null)
-                        {
-                            return RedirectToAction(nameof(CourseController.Index));
-                        }
+                        return RedirectToAction(nameof(CourseController.Index));
                     }
                 }
-                course.Name = formData.Name;
-                course.Hours = formData.Hours;
-                DbContext.SaveChanges();
             }
+            course.Name = formData.Name;
+            course.Hours = formData.Hours;
+            DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
 
@@ -198,7 +142,9 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
 
             var allProgram = DbContext.ProgramDatabase
@@ -238,7 +184,9 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
@@ -315,7 +263,9 @@ namespace Scheduler_App.Controllers
             var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == model.InstructorId);
             if (instructor == null)
             {
-                return RedirectToAction(nameof(InstructorController.Detail));
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
             }
             if (model.RemoveSelectedCourses != null)
             {
@@ -334,7 +284,7 @@ namespace Scheduler_App.Controllers
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details), new { id = model.CourseId });
+            return RedirectToAction("Detail","Instructor", new { id = instructor.Id });
         }
 
         // Method for the Remove Course to the Instructor
@@ -347,6 +297,12 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Details));
             }
             var course = instructor.Courses.FirstOrDefault(p => p.Id == id);
+            if (course == null)
+            {
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
+            }
             if (course != null)
             {
 
@@ -354,7 +310,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
+            return RedirectToAction("Detail", "Instructor", new { id = instructor.Id });
         }
 
         // Delete Method for course
@@ -368,7 +324,9 @@ namespace Scheduler_App.Controllers
             Course course = DbContext.CourseDatabase.Find(id);
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
             return View(course);
         }
@@ -381,6 +339,7 @@ namespace Scheduler_App.Controllers
             course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Course";
             return RedirectToAction(nameof(CourseController.Index));
         }
 

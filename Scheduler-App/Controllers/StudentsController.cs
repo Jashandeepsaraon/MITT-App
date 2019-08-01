@@ -7,6 +7,7 @@ using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -192,6 +193,7 @@ namespace Scheduler_App.Controllers
             Student students = DbContext.StudentDatabase.Find(id);
             DbContext.StudentDatabase.Remove(students);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Student.";
             return RedirectToAction(nameof(StudentsController.Index));
         }
 
@@ -230,53 +232,53 @@ namespace Scheduler_App.Controllers
             return View(new List<StudentViewModel>());
         }
 
-        //[HttpPost]
-        //public ActionResult ImportStudent(HttpPostedFileBase postedFile)
-        //{
+        [HttpPost]
+        public ActionResult ImportStudent(HttpPostedFileBase postedFile)
+        {
 
-        //    List<Student> student  = new List<Student>();
-        //    string filePath = string.Empty;
-        //    if (postedFile != null)
-        //    {
-        //        string path = Server.MapPath("~/Uploads/");
-        //        if (!Directory.Exists(path))
-        //        {
-        //            Directory.CreateDirectory(path);
-        //        }
+            List<Student> student = new List<Student>();
+            string filePath = string.Empty;
+            if (postedFile != null)
+            {
+                string path = Server.MapPath("~/Uploads/");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
 
-        //        filePath = path + Path.GetFileName(postedFile.FileName);
-        //        string extension = Path.GetExtension(postedFile.FileName);
-        //        postedFile.SaveAs(filePath);
+                filePath = path + Path.GetFileName(postedFile.FileName);
+                string extension = Path.GetExtension(postedFile.FileName);
+                postedFile.SaveAs(filePath);
 
-        //        //Read the contents of CSV file.
-        //        string csvData = System.IO.File.ReadAllText(filePath);
+                //Read the contents of CSV file.
+                string csvData = System.IO.File.ReadAllText(filePath);
 
-        //        //Execute a loop over the rows.
-        //        foreach (string row in csvData.Split('\n'))
-        //        {
-        //            if (!string.IsNullOrEmpty(row))
-        //            {
-        //                var students = (new Student
-        //                {
-        //                    //Id = Convert.ToInt32(row.Split(',')[0]),
-        //                    FirstName = row.Split(',')[0],
-        //                    LastName = row.Split(',')[1],
-        //                    Email = row.Split(',')[2],
-        //                    ProgramName = row.Split(',')[3],
-        //                });
-        //                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        //                var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
-        //                var result = userManager.CreateAsync(user, students.Password);
-        //                var userId = user.Id;
-        //                DbContext.Users.Add(user);
-        //                student.Add(students);
-        //                DbContext.StudentDatabase.Add(students);
-        //                DbContext.SaveChanges();
-        //            }
-        //        }
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+                //Execute a loop over the rows.
+                foreach (string row in csvData.Split('\n'))
+                {
+                    if (!string.IsNullOrEmpty(row))
+                    {
+                        var students = (new Student
+                        {
+                            //Id = Convert.ToInt32(row.Split(',')[0]),
+                            FirstName = row.Split(',')[0],
+                            LastName = row.Split(',')[1],
+                            Email = row.Split(',')[2],
+                            //ProgramName = row.Split(',')[3],
+                        });
+                        var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                        var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
+                        var result = userManager.CreateAsync(user, students.Password);
+                        var userId = user.Id;
+                        DbContext.Users.Add(user);
+                        student.Add(students);
+                        DbContext.StudentDatabase.Add(students);
+                        DbContext.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpGet]
         public ActionResult AssignCourse(int? studentId)
@@ -343,7 +345,7 @@ namespace Scheduler_App.Controllers
                 DbContext.SaveChanges();
             }
 
-            return RedirectToAction("Details");
+            return RedirectToAction("Details", new { id = student.Id });
         }
 
         [HttpPost]
@@ -361,7 +363,7 @@ namespace Scheduler_App.Controllers
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(StudentsController.Details));
+            return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
         }
 
         [HttpGet]
@@ -420,7 +422,7 @@ namespace Scheduler_App.Controllers
             //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
             ViewBag.studentProgram = studentProgram;
             DbContext.SaveChanges();
-            return RedirectToAction("Details");
+            return RedirectToAction("Details", new { id = student.Id });
         }
 
         [HttpPost]
@@ -442,9 +444,7 @@ namespace Scheduler_App.Controllers
 
                 DbContext.SaveChanges();
             }
-            return RedirectToAction(nameof(StudentsController.Details));
+            return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
         }
     }
 }
-
-

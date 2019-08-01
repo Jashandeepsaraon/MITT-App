@@ -67,7 +67,7 @@ namespace Scheduler_App.Controllers
             var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
-                program.StartDate = DateTime.Now;
+                //program.StartDate = DateTime.Now;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
                 return RedirectToAction("Index");
@@ -105,6 +105,7 @@ namespace Scheduler_App.Controllers
 
             var model = new CreateEditSchoolProgramViewModel();
             model.Name = program.Name;
+            model.StartDate = program.StartDate;
             return View(model);
         }
 
@@ -143,6 +144,7 @@ namespace Scheduler_App.Controllers
             }
             DbContext.ProgramDatabase.Remove(program);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Program.";
             return RedirectToAction(nameof(ProgramController.Index));
         }
 

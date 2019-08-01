@@ -1,30 +1,41 @@
 ﻿@model AssignCourseToStudentViewModel
+
 @{
     ViewBag.Title = "AssignTickets";
 }
-<div class="content-wrapper">
-    <section class="content">
-        <form action="@Url.Action("AssignProgram", "Students")" method="post">
-            @Html.ValidationSummary(false)
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProgramId, "Program", new { @class = "form-control-label" })
-                <div class="input-group input-group-alternative">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-app"></i></span>
-                    </div>
-                    @Html.DropDownListFor(p => p.ProgramId, Model.ProgramList, "--- Select Program ---", new { @class = "form-control" })
-                </div>
-            </div>
-            @*@if (Model.AddSelectedProgram != null && Model.AddSelectedProgram.Any())
-            {
-                <p>Add course</p>
-                <div class="form-group">
-                    @Html.DropDownListFor(p => p.AddSelectedProgram, Model.ProgramList)
-                </div>
-            }*@
 
-            <input type="hidden" name="studentId" value="@Model.StudentId" />
-            <input type="submit" value="Submit!" />
-        </form>
-    </section>
+<div class="body-content" style="margin-bottom:460px">
+    <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
+        <div class="card-header">
+            <h2>Add to Program</h2>
+        </div>
+        <div class="card-body" style="width: 400px">
+            <form action="@Url.Action("AssignProgram", "Students")" method="post">
+                @Html.ValidationSummary(false)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProgramId, "Program", new { @class = "form-control-label" })
+                    <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+                        </div>
+                        @Html.DropDownListFor(p => p.ProgramId, Model.ProgramList, "--- Select Program ---", new { @class = "form-control" })
+                    </div>
+                </div>
+                @*@if (Model.AddSelectedProgram != null && Model.AddSelectedProgram.Any())
+                    {
+                        <p>Add course</p>
+                        <div class="form-group">
+                            @Html.DropDownListFor(p => p.AddSelectedProgram, Model.ProgramList)
+                        </div>
+                    }*@
+
+                <input type="hidden" name="studentId" value="@Model.StudentId" />
+                <div class="form-inline row">
+                    <div class="text-center col">
+                        <button type="submit" class="btn btn-success my-4">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

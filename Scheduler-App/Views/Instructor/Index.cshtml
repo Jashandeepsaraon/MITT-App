@@ -26,9 +26,11 @@
 
 @Html.ValidationSummary(false)
 <h5>
-    <strong>
-        @Html.ActionLink("Create New", "CreateInstructor")
-    </strong>
+    @Html.ActionLink("Create New", "CreateInstructor")
+
+</h5>
+<h5>
+    @Html.ActionLink("Create Through CSV", "ImportInstructor")
 </h5>
 
 @if (!Model.Any() || Model == null)
@@ -39,7 +41,10 @@
 }
 else
 {
-
+    if (TempData["Message"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Message"]</div>
+    }
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>

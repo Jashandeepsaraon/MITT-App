@@ -4,7 +4,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
-using Scheduler_App.Models.Enum;
 using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -69,10 +68,9 @@ namespace Scheduler_App.Controllers
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
-                DbContext.Users.Add(user);
-                DbContext.InstructorDatabase.Add(instructor);
-                DbContext.SaveChanges();
-
+                    DbContext.Users.Add(user);
+                    DbContext.InstructorDatabase.Add(instructor);
+                    DbContext.SaveChanges();
                 //if (!userManager.IsInRole(user.Id, "Instructor"))
                 //{
                 //    userManager.AddToRole(user.Id, "Instructor");
@@ -81,7 +79,8 @@ namespace Scheduler_App.Controllers
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
                      "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                userManager.AddToRole(user.Id, nameof(UserRoles.Instructor));
+
+                return RedirectToAction("Index");
             }
 
             else
@@ -97,7 +96,7 @@ namespace Scheduler_App.Controllers
             instructor.Email = formData.Email;
             instructor.Courses.Find(p => p.Id == formData.CourseId);
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(InstructorController.Index));
+            return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
         }
 
         //GET: EditProgram
@@ -151,9 +150,15 @@ namespace Scheduler_App.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var courses = DbContext.CourseDatabase.FirstOrDefault(p => p.InstructorId == instructor.Id);
+             if (instructor.Courses == null /*||courses.Instructor != null*/) 
+            {
+                courses.Instructor = null;
+            }
             instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Instructor.";
             return RedirectToAction(nameof(InstructorController.Index));
         }
 
@@ -221,13 +226,13 @@ namespace Scheduler_App.Controllers
                         var result = userManager.CreateAsync(user, instructors.Password);
                         var userId = user.Id;
                         DbContext.Users.Add(user);
-                        instructor.Add(instructors);
+                        //instructor.Add(instructors);
                         DbContext.InstructorDatabase.Add(instructors);
                         DbContext.SaveChanges();
                     }
                 }
             }
-            return RedirectToAction("Details");
+            return RedirectToAction("Index");
         }
 
         //Method to get the Instructors List 
@@ -241,7 +246,12 @@ namespace Scheduler_App.Controllers
                   Text = p.FirstName,
                   Value = p.Id.ToString(),
               }).ToList();
-
+            if (instructorList == null)
+            {
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
+            }
             var model = new AssignInstructorViewModel();
             model.InstructorList = instructorList;
             model.CourseId = id;
@@ -268,7 +278,7 @@ namespace Scheduler_App.Controllers
                 assignInstructor.Courses.Add(course);
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("Details", "Course", new { id = model.CourseId});
+            return RedirectToAction("Details", "Course", new { id = model.CourseId });
 
         }
 
