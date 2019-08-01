@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
+using Scheduler_App.Models.Enum;
 using Scheduler_App.Models.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace Scheduler_App.Controllers
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmail(userId, "Notification",
                      "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                userManager.AddToRole(user.Id, nameof(UserRoles.Instructor));
             }
 
             else

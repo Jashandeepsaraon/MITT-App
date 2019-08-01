@@ -5,10 +5,7 @@ using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Scheduler_App.Controllers
@@ -84,6 +81,16 @@ namespace Scheduler_App.Controllers
             var course = Mapper.Map<Course>(formData);
             if (course.InstructorId == 0 && course.InstructorId == null && !id.HasValue)
             {
+                //var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
+                //if(course == null)
+                // {
+                course.StartDate = course.Program.StartDate;
+                //}
+                //else
+                //{
+                //    course.StartDate = 
+                //}
+
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
             }
@@ -92,25 +99,91 @@ namespace Scheduler_App.Controllers
                 if (!id.HasValue)
                 {
                     //course.Program.Courses.Add(course);
+
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                    DbContext.CourseDatabase.Add(course);
-                    DbContext.SaveChanges();
-                }
-                else
-                {
-                    course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
-                    if (course == null)
+                    if (course != null)
                     {
-                        return RedirectToAction(nameof(CourseController.Index));
+                        //var firstCourse = course.Program.Courses.ElementAtOrDefault(0);
+                        ////var lastCourse = course.Program.Courses.Last();
+                        ////var firstCourse = course1;
+                        ////var nextCourse = firstCourse.Id + 
+                        //if (firstCourse == null)
+                        //{
+                        //    course.StartDate = course.Program.StartDate;
+                        //    var c = course.Hours / course.DailyHours;
+                        //    int workDays = 0;
+                        //    DateTime start = course.StartDate;
+                        //    //start = Convert.ToDateTime(course.EndDate);
+                        //    DateTime? end = course.EndDate;
+                        //    end = course.StartDate.AddDays(c);
+                        //    while (course.StartDate != end)
+                        //    {
+                        //        if (course.StartDate.DayOfWeek != DayOfWeek.Saturday && course.StartDate.DayOfWeek != DayOfWeek.Sunday)
+                        //        {
+                        //            workDays++;
+                        //        }
+
+                        //        /*var t =*/ course.EndDate = course.StartDate.AddDays(workDays);
+                        //        //course.EndDate = t;
+                        //        course.StartDate = Convert.ToDateTime(end);
+                        //    }
+                        //    course.EndDate = course.StartDate.AddDays(workDays-1);
+                        //    course.StartDate = course.StartDate.AddDays(-c + 1);
+
+                        //}
+                        //else
+                        //{
+                        //    var lastCourse = course.Program.Courses.Last();
+                        //    var c = course.Hours / course.DailyHours;
+                        //    int workDays = 0;
+                        //    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                        //    //start = course.StartDate;
+                        //    //DateTime end = Convert.ToDateTime(lastCourse.EndDate);
+                        //    DateTime end = course.StartDate.AddDays(c);
+
+                        //    while (course.StartDate != end)
+                        //    {
+                        //        if (course.StartDate.DayOfWeek != DayOfWeek.Saturday && course.StartDate.DayOfWeek != DayOfWeek.Sunday)
+                        //        {
+                        //            workDays++;
+                        //        }
+
+                        //        var t = course.StartDate = course.StartDate.AddDays(1);
+                        //        course.EndDate = t;
+                        //        //end = course.StartDate;
+                        //    }
+                        //    lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
+                        //    //if (lastCourse.EndDate != null)
+                        //    //{
+                        //    //    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                        //    //    course.StartDate = lastCourse.StartDate.AddDays(-c);
+                        //    //}
+                        //    //DateTime? d = course.StartDate;
+                        //    //DateTime? p = lastCourse.EndDate;
+                        //    //d = p;
+                        //}
+                        DbContext.CourseDatabase.Add(course);
+                        DbContext.SaveChanges();
+                    }
+
+                    else
+                    {
+                        course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
+                        if (course == null)
+                        {
+                            return RedirectToAction(nameof(CourseController.Index));
+                        }
                     }
                 }
+                course.Name = formData.Name;
+                course.Hours = formData.Hours;
+                DbContext.SaveChanges();
             }
-            course.Name = formData.Name;
-            course.Hours = formData.Hours;
-            DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
+
+
 
         //GET: EditCourse
         [HttpGet]
@@ -170,6 +243,8 @@ namespace Scheduler_App.Controllers
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
+            courseDetail.StartDate = course.StartDate;
+            //courseDetail.EndDate = course.EndDate;
             if (courseDetail.Instructor != null)
             {
                 courseDetail.Instructor.FirstName = course.Instructor.FirstName;
@@ -308,5 +383,19 @@ namespace Scheduler_App.Controllers
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
+
+
+        public ActionResult Cal()
+        {
+            return View();
+        }
+
+        public JsonResult GetEvents()
+        {
+            var eve = DbContext.CourseDatabase.ToList();
+            var events = eve.Select(p => p.Name).ToList();
+            return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
     }
 }
+

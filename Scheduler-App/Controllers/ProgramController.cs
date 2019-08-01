@@ -83,6 +83,7 @@ namespace Scheduler_App.Controllers
             }
             program.Name = formData.Name;
             program.StartDate = formData.StartDate;
+            program.Courses.First().StartDate = formData.StartDate;
             DbContext.SaveChanges();
             return RedirectToAction("Details", new { id = program.Id });
         }

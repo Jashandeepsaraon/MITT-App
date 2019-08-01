@@ -1,0 +1,47 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
+    border:0.1rem solid rgb(0, 141, 106);
+}
+  
+.fc td{
+ border-color:#00a88e;
+ }
+  
+.colr{
+  background-color: rgba(0, 109, 93, 1) ; 
+  color: white;
+  text-align: center;
+  border-color:white;
+  max-width: 900px;
+  margin: 100px auto;
+}
+#click{
+  text-decoration-color: #00a88e 
+}
+
+h1,h2{
+  color: #00a88e ;
+  text-align: center;
+}
+h3{
+  color: rgb(189, 199, 198) ;
+  text-align: center;
+}
+.fc-day-number,span,button{
+  color: #00a88e ;
+}
+
+#calendar {
+  max-width: 900px;
+  margin: 100px auto;
+  color: #00a88e ;
+}
+
+.color{
+  font-size: 2em;
+  color: red;
+  text-decoration-line: underline;
+}

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
@@ -33,7 +34,7 @@ namespace Scheduler_App.Controllers
 
         //GET : CreateStudent
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
             //var program = DbContext.ProgramDatabase
@@ -71,7 +72,7 @@ namespace Scheduler_App.Controllers
         //}
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateStudent(CreateEditStudentViewModel formData)
         {
             return SaveStudent(null, formData);
@@ -91,11 +92,20 @@ namespace Scheduler_App.Controllers
                 //formData.ProgramList = program;
                 return View(formData);
             }
+
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //var roleManager =
+            //  new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(DbContext));
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
             var result = userManager.CreateAsync(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
+
+            //if (result.IsCompleted)
+            
+            // Add a user to the default role, or any role you prefer here
+            userManager.AddToRoleAsync(user.Id, "Student");
+            
 
             if (!id.HasValue)
             {
@@ -106,10 +116,10 @@ namespace Scheduler_App.Controllers
                 DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
-                //String code = userManager.GenerateEmailConfirmationToken(user.Id);
-                //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                //string code = userManager.GenerateEmailConfirmationToken(user.Id);
+                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",
-                //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
+                //     "You are registered as a Student. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
             }
             else
             {
@@ -122,13 +132,15 @@ namespace Scheduler_App.Controllers
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
             student.Email = formData.Email;
+            //roleManager.Create(user.Id, "Student");
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }
 
         //GET: Edit
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult EditStudent(int? id)
         {
             if (!id.HasValue)
@@ -151,7 +163,7 @@ namespace Scheduler_App.Controllers
         }
         //POST:
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult EditStudent(int id, CreateEditStudentViewModel formData)
         {
             return SaveStudent(id, formData);
@@ -194,8 +206,8 @@ namespace Scheduler_App.Controllers
 
             var student = DbContext.StudentDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
-            var c = student.Courses.Select(p => p.Id);
-            var course = DbContext.CourseDatabase.Find(c);
+            //var c = student.Courses.Select(p => p.Id);
+            //var course = DbContext.CourseDatabase.Find(c);
             if (student == null)
                 return RedirectToAction(nameof(StudentsController.Index));
 
@@ -204,7 +216,7 @@ namespace Scheduler_App.Controllers
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
             allStudent.Courses = student.Courses;
-            //allStudent.ProgramName = name.ToString();
+            allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
             //var programName = student.Courses.FirstOrDefault(p => p.Id == id).Program.Name;
             //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
             //allStudent.CourseName = student.Course.Name;
@@ -398,7 +410,7 @@ namespace Scheduler_App.Controllers
             foreach (var singleCourse in courses)
             {
                 singleCourse.Students.Add(student);
-                
+
             }
             DbContext.SaveChanges();
             var studentProgram = student.Courses.FirstOrDefault(p => p.Program == assignProgram).Program;
