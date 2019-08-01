@@ -183,6 +183,7 @@ namespace Scheduler_App.Controllers
            Student students = DbContext.StudentDatabase.Find(id);
             DbContext.StudentDatabase.Remove(students);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Student.";
             return RedirectToAction(nameof(StudentsController.Index));
         }
 

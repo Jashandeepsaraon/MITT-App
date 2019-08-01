@@ -39,6 +39,10 @@
 }
 else
 {
+    if (TempData["Message"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Message"]</div>
+    }
     <table id="sample-datatables" class="table table-striped" style="margin-bottom:400px">
         <thead>
             <tr>

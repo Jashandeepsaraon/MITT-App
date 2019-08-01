@@ -21,6 +21,7 @@
                 <p>Add Instructor</p>
                 <div class="form-group">
                     @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList)
+                    @Html.ValidationMessageFor(m => m.InstructorList, "", new { @class = "text-danger" })
                 </div>
             }
             <input type="hidden" name="courseId" value="@Model.CourseId" />

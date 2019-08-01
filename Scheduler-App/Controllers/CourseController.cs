@@ -59,11 +59,18 @@ namespace Scheduler_App.Controllers
         private ActionResult SaveCourse(int? id, CreateEditCourseViewModel formData)
         {
             var allProgram = DbContext.ProgramDatabase
-                .Select(p => new SelectListItem()
-                {
-                    Text = p.Name,
-                    Value = p.Id.ToString(),
-                }).ToList();
+           .Select(p => new SelectListItem()
+           {
+               Text = p.Name,
+               Value = p.Id.ToString(),
+           }).ToList();
+
+            if (formData == null)
+            {
+                ModelState.AddModelError("", "No form data found.");
+                formData.ProgramList = allProgram;
+                return View(formData);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -102,7 +109,9 @@ namespace Scheduler_App.Controllers
                     course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
                     if (course == null)
                     {
-                        return RedirectToAction(nameof(CourseController.Index));
+                        ModelState.AddModelError("", "Course is not found.");
+                        return View("Error");
+                        //return RedirectToAction(nameof(CourseController.Index));
                     }
                 }
             }
@@ -125,7 +134,9 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
 
             var allProgram = DbContext.ProgramDatabase
@@ -165,7 +176,9 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
@@ -240,7 +253,9 @@ namespace Scheduler_App.Controllers
             var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == model.InstructorId);
             if (instructor == null)
             {
-                return RedirectToAction(nameof(InstructorController.Detail));
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
             }
             if (model.RemoveSelectedCourses != null)
             {
@@ -272,6 +287,12 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Details));
             }
             var course = instructor.Courses.FirstOrDefault(p => p.Id == id);
+            if (course == null)
+            {
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
+            }
             if (course != null)
             {
 
@@ -293,7 +314,9 @@ namespace Scheduler_App.Controllers
             Course course = DbContext.CourseDatabase.Find(id);
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
             return View(course);
         }
@@ -306,6 +329,7 @@ namespace Scheduler_App.Controllers
             course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Course";
             return RedirectToAction(nameof(CourseController.Index));
         }
     }

@@ -68,10 +68,9 @@ namespace Scheduler_App.Controllers
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
-                DbContext.Users.Add(user);
-                DbContext.InstructorDatabase.Add(instructor);
-                DbContext.SaveChanges();
-
+                    DbContext.Users.Add(user);
+                    DbContext.InstructorDatabase.Add(instructor);
+                    DbContext.SaveChanges();
                 //if (!userManager.IsInRole(user.Id, "Instructor"))
                 //{
                 //    userManager.AddToRole(user.Id, "Instructor");
@@ -151,6 +150,7 @@ namespace Scheduler_App.Controllers
             Instructor instructor = DbContext.InstructorDatabase.Find(id);
             DbContext.InstructorDatabase.Remove(instructor);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Instructor.";
             return RedirectToAction(nameof(InstructorController.Index));
         }
 
@@ -238,7 +238,12 @@ namespace Scheduler_App.Controllers
                   Text = p.FirstName,
                   Value = p.Id.ToString(),
               }).ToList();
-
+            if (instructorList == null)
+            {
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
+            }
             var model = new AssignInstructorViewModel();
             model.InstructorList = instructorList;
             model.CourseId = id;

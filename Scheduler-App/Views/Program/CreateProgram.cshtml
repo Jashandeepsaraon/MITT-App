@@ -32,7 +32,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                         </div>
-                        <input type="date" name="StartDate" />
+                        @Html.TextBoxFor(model => model.StartDate, new { @type = "datetime-local", placeholder = nameof(Model.StartDate) })
+                        @*<input type="date" name="StartDate" />*@
                     </div>
                 </div>
 
