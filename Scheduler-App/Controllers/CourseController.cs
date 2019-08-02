@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentDateTime;
 using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
@@ -88,16 +89,6 @@ namespace Scheduler_App.Controllers
             var course = Mapper.Map<Course>(formData);
             if (course.InstructorId == 0 && course.InstructorId == null && !id.HasValue)
             {
-                //var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
-                //if(course == null)
-                // {
-                course.StartDate = course.Program.StartDate;
-                //}
-                //else
-                //{
-                //    course.StartDate = 
-                //}
-
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
             }
@@ -105,13 +96,41 @@ namespace Scheduler_App.Controllers
             {
                 if (!id.HasValue)
                 {
-                    //course.Program.Courses.Add(course);
 
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                    DbContext.CourseDatabase.Add(course);
-                    DbContext.SaveChanges();
+                    if (course != null)
+                    {
+                        var course1 = course.Program.Courses.ElementAtOrDefault(0);
+                        var firstCourse = course1;
+                        if (firstCourse == null)
+                        {
+                            course.StartDate = course.Program.StartDate;
+                        }
+                        else
+                        {
+                            var lastCourse = course.Program.Courses.Last();
+                            var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
+                            lastCourse.EndDate = lastCourse.StartDate.AddBusinessDays(totalDays-1);
+                            //course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+
+                            //while (totalDays != 0)
+                            //{
+                            //    if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
+                            //    {
+                            //        lastCourse.EndDate = Convert.ToDateTime(lastCourse.EndDate).AddDays(1);
+                            //        totalDays--;
+                            //    }
+                            //}
+
+                            course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                        }
+                        DbContext.CourseDatabase.Add(course);
+                        DbContext.SaveChanges();
+                    }
+
                 }
+
                 else
                 {
                     course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
@@ -284,7 +303,7 @@ namespace Scheduler_App.Controllers
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("Detail","Instructor", new { id = instructor.Id });
+            return RedirectToAction("Detail", "Instructor", new { id = instructor.Id });
         }
 
         // Method for the Remove Course to the Instructor
@@ -352,9 +371,9 @@ namespace Scheduler_App.Controllers
         public JsonResult GetEvents()
         {
             var eve = DbContext.CourseDatabase.ToList();
-            var events = eve.Select(p => p.Name).ToList();
+            //var endDate = eve.Select(p => Convert.ToDateTime(p.EndDate));
+            var events = eve.Select(p => new { p.Name, p.EndDate, p.StartDate }).ToList();
             return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }
-
