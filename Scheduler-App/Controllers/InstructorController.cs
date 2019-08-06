@@ -243,7 +243,7 @@ namespace Scheduler_App.Controllers
             var instructorList = DbContext.InstructorDatabase
               .Select(p => new SelectListItem()
               {
-                  Text = p.FirstName,
+                  Text = p.FirstName + " " + p.LastName,
                   Value = p.Id.ToString(),
               }).ToList();
             if (instructorList == null)
