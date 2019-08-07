@@ -107,6 +107,7 @@ namespace Scheduler_App.Controllers
                 DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 DbContext.SaveChanges();
+                return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
                 //String code = userManager.GenerateEmailConfirmationToken(user.Id);
                 //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",
@@ -124,7 +125,7 @@ namespace Scheduler_App.Controllers
             student.LastName = formData.LastName;
             student.Email = formData.Email;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(StudentsController.Index));
+            return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
         }
 
         //GET: Edit
@@ -184,9 +185,8 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(StudentsController.Index));
         }
 
-
         [HttpGet]
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int? programId)
         {
             if (!id.HasValue)
                 return RedirectToAction(nameof(StudentsController.Index));
@@ -195,22 +195,40 @@ namespace Scheduler_App.Controllers
 
             var student = DbContext.StudentDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
-            //var c = student.Courses.Select(p => p.Id);
-            //var course = DbContext.CourseDatabase.Find(c);
+
             if (student == null)
+            {
                 return RedirectToAction(nameof(StudentsController.Index));
+            }
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == programId);
 
             var allStudent = new StudentViewModel();
             allStudent.FirstName = student.FirstName;
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
             allStudent.Courses = student.Courses;
-            allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
+            //allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
             //var programName = student.Courses.FirstOrDefault(p => p.Id == id).Program.Name;
             //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
             //allStudent.CourseName = student.Course.Name;
             //var programName = allStudent.Courses.FirstOrDefault(p => p.Id == id).ProgramName;
+            if ( allStudent.Courses.Count != 0)
+            {
+                //allStudent.ProgramId = program.Id;
+                var programName = allStudent.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
+                programName = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
+                allStudent.ProgramId = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Id;
+                allStudent.ProgramName = programName;
+            }
+            else
+            {
+                allStudent.ProgramName = null;
+                allStudent.ProgramId = null;
+            }
+
             ViewBag.id = id;
+            ViewBag.programId = programId;
             return View(allStudent);
         }
         [HttpGet]
@@ -268,7 +286,7 @@ namespace Scheduler_App.Controllers
         }
 
         [HttpGet]
-        public ActionResult AssignCourse(int? studentId)
+        public ActionResult AssignCourse(int? studentId, int? programId)
         {
             var allPrograms = DbContext.ProgramDatabase
                 .Select(p => new SelectListItem()
@@ -287,9 +305,11 @@ namespace Scheduler_App.Controllers
             var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
             var model = new AssignCourseToStudentViewModel();
             model.StudentId = student.Id;
+            model.ProgramId = programId;
+            
 
             var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(k => new SelectListItem()
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
             {
                 Text = k.Name,
                 Value = k.Id.ToString(),
@@ -330,9 +350,13 @@ namespace Scheduler_App.Controllers
                 //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
+
+                var program = student.Courses.FirstOrDefault(p => p.Id == assigncourse.Id).Program;
+                int? programId = program.Id;
+                programId = model.ProgramId;
             }
 
-            return RedirectToAction("Details", new { id = student.Id });
+            return RedirectToAction("Details", new { id = student.Id, programId = model.ProgramId });
         }
 
         [HttpPost]
@@ -399,17 +423,17 @@ namespace Scheduler_App.Controllers
             foreach (var singleCourse in courses)
             {
                 singleCourse.Students.Add(student);
-                
             }
             DbContext.SaveChanges();
             var studentProgram = student.Courses.FirstOrDefault(p => p.Program == assignProgram).Program;
+            var programId = studentProgram.Id;
             studentProgram = assignProgram;
-
+            programId = assignProgram.Id;
             //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
-            ViewBag.studentProgram = studentProgram;
+            ViewBag.programId = model.ProgramId;
             DbContext.SaveChanges();
-            return RedirectToAction("Details", new { id = student.Id });
+            return RedirectToAction("Details", new { id = student.Id, programId = model.ProgramId });
         }
 
         [HttpPost]
@@ -420,8 +444,10 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(CourseController.Details));
             }
-            var program = DbContext.CourseDatabase.Where(p => p.ProgramId == id).ToList();
+            var program = student.Courses.FirstOrDefault(p => p.ProgramId == id).Program;
+            //var course = DbContext.CourseDatabase.Where(p => p.ProgramId == id).ToList();
             var courses = student.Courses.ToList();
+
             if (courses != null)
             {
                 foreach (var ca in courses)

@@ -66,22 +66,31 @@ namespace Scheduler_App.Controllers
             var instructor = Mapper.Map<Instructor>(formData);
 
             //var Instructor = formData.Instructor;
+            
             if (!id.HasValue)
             {
-                DbContext.Users.Add(user);
-                DbContext.InstructorDatabase.Add(instructor);
-                DbContext.SaveChanges();
+                try{
+                    DbContext.Users.Add(user);
+                    DbContext.InstructorDatabase.Add(instructor);
+                    DbContext.SaveChanges();
+                }
+                catch(Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                   
+                    //ModelState.AddModelError("", e.InnerException);
+                }                
 
                 //if (!userManager.IsInRole(user.Id, "Instructor"))
                 //{
                 //    userManager.AddToRole(user.Id, "Instructor");
                 //}
-                string code = userManager.GenerateEmailConfirmationToken(user.Id);
-                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                userManager.SendEmail(userId, "Notification",
-                     "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                //string code = userManager.GenerateEmailConfirmationToken(user.Id);
+                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                //userManager.SendEmail(userId, "Notification",
+                //     "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
             }
 
             else
@@ -246,6 +255,11 @@ namespace Scheduler_App.Controllers
                   Text = p.FirstName,
                   Value = p.Id.ToString(),
               }).ToList();
+
+            if(instructorList == null || instructorList.Count == 0)
+            {
+                TempData["Message"] = "There is no Instructor available";
+            }
 
             var model = new AssignInstructorViewModel();
             model.InstructorList = instructorList;
