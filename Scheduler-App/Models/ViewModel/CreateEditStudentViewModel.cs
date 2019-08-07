@@ -17,5 +17,10 @@ namespace Scheduler_App.Models.ViewModel
         [Required]
         public string Email { get; set; }
         public string Password { get; set; }
+
+        public CreateEditStudentViewModel()
+        {
+            Password = "Password-1";
+        }
     }
 }

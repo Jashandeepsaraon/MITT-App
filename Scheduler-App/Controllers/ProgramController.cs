@@ -67,7 +67,7 @@ namespace Scheduler_App.Controllers
             var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
-                program.StartDate = DateTime.Now;
+                //program.StartDate = DateTime.Now;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
                 return RedirectToAction("Details", new { id = program.Id });
@@ -81,8 +81,44 @@ namespace Scheduler_App.Controllers
                     return RedirectToAction(nameof(ProgramController.Index));
                 }
             }
+           //var startDate =  program.Courses.Select(p => p.StartDate);
+           // var endDate = program.Courses.Select(p => p.EndDate);
+           // foreach(var sd in startDate)
+           // {
+
+           // }
             program.Name = formData.Name;
             program.StartDate = formData.StartDate;
+            var firstCourse = program.Courses.First();
+            var startDate = firstCourse.StartDate;
+            firstCourse.StartDate = formData.StartDate;
+            var lastCourse = program.Courses.Last();
+            if(lastCourse != null)
+            {
+                foreach(var course in program.Courses)
+                {
+                    var c = lastCourse.Hours / lastCourse.DailyHours;
+                    int newC = Convert.ToInt32(c - 1);
+                    int workDays = 0;
+                    lastCourse.EndDate = lastCourse.StartDate.AddDays(newC);
+                    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                    while (lastCourse.StartDate != lastCourse.EndDate)
+                    {
+                        if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            workDays++;
+                        }
+
+                        lastCourse.StartDate = lastCourse.StartDate.AddDays(1);
+                        //lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
+                        //course.StartDate = t;
+                    }
+                    lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
+                    lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
+
+                    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                }
+            }         
             DbContext.SaveChanges();
             return RedirectToAction("Details", new { id = program.Id });
         }
@@ -104,6 +140,7 @@ namespace Scheduler_App.Controllers
 
             var model = new CreateEditSchoolProgramViewModel();
             model.Name = program.Name;
+            model.StartDate = program.StartDate;
             return View(model);
         }
 
@@ -142,6 +179,7 @@ namespace Scheduler_App.Controllers
             }
             DbContext.ProgramDatabase.Remove(program);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Program.";
             return RedirectToAction(nameof(ProgramController.Index));
         }
 

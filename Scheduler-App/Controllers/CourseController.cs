@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentDateTime;
 using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Scheduler_App.Controllers
@@ -80,11 +78,18 @@ namespace Scheduler_App.Controllers
         private ActionResult SaveCourse(int? id, CreateEditCourseViewModel formData)
         {
             var allProgram = DbContext.ProgramDatabase
-                .Select(p => new SelectListItem()
-                {
-                    Text = p.Name,
-                    Value = p.Id.ToString(),
-                }).ToList();
+           .Select(p => new SelectListItem()
+           {
+               Text = p.Name,
+               Value = p.Id.ToString(),
+           }).ToList();
+
+            if (formData == null)
+            {
+                ModelState.AddModelError("", "No form data found.");
+                formData.ProgramList = allProgram;
+                return View(formData);
+            }
 
             if (!ModelState.IsValid)
             {
@@ -112,21 +117,11 @@ namespace Scheduler_App.Controllers
             {
                 if (!id.HasValue)
                 {
-                    //course.Program.Courses.Add(course);
+
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                    if(formData.PrerequisiteForId != null)
-                    {
-                        course.PrerequisiteFor = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteForId).Id;
-                    }
-                    if(formData.PrerequisiteOfId != null)
-                    {
-                        course.PrerequisiteOf = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteOfId).Id;
-                    }
-
                     DbContext.CourseDatabase.Add(course);
                     DbContext.SaveChanges();
-                    return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
                 }
                 else
                 {
@@ -143,6 +138,8 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
         }
 
+
+
         //GET: EditCourse
         [HttpGet]
         //[Authorize(Roles = "Admin")]
@@ -156,7 +153,9 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
 
             var allProgram = DbContext.ProgramDatabase
@@ -196,12 +195,16 @@ namespace Scheduler_App.Controllers
 
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
 
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
+            courseDetail.StartDate = course.StartDate;
+            //courseDetail.EndDate = course.EndDate;
             if (courseDetail.Instructor != null)
             {
                 courseDetail.Instructor.FirstName = course.Instructor.FirstName;
@@ -274,7 +277,9 @@ namespace Scheduler_App.Controllers
             var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == model.InstructorId);
             if (instructor == null)
             {
-                return RedirectToAction(nameof(InstructorController.Detail));
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
             }
             if (model.RemoveSelectedCourses != null)
             {
@@ -306,6 +311,12 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Details));
             }
             var course = instructor.Courses.FirstOrDefault(p => p.Id == id);
+            if (course == null)
+            {
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
+            }
             if (course != null)
             {
 
@@ -327,7 +338,9 @@ namespace Scheduler_App.Controllers
             Course course = DbContext.CourseDatabase.Find(id);
             if (course == null)
             {
-                return RedirectToAction(nameof(CourseController.Index));
+                ModelState.AddModelError("", "Course is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(CourseController.Index));
             }
             return View(course);
         }
@@ -340,7 +353,22 @@ namespace Scheduler_App.Controllers
             course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Course";
             return RedirectToAction(nameof(CourseController.Index));
+        }
+
+
+        public ActionResult Cal()
+        {
+            return View();
+        }
+
+        public JsonResult GetEvents()
+        {
+            var eve = DbContext.CourseDatabase.ToList();
+            //var endDate = eve.Select(p => Convert.ToDateTime(p.EndDate));
+            var events = eve.Select(p => new { p.Name, p.EndDate, p.StartDate }).ToList();
+            return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }
