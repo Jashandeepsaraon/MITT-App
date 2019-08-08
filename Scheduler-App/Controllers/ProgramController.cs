@@ -70,7 +70,7 @@ namespace Scheduler_App.Controllers
                 //program.StartDate = DateTime.Now;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = program.Id });
             }
 
             else
@@ -216,7 +216,7 @@ namespace Scheduler_App.Controllers
             course.Hours = formData.Hours;
 
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Index));
+            return RedirectToAction(nameof(ProgramController.Details), new { id = programId });
         }
         [HttpPost]
         public ActionResult DeleteProgramCourse(int id,int Courseid)

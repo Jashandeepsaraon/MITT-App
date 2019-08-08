@@ -39,7 +39,27 @@
                         @Html.DropDownListFor(model => model.ProgramId, Model.ProgramList, "---- Select Program ----", new { @class = "form-control" })
                         @*@Html.ValidationMessageFor(m => m.ProgramId, "", new { @class = "text-danger" })*@
                     </div>
-                </div>               
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrerequisiteForId, "PrerequisiteFor", new { @class = "form-control-label" })
+                    <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+                        </div>
+                        @Html.DropDownListFor(model => model.PrerequisiteForId, Model.PrerequisiteFor, "---- Select Course ----", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PrerequisiteFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrerequisiteOfId, "PrerequisiteOf", new { @class = "form-control-label" })
+                    <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+                        </div>
+                        @Html.DropDownListFor(model => model.PrerequisiteOfId, Model.PrerequisiteOf, "---- Select Course ----", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PrerequisiteOf, "", new { @class = "text-danger" })
+                    </div>
+                </div>
                 <div class="form-inline row">
                     <div class="text-center col">
                         <button type="submit" class="btn btn-success my-4">Create Course</button>

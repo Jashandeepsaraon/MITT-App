@@ -41,8 +41,29 @@ namespace Scheduler_App.Controllers
                    Value = p.Id.ToString(),
                }).ToList();
 
+            var course = DbContext.CourseDatabase.ToList();
+            if (course == null)
+            {    
+                return RedirectToAction("Index");
+            }
+            var prerequisiteFor = DbContext.CourseDatabase
+                    .Select(p => new SelectListItem()
+                    {
+                        Text = p.Name,
+                        Value = p.Id.ToString()
+                    }).ToList();
+
+            var prerequisiteOf = DbContext.CourseDatabase
+                    .Select(p => new SelectListItem()
+                    {
+                        Text = p.Name,
+                        Value = p.Id.ToString()
+                    }).ToList();
+
             var model = new CreateEditCourseViewModel();
             model.ProgramList = allProgram;
+            model.PrerequisiteFor = prerequisiteFor;
+            model.PrerequisiteOf = prerequisiteOf;
             return View(model);
         }
 
@@ -99,38 +120,9 @@ namespace Scheduler_App.Controllers
 
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
-                    if (course != null)
-                    {
-                        var course1 = course.Program.Courses.ElementAtOrDefault(0);
-                        var firstCourse = course1;
-                        if (firstCourse == null)
-                        {
-                            course.StartDate = course.Program.StartDate;
-                        }
-                        else
-                        {
-                            var lastCourse = course.Program.Courses.Last();
-                            var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
-                            lastCourse.EndDate = lastCourse.StartDate.AddBusinessDays(totalDays-1);
-                            //course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-
-                            //while (totalDays != 0)
-                            //{
-                            //    if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                            //    {
-                            //        lastCourse.EndDate = Convert.ToDateTime(lastCourse.EndDate).AddDays(1);
-                            //        totalDays--;
-                            //    }
-                            //}
-
-                            course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                        }
-                        DbContext.CourseDatabase.Add(course);
-                        DbContext.SaveChanges();
-                    }
-
+                    DbContext.CourseDatabase.Add(course);
+                    DbContext.SaveChanges();
                 }
-
                 else
                 {
                     course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
@@ -143,7 +135,7 @@ namespace Scheduler_App.Controllers
             course.Name = formData.Name;
             course.Hours = formData.Hours;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(CourseController.Index));
+            return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
         }
 
 
@@ -207,6 +199,7 @@ namespace Scheduler_App.Controllers
                 return View("Error");
                 //return RedirectToAction(nameof(CourseController.Index));
             }
+
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
@@ -218,6 +211,8 @@ namespace Scheduler_App.Controllers
                 courseDetail.Instructor.LastName = course.Instructor.LastName;
             }
             courseDetail.ProgramName = course.Program.Name;
+            //courseDetail.PrerequisiteFor = preFor;
+            //courseDetail.PrerequisiteOf = preOf;
             ViewBag.id = id;
             return View(courseDetail);
         }
@@ -243,7 +238,7 @@ namespace Scheduler_App.Controllers
             var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == instructorId);
             model.InstructorId = instructor.Id;
             var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem()
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(c => new SelectListItem()
             {
                 Text = c.Name,
                 Value = c.Id.ToString(),
