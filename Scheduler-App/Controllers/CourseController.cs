@@ -101,8 +101,7 @@ namespace Scheduler_App.Controllers
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                     if (course != null)
                     {
-                        var course1 = course.Program.Courses.ElementAtOrDefault(0);
-                        var firstCourse = course1;
+                        var firstCourse = course.Program.Courses.ElementAtOrDefault(0);
                         if (firstCourse == null)
                         {
                             course.StartDate = course.Program.StartDate;
@@ -112,26 +111,12 @@ namespace Scheduler_App.Controllers
                             var lastCourse = course.Program.Courses.Last();
                             var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
                             lastCourse.EndDate = lastCourse.StartDate.AddBusinessDays(totalDays-1);
-                            //course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-
-                            //while (totalDays != 0)
-                            //{
-                            //    if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                            //    {
-                            //        lastCourse.EndDate = Convert.ToDateTime(lastCourse.EndDate).AddDays(1);
-                            //        totalDays--;
-                            //    }
-                            //}
-
                             course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
                         }
                         DbContext.CourseDatabase.Add(course);
                         DbContext.SaveChanges();
                     }
-
-                }
-
-                else
+                }else
                 {
                     course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
                     if (course == null)
@@ -145,8 +130,6 @@ namespace Scheduler_App.Controllers
             DbContext.SaveChanges();
             return RedirectToAction(nameof(CourseController.Index));
         }
-
-
 
         //GET: EditCourse
         [HttpGet]
@@ -197,7 +180,6 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Index));
             }
 
-            var userId = User.Identity.GetUserId();
             var course = DbContext.CourseDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
 
@@ -248,17 +230,6 @@ namespace Scheduler_App.Controllers
                 Text = c.Name,
                 Value = c.Id.ToString(),
             }).ToList();
-            //if (instructor.Courses != null)
-            //{
-            //    var courses = DbContext.CourseDatabase.Where(p => p.ProgramId == 0).Select(c => new SelectListItem()
-            //    {
-            //        Text = c.Name,
-            //        Value = c.Id.ToString(),
-            //    }).ToList();
-            //    return View(courses);
-            //}
-            //var developerRoleId = roleManager.Roles.First(role => role.Name == "developer").Id;
-            //var developer = DbContext.Users.Where(user => user.Roles.Any(role => role.RoleId == developerRoleId)).ToList();
             model.AddCourses = course;
             model.ProgramList = program;
             return View(model);
@@ -289,9 +260,8 @@ namespace Scheduler_App.Controllers
             if (model.RemoveSelectedCourses != null)
             {
                 //var removecourse = DbContext.CourseDatabase.First(course => instructor.Id == course.InstructorId).Instructor.Remove(instructor);
-                var instId = instructor.Id.ToString();
-                instId = null;
-                //ticket.AssignedToId = null;
+                var instructorId = instructor.Id.ToString();
+                instructorId = null;
             }
             if (model.AddSelectedCourses != null)
             {
@@ -324,7 +294,6 @@ namespace Scheduler_App.Controllers
             }
             if (course != null)
             {
-
                 var AssignedCourse = instructor.Courses.Remove(course);
                 course.Instructor = null;
                 DbContext.SaveChanges();
@@ -362,8 +331,7 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(CourseController.Index));
         }
 
-
-        public ActionResult Cal()
+        public ActionResult Calendar()
         {
             return View();
         }

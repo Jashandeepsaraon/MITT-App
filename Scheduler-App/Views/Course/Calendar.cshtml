@@ -19,14 +19,14 @@
                 success: function (data) {
                     $.each(data, function (i, v) {
                         console.log(v)
-                        //events.push({
-                        //    name: v.name,
-                        //    //hours: v.hours,
-                        //    start: v.Start),
-                        //    end: v.End != null ? moment(v.End) : null,
-                        //    //color: v.ThemeColor,
-                        //    //allDay: v.IsFullDay
-                        //});
+                        events.push({
+                            Name: v.Name,
+                            //hours: v.hours,
+                            Start: v.Start,
+                            End: v.End != null ? moment(v.End) : null,
+                            //color: v.ThemeColor,
+                            //allDay: v.IsFullDay
+                        });
                     })
 
                     GenerateCalender(events);
