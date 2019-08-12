@@ -10,10 +10,10 @@
         </div>
         <div class="card-body" style="margin-top:-15px; width:400px">
             @using (Html.BeginForm("ImportInstructor", "Instructor", FormMethod.Post, new { enctype = "multipart/form-data" }))
-            {
+             {
                 <input type="file" name="postedFile" />
                 <button type="submit" class="btn btn-success my-4">Import</button>
-            }
+             }
 
             @*<table id="sample-datatables" class="table table-striped" style="margin-top:40px" cellpadding="0" cellspacing="0">
                     <thead>

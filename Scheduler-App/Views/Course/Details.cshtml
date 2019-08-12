@@ -8,9 +8,6 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
-        @*<div>
-            <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
-        </div>*@
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -25,19 +22,19 @@
                     <th style="display:flex; justify-content:flex-start">
                         Instructor Name
                         @if (Model.Instructor == null)
-                        {
+                         {
                             <div>
                                 (<a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>)
                             </div>
-                        }
+                         }
 
                     </th>
                     @if (Model.Instructor == null)
-                    {
+                     {
                         <td>
                             <p><strong>No Instructor Assigned</strong></p>
                         </td>
-                    }
+                     }
                     else
                     {
                         <td>
@@ -53,7 +50,6 @@
                             </div>
                         </td>
                     }
-
                 </tr>
             </thead>
             <tbody></tbody>
