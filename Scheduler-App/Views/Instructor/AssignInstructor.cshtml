@@ -9,25 +9,33 @@
             <h2>Add Instructor</h2>
         </div>
         <div class="card-body" style="width: 400px">
-            <form action="@Url.Action("AssignInstructor", "Instructor")" method="post">
-                @Html.ValidationSummary(false)
-                @if (Model.InstructorList != null && Model.InstructorList.Any())
-                {
-                    <p>Add Instructor</p>
-                    <div class="input-group input-group-alternative">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Message"]</div>
+            }
+            else
+            {
+                <form action="@Url.Action("AssignInstructor", "Instructor")" method="post">
+                    @Html.ValidationSummary(false)
+                    @if (Model.InstructorList != null && Model.InstructorList.Any())
+                    {
+                        <p>Add Instructor</p>
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-app"></i></span>
+                            </div>
+                            @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList, "--- Select Instructor ---", new { @class = "form-control" })
+
                         </div>
-                        @Html.DropDownListFor(p => p.AddSelectedInstructor, Model.InstructorList, "--- Select Instructor ---", new { @class = "form-control" })
+                    }
+                    <input type="hidden" name="courseId" value="@Model.CourseId" />
+                    <div class="form-inline row">
+                        <div class="text-center col">
+                            <button type="submit" class="btn btn-success my-4">Submit</button>
+                        </div>
                     </div>
-                }
-                <input type="hidden" name="courseId" value="@Model.CourseId" />
-                <div class="form-inline row">
-                    <div class="text-center col">
-                        <button type="submit" class="btn btn-success my-4">Submit</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            }
         </div>
     </div>
 </div>

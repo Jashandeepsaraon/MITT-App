@@ -69,7 +69,7 @@ namespace Scheduler_App.Controllers
             {
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = program.Id });
             }
 
             else
@@ -180,7 +180,7 @@ namespace Scheduler_App.Controllers
             course.Name = formData.Name;
             course.Hours = formData.Hours;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Index));
+            return RedirectToAction(nameof(ProgramController.Details), new { id = programId });
         }
 
         [HttpPost]

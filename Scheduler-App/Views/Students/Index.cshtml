@@ -58,7 +58,7 @@ else
             {
                 <tr>
                     <td>
-                        <a href="@Url.Action("Details", "Students", new { id = student.Id })">
+                        <a href="@Url.Action("Details", "Students", new { id = student.Id, programId = student.ProgramId })">
                             @student.FirstName @student.LastName
                         </a>
                     </td>
