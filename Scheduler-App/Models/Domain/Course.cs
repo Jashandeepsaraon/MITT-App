@@ -16,6 +16,11 @@ namespace Scheduler_App.Models.Domain
         public int? InstructorId { get; set; }
         public virtual List<Student> Students { get; set; }
         public int Hours { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public double DailyHours { get; set; }
+        public int? PrerequisiteFor { get; set; }
+        public int? PrerequisiteOf { get; set; }
 
         public Course()
         {

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,29 +56,50 @@ namespace Scheduler_App.Controllers
             }
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result = userManager.CreateAsync(user, formData.Password);
+            var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
 
-            if (!id.HasValue)
+            try
             {
-                DbContext.Users.Add(user);
-                DbContext.StudentDatabase.Add(student);
-                DbContext.SaveChanges();
-                return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
-                //String code = userManager.GenerateEmailConfirmationToken(user.Id);
-                //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                //userManager.SendEmail(userId, "Notification",
-                //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
-            }
-            else
-            {
-                student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
-                if (student == null)
+                if (!id.HasValue)
                 {
-                    return RedirectToAction(nameof(StudentsController.Index));
+                    //DbContext.Users.Add(user);
+                    DbContext.StudentDatabase.Add(student);
+                    DbContext.SaveChanges();
+
+
+                    return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
                 }
+                else
+                {
+                    student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
+                    if (student == null)
+                    {
+                        return RedirectToAction(nameof(StudentsController.Index));
+                    }
+                }
+
             }
+            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            {
+                Exception raise = dbEx;
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        string message = string.Format("{0}:{1}",
+                            validationErrors.Entry.Entity.ToString(),
+                            validationError.ErrorMessage);
+                        // raise a new exception nesting  
+                        // the current instance as InnerException  
+                        raise = new InvalidOperationException(message, raise);
+                    }
+                }
+                throw raise;
+            }
+
+            
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
             student.Email = formData.Email;
@@ -124,7 +146,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(StudentsController.Index));
             }
-            Student student = DbContext.StudentDatabase.Find(id);
+            var student = DbContext.StudentDatabase.Find(id);
             if (student == null)
             {
                 return RedirectToAction(nameof(StudentsController.Index));
@@ -134,10 +156,12 @@ namespace Scheduler_App.Controllers
 
         // POST: Delete Action for Student
         [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id, string userId)
         {
-            Student students = DbContext.StudentDatabase.Find(id);
+            var students = DbContext.StudentDatabase.Find(id);
+            var applicationUser = DbContext.Users.FirstOrDefault(p => p.Email == students.Email);
             DbContext.StudentDatabase.Remove(students);
+            DbContext.Users.Remove(applicationUser);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(StudentsController.Index));
         }

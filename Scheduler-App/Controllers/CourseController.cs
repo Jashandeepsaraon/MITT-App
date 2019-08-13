@@ -120,6 +120,14 @@ namespace Scheduler_App.Controllers
 
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+                    if (formData.PrerequisiteForId != null)
+                    {
+                        course.PrerequisiteFor = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteForId).Id;
+                    }
+                    if (formData.PrerequisiteOfId != null)
+                    {
+                        course.PrerequisiteOf = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteOfId).Id;
+                    }
                     if (course != null)
                     {
                         var course1 = course.Program.Courses.ElementAtOrDefault(0);
@@ -148,8 +156,8 @@ namespace Scheduler_App.Controllers
                         }
                         DbContext.CourseDatabase.Add(course);
                         DbContext.SaveChanges();
+                        return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
                     }
-
                 }
 
                 else
@@ -348,7 +356,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(CourseController.Index));
             }
-            Course course = DbContext.CourseDatabase.Find(id);
+            var course = DbContext.CourseDatabase.Find(id);
             if (course == null)
             {
                 ModelState.AddModelError("", "Course is not found.");
@@ -362,7 +370,7 @@ namespace Scheduler_App.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Course course = DbContext.CourseDatabase.Find(id);
+            var course = DbContext.CourseDatabase.Find(id);
             course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();

@@ -15,6 +15,7 @@ namespace Scheduler_App.Models.ViewModel
         [Required]
         public string LastName { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
 

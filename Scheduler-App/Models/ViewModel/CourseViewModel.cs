@@ -16,6 +16,10 @@ namespace Scheduler_App.Models.ViewModel
         public virtual Instructor Instructor { get; set; }
         public int? InstructorId { get; set; }
         public int Hours { get; set; }
-        public int? ProgramId { get; set; }       
+        public int? ProgramId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int? PrerequisiteFor { get; set; }
+        public int? PrerequisiteOf { get; set; }
     }
 }

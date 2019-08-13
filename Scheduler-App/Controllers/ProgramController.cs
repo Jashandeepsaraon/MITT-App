@@ -123,7 +123,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(ProgramController.Index));
             }
-            Program program = DbContext.ProgramDatabase.Find(id);
+            var program = DbContext.ProgramDatabase.Find(id);
             if (program == null)
             {
                 return RedirectToAction(nameof(ProgramController.Index));
@@ -135,7 +135,7 @@ namespace Scheduler_App.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Program program = DbContext.ProgramDatabase.Find(id);
+            var program = DbContext.ProgramDatabase.Find(id);
             //var p = DbContext.ProgramDatabase.ToList();
             var course = DbContext.CourseDatabase.Where(p => p.ProgramId == id ).ToList();
             foreach(var ca in course)
