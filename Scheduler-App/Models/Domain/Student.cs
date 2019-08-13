@@ -13,6 +13,7 @@ namespace Scheduler_App.Models.Domain
         public string LastName { get; set; }
         [EmailAddress]
         public string Email { get; set; }
+        public string ProgramName { get; set; }
         public string Password { get; set; }
         public virtual List<Course> Courses { get; set; }
 

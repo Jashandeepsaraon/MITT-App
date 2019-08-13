@@ -64,7 +64,7 @@ namespace Scheduler_App.Controllers
 
             if (!id.HasValue)
             {
-                //DbContext.Users.Add(user);
+                DbContext.Users.Add(user);
                 DbContext.InstructorDatabase.Add(instructor);
                 DbContext.SaveChanges();
                 //if (!userManager.IsInRole(user.Id, "Instructor"))
@@ -240,7 +240,7 @@ namespace Scheduler_App.Controllers
             var instructorList = DbContext.InstructorDatabase
               .Select(p => new SelectListItem()
               {
-                  Text = p.FirstName,
+                  Text = p.FirstName + " " + p.LastName,
                   Value = p.Id.ToString(),
               }).ToList();
             if (instructorList == null)

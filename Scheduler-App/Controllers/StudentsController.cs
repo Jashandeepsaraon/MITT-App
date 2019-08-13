@@ -60,43 +60,24 @@ namespace Scheduler_App.Controllers
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
 
-            try
+            if (!id.HasValue)
             {
-                if (!id.HasValue)
-                {
-                    //DbContext.Users.Add(user);
-                    DbContext.StudentDatabase.Add(student);
-                    DbContext.SaveChanges();
-
-
-                    return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
-                }
-                else
-                {
-                    student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
-                    if (student == null)
-                    {
-                        return RedirectToAction(nameof(StudentsController.Index));
-                    }
-                }
-
+                DbContext.Users.Add(user);
+                DbContext.StudentDatabase.Add(student);
+                DbContext.SaveChanges();
+                return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
+                //String code = userManager.GenerateEmailConfirmationToken(user.Id);
+                //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                //userManager.SendEmail(userId, "Notification",
+                //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
             }
-            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            else
             {
-                Exception raise = dbEx;
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == id);
+                if (student == null)
                 {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        string message = string.Format("{0}:{1}",
-                            validationErrors.Entry.Entity.ToString(),
-                            validationError.ErrorMessage);
-                        // raise a new exception nesting  
-                        // the current instance as InnerException  
-                        raise = new InvalidOperationException(message, raise);
-                    }
+                    return RedirectToAction(nameof(StudentsController.Index));
                 }
-                throw raise;
             }
 
             
@@ -238,7 +219,7 @@ namespace Scheduler_App.Controllers
                             FirstName = row.Split(',')[0],
                             LastName = row.Split(',')[1],
                             Email = row.Split(',')[2],
-                            //ProgramName = row.Split(',')[3],
+                            ProgramName = row.Split(',')[3],
                         });
                         var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                         var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
@@ -246,6 +227,11 @@ namespace Scheduler_App.Controllers
                         var userId = user.Id;
                         DbContext.Users.Add(user);
                         student.Add(students);
+                        //foreach (var singleStudent in student)
+                        //{
+                        //    var program = singleStudent.ProgramName.Select(p => p.);
+                        //    singleStudent.Courses
+                        //}
                         DbContext.StudentDatabase.Add(students);
                         DbContext.SaveChanges();
                     }

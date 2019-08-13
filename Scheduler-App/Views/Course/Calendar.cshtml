@@ -14,18 +14,20 @@
         $(document).ready(function () {
             var events = [];
             $.ajax({
-                type: "GET",
+                type: "Get",
                 url: "/course/GetEvents",
                 success: function (data) {
                     $.each(data, function (i, v) {
+
+
                         console.log(v)
                         events.push({
-                            Name: v.Name,
-                            //hours: v.hours,
-                            Start: v.Start,
-                            End: v.End != null ? moment(v.End) : null,
-                            //color: v.ThemeColor,
-                            //allDay: v.IsFullDay
+                            title: v.Name,
+                            start: v.startDate[i.start[v.StartTime]],
+                            timeZone:v.DailyHours,
+                            //duration:'5.5',
+                            end: v.endDate[i.end[v.EndTime]], 
+                            allDay: false,
                         });
                     })
 
@@ -41,6 +43,7 @@
                 $('#calender').fullCalendar({
                     contentHeight: 400,
                     defaultDate: new Date(),
+                    weekends: false,
                     timeFormat: 'h(:mm)a',
                     header: {
                         left: 'prev,next today',
