@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using FluentDateTime;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -104,26 +105,25 @@ namespace Scheduler_App.Controllers
                         var course1 = course.Program.Courses.ElementAtOrDefault(0);
                         var firstCourse = course1;
                         if (firstCourse == null)
-                        {
+                        {                          
                             course.StartDate = course.Program.StartDate;
+                            var totalDays = Convert.ToInt32(course.Hours / course.DailyHours);
+                         course.EndDate = course.StartDate.AddBusinessDays(totalDays - 1);             /*var hours = Convert.ToDouble(course.DailyHours);*/
+                            var startTime = course.StartTime  = course.StartDate.TimeOfDay;
+                            var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                             var a = remainingHours + startTime.Hours ;
+                            course.EndTime = new TimeSpan((int)a, startTime.Minutes,0);
                         }
                         else
                         {
                             var lastCourse = course.Program.Courses.Last();
                             var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
-                            lastCourse.EndDate = lastCourse.StartDate.AddBusinessDays(totalDays-1);
-                            //course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-
-                            //while (totalDays != 0)
-                            //{
-                            //    if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                            //    {
-                            //        lastCourse.EndDate = Convert.ToDateTime(lastCourse.EndDate).AddDays(1);
-                            //        totalDays--;
-                            //    }
-                            //}
-
+                            course.EndDate = lastCourse.EndDate.AddBusinessDays(totalDays-1);
                             course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                            var startTime = course.StartTime = course.StartDate.TimeOfDay;
+                            var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                            var a = remainingHours + startTime.Hours;
+                            course.EndTime = new TimeSpan((int)a, startTime.Minutes, 0);
                         }
                         DbContext.CourseDatabase.Add(course);
                         DbContext.SaveChanges();
@@ -211,7 +211,7 @@ namespace Scheduler_App.Controllers
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
             courseDetail.StartDate = course.StartDate;
-            //courseDetail.EndDate = course.EndDate;
+            courseDetail.EndDate = course.EndDate;
             if (courseDetail.Instructor != null)
             {
                 courseDetail.Instructor.FirstName = course.Instructor.FirstName;
@@ -368,12 +368,15 @@ namespace Scheduler_App.Controllers
             return View();
         }
 
+      
         public JsonResult GetEvents()
         {
             var eve = DbContext.CourseDatabase.ToList();
-            //var endDate = eve.Select(p => Convert.ToDateTime(p.EndDate));
-            var events = eve.Select(p => new { p.Name, p.EndDate, p.StartDate }).ToList();
-            return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            var startDate = eve.Select(p => new {p.StartDate }.StartDate.GetDateTimeFormats()[3]);
+            var endDate = eve.Select(p => new { p.EndDate }.EndDate.GetDateTimeFormats()[3]);
+            var events = eve.Select(p => new { p.Name, startDate, endDate, p.StartTime, p.EndTime, p.DailyHours });
+
+            return new JsonResult { Data = events,JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }

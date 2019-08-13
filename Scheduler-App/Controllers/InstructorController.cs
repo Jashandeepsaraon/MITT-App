@@ -68,16 +68,16 @@ namespace Scheduler_App.Controllers
             //var Instructor = formData.Instructor;
             if (!id.HasValue)
             {
-                    DbContext.Users.Add(user);
+                    //DbContext.Users.Add(user);
                     DbContext.InstructorDatabase.Add(instructor);
                     DbContext.SaveChanges();
-                //if (!userManager.IsInRole(user.Id, "Instructor"))
-                //{
-                //    userManager.AddToRole(user.Id, "Instructor");
-                //}
+                if (!userManager.IsInRole(user.Id, "Instructor"))
+                {
+                    userManager.AddToRole(user.Id, "Instructor");
+                }
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                userManager.SendEmail(userId, "Notification",
+                userManager.SendEmailAsync(userId, "Notification",
                      "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                 return RedirectToAction("Index");

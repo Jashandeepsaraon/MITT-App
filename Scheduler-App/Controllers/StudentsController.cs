@@ -98,14 +98,10 @@ namespace Scheduler_App.Controllers
             //var roleManager =
             //  new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(DbContext));
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result = userManager.CreateAsync(user, formData.Password);
+            var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
 
-            //if (result.IsCompleted)
-            
-            // Add a user to the default role, or any role you prefer here
-            userManager.AddToRoleAsync(user.Id, "Student");
             
 
             if (!id.HasValue)
@@ -114,9 +110,13 @@ namespace Scheduler_App.Controllers
                 //student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                 //student.CourseName = student.Program.Courses.FirstOrDefault(p => p.Id == formData.CourseId).Name;
 
-                DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
+                //DbContext.Users.Add(user);
                 DbContext.SaveChanges();
+                if (!userManager.IsInRole(user.Id, "Student"))
+                {
+                    userManager.AddToRole(user.Id, "Student");
+                }
                 //string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",
@@ -264,7 +264,7 @@ namespace Scheduler_App.Controllers
                             FirstName = row.Split(',')[0],
                             LastName = row.Split(',')[1],
                             Email = row.Split(',')[2],
-                            //ProgramName = row.Split(',')[3],
+                            ProgramName = row.Split(',')[3],
                         });
                         var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                         var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
@@ -272,6 +272,11 @@ namespace Scheduler_App.Controllers
                         var userId = user.Id;
                         DbContext.Users.Add(user);
                         student.Add(students);
+                        //foreach (var singleStudent in student)
+                        //{
+                        //    var program = singleStudent.ProgramName.Select(p => p.);
+                        //    singleStudent.Courses
+                        //}
                         DbContext.StudentDatabase.Add(students);
                         DbContext.SaveChanges();
                     }
@@ -412,7 +417,6 @@ namespace Scheduler_App.Controllers
             foreach (var singleCourse in courses)
             {
                 singleCourse.Students.Add(student);
-
             }
             DbContext.SaveChanges();
             var studentProgram = student.Courses.FirstOrDefault(p => p.Program == assignProgram).Program;

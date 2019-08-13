@@ -17,7 +17,7 @@ namespace Scheduler_App.Models.ViewModel
         public int? InstructorId { get; set; }
         public int Hours { get; set; }
         public DateTime StartDate { get; set; }
-        //public DateTime EndDate { get; set; }
+        public DateTime EndDate { get; set; }
         public int? ProgramId { get; set; }       
     }
 }
