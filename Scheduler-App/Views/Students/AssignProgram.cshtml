@@ -21,14 +21,6 @@
                         @Html.DropDownListFor(p => p.ProgramId, Model.ProgramList, "--- Select Program ---", new { @class = "form-control" })
                     </div>
                 </div>
-                @*@if (Model.AddSelectedProgram != null && Model.AddSelectedProgram.Any())
-                    {
-                        <p>Add course</p>
-                        <div class="form-group">
-                            @Html.DropDownListFor(p => p.AddSelectedProgram, Model.ProgramList)
-                        </div>
-                    }*@
-
                 <input type="hidden" name="studentId" value="@Model.StudentId" />
                 <div class="form-inline row">
                     <div class="text-center col">

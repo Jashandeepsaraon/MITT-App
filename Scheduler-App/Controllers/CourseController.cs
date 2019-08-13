@@ -42,8 +42,29 @@ namespace Scheduler_App.Controllers
                    Value = p.Id.ToString(),
                }).ToList();
 
+            var course = DbContext.CourseDatabase.ToList();
+            if (course == null)
+            {    
+                return RedirectToAction("Index");
+            }
+            var prerequisiteFor = DbContext.CourseDatabase
+                    .Select(p => new SelectListItem()
+                    {
+                        Text = p.Name,
+                        Value = p.Id.ToString()
+                    }).ToList();
+
+            var prerequisiteOf = DbContext.CourseDatabase
+                    .Select(p => new SelectListItem()
+                    {
+                        Text = p.Name,
+                        Value = p.Id.ToString()
+                    }).ToList();
+
             var model = new CreateEditCourseViewModel();
             model.ProgramList = allProgram;
+            model.PrerequisiteFor = prerequisiteFor;
+            model.PrerequisiteOf = prerequisiteOf;
             return View(model);
         }
 
@@ -143,10 +164,8 @@ namespace Scheduler_App.Controllers
             course.Name = formData.Name;
             course.Hours = formData.Hours;
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(CourseController.Index));
+            return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
         }
-
-
 
         //GET: EditCourse
         [HttpGet]
@@ -197,7 +216,6 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Index));
             }
 
-            var userId = User.Identity.GetUserId();
             var course = DbContext.CourseDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
 
@@ -207,6 +225,7 @@ namespace Scheduler_App.Controllers
                 return View("Error");
                 //return RedirectToAction(nameof(CourseController.Index));
             }
+
             var courseDetail = new CourseViewModel();
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
@@ -218,6 +237,8 @@ namespace Scheduler_App.Controllers
                 courseDetail.Instructor.LastName = course.Instructor.LastName;
             }
             courseDetail.ProgramName = course.Program.Name;
+            //courseDetail.PrerequisiteFor = preFor;
+            //courseDetail.PrerequisiteOf = preOf;
             ViewBag.id = id;
             return View(courseDetail);
         }
@@ -243,22 +264,11 @@ namespace Scheduler_App.Controllers
             var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == instructorId);
             model.InstructorId = instructor.Id;
             var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new SelectListItem()
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(c => new SelectListItem()
             {
                 Text = c.Name,
                 Value = c.Id.ToString(),
             }).ToList();
-            //if (instructor.Courses != null)
-            //{
-            //    var courses = DbContext.CourseDatabase.Where(p => p.ProgramId == 0).Select(c => new SelectListItem()
-            //    {
-            //        Text = c.Name,
-            //        Value = c.Id.ToString(),
-            //    }).ToList();
-            //    return View(courses);
-            //}
-            //var developerRoleId = roleManager.Roles.First(role => role.Name == "developer").Id;
-            //var developer = DbContext.Users.Where(user => user.Roles.Any(role => role.RoleId == developerRoleId)).ToList();
             model.AddCourses = course;
             model.ProgramList = program;
             return View(model);
@@ -289,9 +299,8 @@ namespace Scheduler_App.Controllers
             if (model.RemoveSelectedCourses != null)
             {
                 //var removecourse = DbContext.CourseDatabase.First(course => instructor.Id == course.InstructorId).Instructor.Remove(instructor);
-                var instId = instructor.Id.ToString();
-                instId = null;
-                //ticket.AssignedToId = null;
+                var instructorId = instructor.Id.ToString();
+                instructorId = null;
             }
             if (model.AddSelectedCourses != null)
             {
@@ -324,7 +333,6 @@ namespace Scheduler_App.Controllers
             }
             if (course != null)
             {
-
                 var AssignedCourse = instructor.Courses.Remove(course);
                 course.Instructor = null;
                 DbContext.SaveChanges();
@@ -362,8 +370,7 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(CourseController.Index));
         }
 
-
-        public ActionResult Cal()
+        public ActionResult Calendar()
         {
             return View();
         }

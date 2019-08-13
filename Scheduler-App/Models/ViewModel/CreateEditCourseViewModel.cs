@@ -15,5 +15,9 @@ namespace Scheduler_App.Models.ViewModel
         public List<SelectListItem> ProgramList { get; set; }
         public int Hours { get; set; }
         public int ProgramId { get; set; }
+        public List<SelectListItem> PrerequisiteOf { get; set; }
+        public List<SelectListItem> PrerequisiteFor { get; set; }
+        public int? PrerequisiteOfId { get; set; }
+        public int? PrerequisiteForId { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
@@ -18,7 +17,6 @@ namespace Scheduler_App.Controllers
     {
         private ApplicationDbContext DbContext;
         public StudentsController()
-
         {
             DbContext = new ApplicationDbContext();
         }
@@ -35,45 +33,15 @@ namespace Scheduler_App.Controllers
 
         //GET : CreateStudent
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-            //var program = DbContext.ProgramDatabase
-            //   .Select(p => new SelectListItem()
-            //   {
-            //       Text = p.Name,
-            //       Value = p.Id.ToString(),
-            //   }).ToList();
-            //ViewBag.program = program;
-            //var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new 
-            //SelectListItem
-            //{
-            //    Text = c.Name,
-            //    Value = c.Id.ToString(),
-            //}).ToList();
-
-            //ViewBag.course = course;
-            //var model = new CreateEditStudentViewModel();
-            //model.ProgramList = program;
-            //model.CourseList = course;
-            //;
             return View();
         }
 
-        //public JsonResult GetCourses(int ProgramId, CreateEditStudentViewModel model)
-        //{
-        //    var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
-        //    {
-        //        Name = c.Name,
-        //        Id = c.Id,
-        //    }).ToList();
-
-        //    //ViewBag.c = new MultiSelectList(courseList,"Id", "Name");
-        //    return Json(courseList, JsonRequestBehavior.AllowGet);
-        //}
-
+        //Post : CreateStudent
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent(CreateEditStudentViewModel formData)
         {
             return SaveStudent(null, formData);
@@ -81,27 +49,20 @@ namespace Scheduler_App.Controllers
 
         private ActionResult SaveStudent(int? id, CreateEditStudentViewModel formData)
         {
-            //var program = DbContext.ProgramDatabase
-            //   .Select(p => new SelectListItem()
-            //   {
-            //       Text = p.Name,
-            //       Value = p.Id.ToString(),
-            //   }).ToList();
-
             if (!ModelState.IsValid)
             {
-                //formData.ProgramList = program;
                 return View(formData);
             }
-
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            //var roleManager =
-            //  new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(DbContext));
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
             var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
 
+            //if (result.IsCompleted)
+            
+            // Add a user to the default role, or any role you prefer here
+            userManager.AddToRoleAsync(user.Id, "Student");
             
 
             if (!id.HasValue)
@@ -110,17 +71,14 @@ namespace Scheduler_App.Controllers
                 //student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                 //student.CourseName = student.Program.Courses.FirstOrDefault(p => p.Id == formData.CourseId).Name;
 
+                DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
                 //DbContext.Users.Add(user);
                 DbContext.SaveChanges();
-                if (!userManager.IsInRole(user.Id, "Student"))
-                {
-                    userManager.AddToRole(user.Id, "Student");
-                }
                 //string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //userManager.SendEmail(userId, "Notification",
-                //     "You are registered as a Student. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
             }
             else
             {
@@ -133,15 +91,13 @@ namespace Scheduler_App.Controllers
             student.FirstName = formData.FirstName;
             student.LastName = formData.LastName;
             student.Email = formData.Email;
-            //roleManager.Create(user.Id, "Student");
-
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(StudentsController.Index));
+            return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
         }
 
         //GET: Edit
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult EditStudent(int? id)
         {
             if (!id.HasValue)
@@ -162,15 +118,16 @@ namespace Scheduler_App.Controllers
 
             return View(model);
         }
-        //POST:
+
+        //POST: EditStudent
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult EditStudent(int id, CreateEditStudentViewModel formData)
         {
             return SaveStudent(id, formData);
         }
 
-        // GET:
+        // GET: Delete Action for Student
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -185,21 +142,18 @@ namespace Scheduler_App.Controllers
             return View(student);
         }
 
-        // POST: Delete
+        // POST: Delete Action for Student
         [HttpPost, ActionName("Delete")]
-
         public ActionResult DeleteConfirmed(int id)
         {
             Student students = DbContext.StudentDatabase.Find(id);
             DbContext.StudentDatabase.Remove(students);
             DbContext.SaveChanges();
-            TempData["Message"] = "You Successfully deleted the Student.";
             return RedirectToAction(nameof(StudentsController.Index));
         }
 
-
         [HttpGet]
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int? programId)
         {
             if (!id.HasValue)
                 return RedirectToAction(nameof(StudentsController.Index));
@@ -208,10 +162,13 @@ namespace Scheduler_App.Controllers
 
             var student = DbContext.StudentDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
-            //var c = student.Courses.Select(p => p.Id);
-            //var course = DbContext.CourseDatabase.Find(c);
+
             if (student == null)
+            {
                 return RedirectToAction(nameof(StudentsController.Index));
+            }
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == programId);
 
             var allStudent = new StudentViewModel();
             allStudent.FirstName = student.FirstName;
@@ -224,18 +181,21 @@ namespace Scheduler_App.Controllers
             //allStudent.CourseName = student.Course.Name;
             //var programName = allStudent.Courses.FirstOrDefault(p => p.Id == id).ProgramName;
             ViewBag.id = id;
+            ViewBag.programId = programId;
             return View(allStudent);
         }
+
+        //Get: Create Student through the CSV
         [HttpGet]
         public ActionResult ImportStudent()
         {
             return View(new List<StudentViewModel>());
         }
 
+        //Post: Create Student through the CSV
         [HttpPost]
         public ActionResult ImportStudent(HttpPostedFileBase postedFile)
         {
-
             List<Student> student = new List<Student>();
             string filePath = string.Empty;
             if (postedFile != null)
@@ -285,8 +245,9 @@ namespace Scheduler_App.Controllers
             return RedirectToAction("Index");
         }
 
+        //Method to get the Courses and program List
         [HttpGet]
-        public ActionResult AssignCourse(int? studentId)
+        public ActionResult AssignCourse(int? studentId, int? programId)
         {
             var allPrograms = DbContext.ProgramDatabase
                 .Select(p => new SelectListItem()
@@ -305,9 +266,11 @@ namespace Scheduler_App.Controllers
             var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
             var model = new AssignCourseToStudentViewModel();
             model.StudentId = student.Id;
+            model.ProgramId = programId;
+            
 
             var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(k => new SelectListItem()
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
             {
                 Text = k.Name,
                 Value = k.Id.ToString(),
@@ -319,6 +282,7 @@ namespace Scheduler_App.Controllers
             return View(model);
         }
 
+        // Method for get the Courses List
         public JsonResult GetCourses(int ProgramId)
         {
             var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
@@ -329,6 +293,7 @@ namespace Scheduler_App.Controllers
             return Json(courseList, JsonRequestBehavior.AllowGet);
         }
 
+        // Method for the Assign Course to the Student
         [HttpPost]
         public ActionResult AssignCourse(AssignCourseToStudentViewModel model)
         {
@@ -348,9 +313,13 @@ namespace Scheduler_App.Controllers
                 //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
                 DbContext.SaveChanges();
+
+                var program = student.Courses.FirstOrDefault(p => p.Id == assigncourse.Id).Program;
+                int? programId = program.Id;
+                programId = model.ProgramId;
             }
 
-            return RedirectToAction("Details", new { id = student.Id });
+            return RedirectToAction("Details", new { id = student.Id, programId = model.ProgramId });
         }
 
         [HttpPost]
@@ -420,13 +389,14 @@ namespace Scheduler_App.Controllers
             }
             DbContext.SaveChanges();
             var studentProgram = student.Courses.FirstOrDefault(p => p.Program == assignProgram).Program;
+            var programId = studentProgram.Id;
             studentProgram = assignProgram;
-
+            programId = assignProgram.Id;
             //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             //userManager.SendEmailAsync(assignedUser.Id, "Notification", "You are assigned to a new Ticket.");
-            ViewBag.studentProgram = studentProgram;
+            ViewBag.programId = model.ProgramId;
             DbContext.SaveChanges();
-            return RedirectToAction("Details", new { id = student.Id });
+            return RedirectToAction("Details", new { id = student.Id, programId = model.ProgramId });
         }
 
         [HttpPost]
@@ -437,8 +407,10 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(CourseController.Details));
             }
-            var program = DbContext.CourseDatabase.Where(p => p.ProgramId == id).ToList();
+            var program = student.Courses.FirstOrDefault(p => p.ProgramId == id).Program;
+            //var course = DbContext.CourseDatabase.Where(p => p.ProgramId == id).ToList();
             var courses = student.Courses.ToList();
+
             if (courses != null)
             {
                 foreach (var ca in courses)

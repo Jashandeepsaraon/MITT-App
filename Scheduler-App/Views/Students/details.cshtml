@@ -26,31 +26,40 @@
                 <tr>
                     <th style="display:flex; justify-content:flex-start">
                         Program Name
-                        (
-                        <div>
-                            <a href="@Url.Action("AssignProgram", "Students",new { studentId = ViewBag.id})">Add Program</a>
-                        </div>
-                        )
+                        @if (Model.Courses.Count == 0)
+                        {
+                            <div>
+                                (<a href="@Url.Action("AssignProgram", "Students",new { studentId = ViewBag.id})">Add Program</a>)
+                            </div>
+                        }
                     </th>
-                    <td>
-                        <div style="display:flex; justify-content:flex-start">
-                            <a href="@Url.Action("Details", "Program", new { id = Model.ProgramId } )">
-                                @Model.ProgramName.ToString()
-                            </a>
-                            <form method="post" action="@Url.Action("RemoveProgram","Students", new { id = Model.ProgramId, studentId = ViewBag.id })">
-                                <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
-                            </form>
-                        </div>
-                    </td>
+                    @if (Model.Courses.Count == 0)
+                    {
+                        <td>
+                            <p><strong>No Program Assigned</strong></p>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div style="display:flex; justify-content:flex-start">
+                                <a href="@Url.Action("Details", "Program", new { id = Model.ProgramId } )">
+                                    @Model.ProgramName.ToString()
+                                </a>
+
+                                <form method="post" action="@Url.Action("RemoveProgram","Students", new { id = Model.ProgramId, studentId = ViewBag.id })">
+                                    <button class="btn-delete" style="margin-left:10px; margin-top:-5px; color:red; background:none; border:none; height:30px;font-size:small">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    }
                 <tr>
                 <tr>
                     <th style="display:flex; justify-content:flex-start">
                         Courses Enrolled
-                        (
                         <div>
-                            <a href="@Url.Action("AssignCourse", "Students", new { studentId = ViewBag.id})">Add Course</a>
+                            (<a href="@Url.Action("AssignCourse", "Students", new { studentId = ViewBag.id, programId = ViewBag.programId})">Add Course</a>)
                         </div>
-                        )
                     </th>
                     <td>
                         @foreach (var course in Model.Courses)
