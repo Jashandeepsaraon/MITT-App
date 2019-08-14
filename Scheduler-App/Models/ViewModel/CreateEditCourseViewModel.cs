@@ -11,6 +11,7 @@ namespace Scheduler_App.Models.ViewModel
     {
         public int Id { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z ]+$", ErrorMessage = "Please Enter Only Alphabets in Name Field")]
         public string Name { get; set; }
         public List<SelectListItem> ProgramList { get; set; }
         public int Hours { get; set; }
