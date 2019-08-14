@@ -259,6 +259,8 @@ namespace Scheduler_App.Controllers
                     {
                         students.Courses.Add(a);
                     }
+
+
                     DbContext.StudentDatabase.Add(students);
                     var model = new StudentViewModel();
                     model.FirstName = students.FirstName;

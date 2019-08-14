@@ -18,7 +18,6 @@ namespace Scheduler_App.Models.Domain
         public int? InstructorId { get; set; }
         public virtual List<Student> Students { get; set; }
         public int Hours { get; set; }
-
         public Course()
         {
             Students = new List<Student>();

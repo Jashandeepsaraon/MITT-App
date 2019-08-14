@@ -55,26 +55,27 @@ else
         <tbody>
             @foreach (var program in Model)
             {
-                <tr>
-                    <td>
-                        <a href="@Url.Action("Details", "Program", new { id = program.Id} )">
-                            @program.Name
-                        </a>
-                    </td>
-                    <td>@program.StartDate.ToString("d")</td>
+            <tr>
+                <td>
+                    <a href="@Url.Action("Details", "Program", new { id = program.Id} )">
+                        @program.Name
+                    </a>
+                </td>
+                <td>
+                @program.StartDate.ToShortDateString()</td>
 
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("EditProgram", "Program", new { id = program.Id })">
-                                <i title="Edit Program" class="fas fa-pencil-square-o"></i>
-                            </a>
-                        }
-                    </td>
-                    <td>
-                        @Html.ActionLink("Delete", "Delete", new { id = program.Id })
-                    </td>
-                </tr>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("EditProgram", "Program", new { id = program.Id })">
+                            <i title="Edit Program" class="fas fa-pencil-square-o"></i>
+                        </a>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = program.Id })
+                </td>
+            </tr>
             }
         </tbody>
     </table>

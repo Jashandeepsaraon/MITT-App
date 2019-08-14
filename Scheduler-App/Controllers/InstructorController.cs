@@ -209,6 +209,8 @@ namespace Scheduler_App.Controllers
                 //Execute a loop over the rows.
                 foreach (string row in csvData.Split('\n'))
                 {
+
+
                     if (!string.IsNullOrEmpty(row))
                     {
                         var instructors = (new Instructor
