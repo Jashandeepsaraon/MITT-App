@@ -34,7 +34,7 @@ namespace Scheduler_App.Controllers
 
         //GET : CreateStudent
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
             return View();
@@ -42,7 +42,7 @@ namespace Scheduler_App.Controllers
 
         //Post : CreateStudent
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateStudent(CreateEditStudentViewModel formData)
         {
             return SaveStudent(null, formData);
@@ -59,10 +59,7 @@ namespace Scheduler_App.Controllers
             var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
-            if (!userManager.IsInRole(user.Id, "Student"))
-            {
-                userManager.AddToRoleAsync(user.Id, "Student");
-            }
+            
             if (!id.HasValue)
             {
                 //student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
@@ -73,6 +70,10 @@ namespace Scheduler_App.Controllers
                 DbContext.StudentDatabase.Add(student);
                 //DbContext.Users.Add(user);
                 DbContext.SaveChanges();
+                if (!userManager.IsInRole(user.Id, "Student"))
+                {
+                    userManager.AddToRoleAsync(user.Id, "Student");
+                }
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmailAsync(userId, "Notification",
@@ -208,6 +209,7 @@ namespace Scheduler_App.Controllers
 
             //Read the contents of CSV file.  
             List<Student> student = new List<Student>();
+            var singleStudent = DbContext.StudentDatabase.Select(p => p.Id);
             string csvData = System.IO.File.ReadAllText(csvPath);
 
             //Execute a loop over the rows.  
@@ -242,13 +244,40 @@ namespace Scheduler_App.Controllers
                     });
                     var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
                     var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
-                    var result = userManager.CreateAsync(user, students.Password);
-                    var userId = user.Id;
+                    var result = userManager.Create(user, students.Password);
+                    //programName = student.
                     //DbContext.Users.Add(user);
                     student.Add(students);
-
+                    var programName = student.FirstOrDefault(p => p.ProgramName == students.ProgramName).ProgramName;
+                    char[] charsToTrim = {'\r'};
+                    programName = students.ProgramName.Trim(charsToTrim);
+                    //programName.Courses.Select(p => p.Name);
+                    var k = DbContext.ProgramDatabase.FirstOrDefault(p => p.Name == programName).Courses;
+                  var t =  k.FirstOrDefault().Students;
+                    t.Add(students);
+                    foreach(var a in k)
+                    {
+                        students.Courses.Add(a);
+                    }
                     DbContext.StudentDatabase.Add(students);
+                    var model = new StudentViewModel();
+                    model.FirstName = students.FirstName;
+                    model.LastName = students.LastName;
+                    model.Email = students.Email;
+                    model.ProgramName = students.ProgramName;
+                    model.Courses = students.Courses;
                     DbContext.SaveChanges();
+                    DbContext.Users.Add(user);
+                    var userId = user.Id;
+                    if (!userManager.IsInRole(userId, "Student"))
+                    {
+                        userManager.AddToRoleAsync(userId, "Student");
+                    }
+                    string code = userManager.GenerateEmailConfirmationToken(userId);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    userManager.SendEmailAsync(userId, "Notification",
+                        "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
+
                 }
             }
 

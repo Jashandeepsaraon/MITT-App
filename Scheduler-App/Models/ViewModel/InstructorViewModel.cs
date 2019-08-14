@@ -12,14 +12,15 @@ namespace Scheduler_App.Models.ViewModel
     {
         public int Id { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z ]+$", ErrorMessage = "Please Enter Only Alphabets in FirstName Field")]
         public string FirstName { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z ]+$", ErrorMessage = "Please Enter Only Alphabets in LastName Field")]
         public string LastName { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
-       
         public int ProgramId { get; set; }
         public List<SelectListItem> ProgramList { get; set; }
         public int CourseId { get; set; }
