@@ -17,6 +17,7 @@ namespace Scheduler_App.Models.ViewModel
         [RegularExpression("^[a-zA-Z ]+$", ErrorMessage = "Please Enter Only Alphabets In LastName Field")]
         public string LastName { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
 
