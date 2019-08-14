@@ -213,7 +213,7 @@ namespace Scheduler_App.Controllers
             //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
             //allStudent.CourseName = student.Course.Name;
             //var programName = allStudent.Courses.FirstOrDefault(p => p.Id == id).ProgramName;
-            if ( allStudent.Courses.Count != 0)
+            if (allStudent.Courses.Count != 0)
             {
                 //allStudent.ProgramId = program.Id;
                 var programName = allStudent.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
@@ -288,42 +288,57 @@ namespace Scheduler_App.Controllers
         [HttpGet]
         public ActionResult AssignCourse(int? studentId, int? programId)
         {
-            var allPrograms = DbContext.ProgramDatabase
-                .Select(p => new SelectListItem()
-                {
-                    Text = p.Name,
-                    Value = p.Id.ToString(),
-                }).ToList();
-
-            ViewBag.allProgram = allPrograms;
-
-            if (!studentId.HasValue)
+            if (programId == null)
             {
-                return RedirectToAction(nameof(StudentsController.Index));
+                var allPrograms = DbContext.ProgramDatabase
+                    .Select(p => new SelectListItem()
+                    {
+                        Text = p.Name,
+                        Value = p.Id.ToString(),
+                    }).ToList();
+
+                var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+
+                ViewBag.allProgram = allPrograms;
+                var model = new AssignCourseToStudentViewModel();
+                model.ProgramList = allPrograms;
+                model.ProgramId = programId;
+                model.StudentId = student.Id;
+                return View(model);
             }
-
-            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
-            var model = new AssignCourseToStudentViewModel();
-            model.StudentId = student.Id;
-            model.ProgramId = programId;
-            
-
-            var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
+            else
             {
-                Text = k.Name,
-                Value = k.Id.ToString(),
-            }).ToList();
+                if (!studentId.HasValue)
+                {
+                    return RedirectToAction(nameof(StudentsController.Index));
+                }
 
-            model.AddCourses = course;
-            model.ProgramList = allPrograms;
+                var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+                var model = new AssignCourseToStudentViewModel();
+                model.StudentId = student.Id;
+                model.ProgramId = programId;
+                if (programId != null)
+                {
+                    var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == programId);
+                    var courseList = DbContext.CourseDatabase.ToList();
+                    var course = program.Courses.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
+                    {
+                        Text = k.Name,
+                        Value = k.Id.ToString(),
+                    }).ToList();
 
-            return View(model);
+                    model.AddCourses = course;
+                }
+
+                //model.ProgramList = allPrograms;
+
+                return View(model);
+            }
+            return View();
         }
-
-        public JsonResult GetCourses(int ProgramId)
+        public JsonResult GetCourses(int programId)
         {
-            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
+            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == programId).Select(c => new
             {
                 Name = c.Name,
                 Id = c.Id,

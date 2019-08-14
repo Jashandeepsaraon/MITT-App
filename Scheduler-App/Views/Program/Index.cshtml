@@ -61,7 +61,7 @@ else
                             @program.Name
                         </a>
                     </td>
-                    <td>@program.StartDate</td>
+                    <td>@program.StartDate.ToString("d")</td>
 
                     <td>
                         @if (User.IsInRole("Admin"))

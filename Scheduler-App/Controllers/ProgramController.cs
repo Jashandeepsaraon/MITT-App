@@ -67,7 +67,9 @@ namespace Scheduler_App.Controllers
             var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
-                //program.StartDate = DateTime.Now;
+                var date = formData.StartDate.Date;
+                var newDate = program.StartDate.Date;
+                program.StartDate = newDate;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
                 return RedirectToAction("Details", new { id = program.Id });
@@ -89,36 +91,36 @@ namespace Scheduler_App.Controllers
            // }
             program.Name = formData.Name;
             program.StartDate = formData.StartDate;
-            var firstCourse = program.Courses.First();
-            var startDate = firstCourse.StartDate;
-            firstCourse.StartDate = formData.StartDate;
-            var lastCourse = program.Courses.Last();
-            if(lastCourse != null)
-            {
-                foreach(var course in program.Courses)
-                {
-                    var c = lastCourse.Hours / lastCourse.DailyHours;
-                    int newC = Convert.ToInt32(c - 1);
-                    int workDays = 0;
-                    lastCourse.EndDate = lastCourse.StartDate.AddDays(newC);
-                    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                    while (lastCourse.StartDate != lastCourse.EndDate)
-                    {
-                        if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                        {
-                            workDays++;
-                        }
+            //var firstCourse = program.Courses.First();
+            //var startDate = firstCourse.StartDate;
+            //firstCourse.StartDate = formData.StartDate;
+            //var lastCourse = program.Courses.Last();
+            //if(lastCourse != null)
+            //{
+            //    foreach(var course in program.Courses)
+            //    {
+            //        var c = lastCourse.Hours / lastCourse.DailyHours;
+            //        int newC = Convert.ToInt32(c - 1);
+            //        int workDays = 0;
+            //        lastCourse.EndDate = lastCourse.StartDate.AddDays(newC);
+            //        course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+            //        while (lastCourse.StartDate != lastCourse.EndDate)
+            //        {
+            //            if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
+            //            {
+            //                workDays++;
+            //            }
 
-                        lastCourse.StartDate = lastCourse.StartDate.AddDays(1);
-                        //lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
-                        //course.StartDate = t;
-                    }
-                    lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
-                    lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
+            //            lastCourse.StartDate = lastCourse.StartDate.AddDays(1);
+            //            //lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
+            //            //course.StartDate = t;
+            //        }
+            //        lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
+            //        lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
 
-                    course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                }
-            }         
+            //        course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                //}
+            //}         
             DbContext.SaveChanges();
             return RedirectToAction("Details", new { id = program.Id });
         }
