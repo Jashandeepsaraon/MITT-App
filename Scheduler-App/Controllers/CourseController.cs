@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using FluentDateTime;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
@@ -43,7 +44,7 @@ namespace Scheduler_App.Controllers
 
             var course = DbContext.CourseDatabase.ToList();
             if (course == null)
-            {
+            {    
                 return RedirectToAction("Index");
             }
             var prerequisiteFor = DbContext.CourseDatabase
@@ -120,32 +121,42 @@ namespace Scheduler_App.Controllers
 
                     course.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                     course.Program.Name = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
+                    if (formData.PrerequisiteForId != null)
+                    {
+                        course.PrerequisiteFor = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteForId).Id;
+                    }
+                    if (formData.PrerequisiteOfId != null)
+                    {
+                        course.PrerequisiteOf = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == formData.PrerequisiteOfId).Id;
+                    }
                     if (course != null)
                     {
                         var course1 = course.Program.Courses.ElementAtOrDefault(0);
                         var firstCourse = course1;
                         if (firstCourse == null)
-                        {
+                        {                          
                             course.StartDate = course.Program.StartDate;
+                            var totalDays = Convert.ToInt32(course.Hours / course.DailyHours);
+                            course.EndDate = course.StartDate.AddBusinessDays(totalDays - 1);             /*var hours = Convert.ToDouble(course.DailyHours);*/
+                            var startTime = course.StartTime  = course.StartDate.TimeOfDay;
+                            var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                             var a = remainingHours + startTime.Hours ;
+                            course.EndTime = new TimeSpan((int)a, startTime.Minutes,0);
                         }
                         else
                         {
                             var lastCourse = course.Program.Courses.Last();
                             var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
-                            lastCourse.EndDate = lastCourse.StartDate.AddBusinessDays(totalDays - 1);
-                            //course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                            //while (totalDays != 0)
-                            //{
-                            //    if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-                            //    {
-                            //        lastCourse.EndDate = Convert.ToDateTime(lastCourse.EndDate).AddDays(1);
-                            //        totalDays--;
-                            //    }
-                            //}
+                            course.EndDate = lastCourse.EndDate.AddBusinessDays(totalDays-1);
                             course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                            var startTime = course.StartTime = course.StartDate.TimeOfDay;
+                            var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                            var a = remainingHours + startTime.Hours;
+                            course.EndTime = new TimeSpan((int)a, startTime.Minutes, 0);
                         }
                         DbContext.CourseDatabase.Add(course);
                         DbContext.SaveChanges();
+                        return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
                     }
                 }
                 else
@@ -212,7 +223,6 @@ namespace Scheduler_App.Controllers
                 return RedirectToAction(nameof(CourseController.Index));
             }
 
-            var userId = User.Identity.GetUserId();
             var course = DbContext.CourseDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
 
@@ -227,7 +237,9 @@ namespace Scheduler_App.Controllers
             courseDetail.Name = course.Name;
             courseDetail.Instructor = course.Instructor;
             courseDetail.StartDate = course.StartDate;
-            //courseDetail.EndDate = course.EndDate;
+            courseDetail.EndDate = course.EndDate;
+            courseDetail.StartTime = course.StartTime;
+            courseDetail.EndTime = course.EndTime;
             if (courseDetail.Instructor != null)
             {
                 courseDetail.Instructor.FirstName = course.Instructor.FirstName;
@@ -266,17 +278,6 @@ namespace Scheduler_App.Controllers
                 Text = c.Name,
                 Value = c.Id.ToString(),
             }).ToList();
-            //if (instructor.Courses != null)
-            //{
-            //    var courses = DbContext.CourseDatabase.Where(p => p.ProgramId == 0).Select(c => new SelectListItem()
-            //    {
-            //        Text = c.Name,
-            //        Value = c.Id.ToString(),
-            //    }).ToList();
-            //    return View(courses);
-            //}
-            //var developerRoleId = roleManager.Roles.First(role => role.Name == "developer").Id;
-            //var developer = DbContext.Users.Where(user => user.Roles.Any(role => role.RoleId == developerRoleId)).ToList();
             model.AddCourses = course;
             model.ProgramList = program;
             return View(model);
@@ -307,9 +308,8 @@ namespace Scheduler_App.Controllers
             if (model.RemoveSelectedCourses != null)
             {
                 //var removecourse = DbContext.CourseDatabase.First(course => instructor.Id == course.InstructorId).Instructor.Remove(instructor);
-                var instId = instructor.Id.ToString();
-                instId = null;
-                //ticket.AssignedToId = null;
+                var instructorId = instructor.Id.ToString();
+                instructorId = null;
             }
             if (model.AddSelectedCourses != null)
             {
@@ -342,7 +342,6 @@ namespace Scheduler_App.Controllers
             }
             if (course != null)
             {
-
                 var AssignedCourse = instructor.Courses.Remove(course);
                 course.Instructor = null;
                 DbContext.SaveChanges();
@@ -358,7 +357,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(CourseController.Index));
             }
-            Course course = DbContext.CourseDatabase.Find(id);
+            var course = DbContext.CourseDatabase.Find(id);
             if (course == null)
             {
                 ModelState.AddModelError("", "Course is not found.");
@@ -372,7 +371,7 @@ namespace Scheduler_App.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Course course = DbContext.CourseDatabase.Find(id);
+            var course = DbContext.CourseDatabase.Find(id);
             course.Instructor = null;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
@@ -380,18 +379,20 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(CourseController.Index));
         }
 
-
-        public ActionResult Cal()
+        public ActionResult Calendar()
         {
             return View();
         }
 
+      
         public JsonResult GetEvents()
         {
             var eve = DbContext.CourseDatabase.ToList();
-            //var endDate = eve.Select(p => Convert.ToDateTime(p.EndDate));
-            var events = eve.Select(p => new { p.Name, p.EndDate, p.StartDate }).ToList();
-            return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            var startDate = eve.Select(p => new {p.StartDate }.StartDate.GetDateTimeFormats()[3]);
+            var endDate = eve.Select(p => new { p.EndDate }.EndDate.GetDateTimeFormats()[3]);
+            var events = eve.Select(p => new { p.Name, startDate, endDate, p.StartTime, p.EndTime, p.DailyHours });
+
+            return new JsonResult { Data = events,JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }

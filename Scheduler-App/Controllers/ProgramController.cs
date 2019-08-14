@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentDateTime;
 using Microsoft.AspNet.Identity;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
@@ -15,7 +16,6 @@ using System.Web.Mvc;
 namespace Scheduler_App.Controllers
 {
     public class ProgramController : Controller
-
     {
         private ApplicationDbContext DbContext;
         public ProgramController()
@@ -41,8 +41,9 @@ namespace Scheduler_App.Controllers
             return View();
         }
 
+        //Post : CreateProgram
         [HttpPost]
-       // [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public ActionResult CreateProgram(CreateEditSchoolProgramViewModel formData)
         {
             return SaveProgram(null, formData);
@@ -67,9 +68,6 @@ namespace Scheduler_App.Controllers
             var program = Mapper.Map<Program>(formData);
             if (!id.HasValue)
             {
-                var date = formData.StartDate.Date;
-                var newDate = program.StartDate.Date;
-                program.StartDate = newDate;
                 DbContext.ProgramDatabase.Add(program);
                 DbContext.SaveChanges();
                 return RedirectToAction("Details", new { id = program.Id });
@@ -83,44 +81,9 @@ namespace Scheduler_App.Controllers
                     return RedirectToAction(nameof(ProgramController.Index));
                 }
             }
-           //var startDate =  program.Courses.Select(p => p.StartDate);
-           // var endDate = program.Courses.Select(p => p.EndDate);
-           // foreach(var sd in startDate)
-           // {
 
-           // }
             program.Name = formData.Name;
             program.StartDate = formData.StartDate;
-            //var firstCourse = program.Courses.First();
-            //var startDate = firstCourse.StartDate;
-            //firstCourse.StartDate = formData.StartDate;
-            //var lastCourse = program.Courses.Last();
-            //if(lastCourse != null)
-            //{
-            //    foreach(var course in program.Courses)
-            //    {
-            //        var c = lastCourse.Hours / lastCourse.DailyHours;
-            //        int newC = Convert.ToInt32(c - 1);
-            //        int workDays = 0;
-            //        lastCourse.EndDate = lastCourse.StartDate.AddDays(newC);
-            //        course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-            //        while (lastCourse.StartDate != lastCourse.EndDate)
-            //        {
-            //            if (lastCourse.StartDate.DayOfWeek != DayOfWeek.Saturday && lastCourse.StartDate.DayOfWeek != DayOfWeek.Sunday)
-            //            {
-            //                workDays++;
-            //            }
-
-            //            lastCourse.StartDate = lastCourse.StartDate.AddDays(1);
-            //            //lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
-            //            //course.StartDate = t;
-            //        }
-            //        lastCourse.EndDate = lastCourse.StartDate.AddDays(workDays);
-            //        lastCourse.StartDate = lastCourse.StartDate.AddDays(-newC);
-
-            //        course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
-                //}
-            //}         
             DbContext.SaveChanges();
             return RedirectToAction("Details", new { id = program.Id });
         }
@@ -146,21 +109,22 @@ namespace Scheduler_App.Controllers
             return View(model);
         }
 
-        //POST:
+        //POST: Edit Program
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public ActionResult EditProgram(int id, CreateEditSchoolProgramViewModel formData)
         {
             return SaveProgram(id, formData);
         }
-        // GET:
+
+        // GET: Delete Action for Program
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(ProgramController.Index));
             }
-            Program program = DbContext.ProgramDatabase.Find(id);
+            var program = DbContext.ProgramDatabase.Find(id);
             if (program == null)
             {
                 return RedirectToAction(nameof(ProgramController.Index));
@@ -172,12 +136,12 @@ namespace Scheduler_App.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Program program = DbContext.ProgramDatabase.Find(id);
+            var program = DbContext.ProgramDatabase.Find(id);
             //var p = DbContext.ProgramDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == id ).ToList();
-            foreach(var ca in course)
+            var course = DbContext.CourseDatabase.Where(p => p.ProgramId == id).ToList();
+            foreach (var ca in course)
             {
-              DbContext.CourseDatabase.Remove(ca);
+                DbContext.CourseDatabase.Remove(ca);
             }
             DbContext.ProgramDatabase.Remove(program);
             DbContext.SaveChanges();
@@ -185,14 +149,14 @@ namespace Scheduler_App.Controllers
             return RedirectToAction(nameof(ProgramController.Index));
         }
 
-        //GET : CreateProgramCourse
+        //GET : Create Course through the Program
         [HttpGet]
-
         public ActionResult ProgramCourse()
         {
             return View();
         }
 
+        //POST : Create Course through the Program
         [HttpPost]
         public ActionResult ProgramCourse(int? id, CreateEditCourseViewModel formData, int? programId)
         {
@@ -203,6 +167,34 @@ namespace Scheduler_App.Controllers
             var course = Mapper.Map<Course>(formData);
             if (!id.HasValue)
             {
+                if (course != null)
+                {
+                    var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == programId);
+                    var course1 = program.Courses.ElementAtOrDefault(0);
+                    var firstCourse = course1;
+                    if (firstCourse == null)
+                    {
+                        course.StartDate = program.StartDate;
+                        var totalDays = Convert.ToInt32(course.Hours / course.DailyHours);
+                        course.EndDate = course.StartDate.AddBusinessDays(totalDays - 1);             
+                        /*var hours = Convert.ToDouble(course.DailyHours);*/
+                        var startTime = course.StartTime = course.StartDate.TimeOfDay;
+                        var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                        var a = remainingHours + startTime.Hours;
+                        course.EndTime = new TimeSpan((int)a, startTime.Minutes, 0);
+                    }
+                    else
+                    {
+                        var lastCourse = program.Courses.Last();
+                        var totalDays = Convert.ToInt32(lastCourse.Hours / lastCourse.DailyHours);
+                        course.EndDate = lastCourse.EndDate.AddBusinessDays(totalDays - 1);
+                        course.StartDate = Convert.ToDateTime(lastCourse.EndDate);
+                        var startTime = course.StartTime = course.StartDate.TimeOfDay;
+                        var remainingHours = course.Hours - (course.DailyHours * (totalDays));
+                        var a = remainingHours + startTime.Hours;
+                        course.EndTime = new TimeSpan((int)a, startTime.Minutes, 0);
+                    }
+                }
                 DbContext.CourseDatabase.Add(course);
                 DbContext.SaveChanges();
             }
@@ -216,12 +208,12 @@ namespace Scheduler_App.Controllers
             }
             course.Name = formData.Name;
             course.Hours = formData.Hours;
-
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProgramController.Details), new { id = programId });
         }
+
         [HttpPost]
-        public ActionResult DeleteProgramCourse(int id,int Courseid)
+        public ActionResult DeleteProgramCourse(int id, int Courseid)
         {
             Program program = DbContext.ProgramDatabase.Find(id);
             var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == Courseid);
@@ -229,7 +221,7 @@ namespace Scheduler_App.Controllers
             Courseid = courseId;
             DbContext.CourseDatabase.Remove(course);
             DbContext.SaveChanges();
-            return RedirectToAction(nameof(ProgramController.Details), new { id = program.Id }) ;
+            return RedirectToAction(nameof(ProgramController.Details), new { id = program.Id });
         }
 
         //GET:
@@ -241,7 +233,7 @@ namespace Scheduler_App.Controllers
 
             var program = DbContext.ProgramDatabase.FirstOrDefault(p =>
             p.Id == id.Value);
-            
+
             if (program == null)
             {
                 return RedirectToAction(nameof(ProgramController.Index));
@@ -251,6 +243,7 @@ namespace Scheduler_App.Controllers
                 model.Name = program.Name;
                 model.StartDate = program.StartDate;
                 model.Courses = program.Courses;
+
                 ViewBag.id = id;
             }
             return View(model);

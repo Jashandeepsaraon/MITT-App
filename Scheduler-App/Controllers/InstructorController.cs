@@ -19,7 +19,6 @@ namespace Scheduler_App.Controllers
     {
         private ApplicationDbContext DbContext;
         public InstructorController()
-
         {
             DbContext = new ApplicationDbContext();
         }
@@ -36,7 +35,7 @@ namespace Scheduler_App.Controllers
 
         //GET : Create Instructor
         [HttpGet]
-        ////[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult CreateInstructor()
         {
             return View();
@@ -51,7 +50,6 @@ namespace Scheduler_App.Controllers
         }
 
         private ActionResult SaveInstructor(int? id, InstructorViewModel formData)
-
         {
             if (!ModelState.IsValid)
             {
@@ -60,39 +58,26 @@ namespace Scheduler_App.Controllers
 
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result = userManager.CreateAsync(user, formData.Password);
+            var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
-
             var instructor = Mapper.Map<Instructor>(formData);
 
-            //var Instructor = formData.Instructor;
-            
             if (!id.HasValue)
             {
-                try{
                     DbContext.Users.Add(user);
                     DbContext.InstructorDatabase.Add(instructor);
                     DbContext.SaveChanges();
-                }
-                catch(Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                   
-                    //ModelState.AddModelError("", e.InnerException);
-                }                
-
                 //if (!userManager.IsInRole(user.Id, "Instructor"))
                 //{
                 //    userManager.AddToRole(user.Id, "Instructor");
                 //}
-                //string code = userManager.GenerateEmailConfirmationToken(user.Id);
-                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                //userManager.SendEmail(userId, "Notification",
-                //     "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                string code = userManager.GenerateEmailConfirmationToken(user.Id);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                userManager.SendEmailAsync(userId, "Notification",
+                     "You are registered as an Instructor. Your Current Password is 'Password-1'. Please change your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
+                return RedirectToAction("Index");
             }
-
             else
             {
                 instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
@@ -146,7 +131,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(InstructorController.Index));
             }
-            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var instructor = DbContext.InstructorDatabase.Find(id);
             if (instructor == null)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
@@ -159,22 +144,19 @@ namespace Scheduler_App.Controllers
 
         public ActionResult DeleteConfirmed(int id)
         {
-            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var instructor = DbContext.InstructorDatabase.Find(id);
             var courses = DbContext.CourseDatabase.FirstOrDefault(p => p.InstructorId == instructor.Id);
-             if (instructor.Courses == null /*||courses.Instructor != null*/) 
+            var applicationUser = DbContext.Users.FirstOrDefault(p => p.Email == instructor.Email);
+            if (instructor.Courses == null /*||courses.Instructor != null*/)
             {
                 courses.Instructor = null;
             }
             instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
+            DbContext.Users.Remove(applicationUser);
             DbContext.SaveChanges();
+            TempData["Message"] = "You Successfully deleted the Instructor.";
             return RedirectToAction(nameof(InstructorController.Index));
-        }
-
-        [HttpGet]
-        public ActionResult ImportInstructor()
-        {
-            return View(new List<InstructorViewModel>());
         }
 
         [HttpGet]
@@ -196,11 +178,17 @@ namespace Scheduler_App.Controllers
             return View(allInstructor);
         }
 
+        //Get: Create Instructor through the CSV
+        [HttpGet]
+        public ActionResult ImportInstructor()
+        {
+            return View(new List<InstructorViewModel>());
+        }
 
+        //Post: Create Instructor through the CSV
         [HttpPost]
         public ActionResult ImportInstructor(HttpPostedFileBase postedFile)
         {
-
             List<Instructor> instructor = new List<Instructor>();
             string filePath = string.Empty;
             if (postedFile != null)
@@ -252,15 +240,15 @@ namespace Scheduler_App.Controllers
             var instructorList = DbContext.InstructorDatabase
               .Select(p => new SelectListItem()
               {
-                  Text = p.FirstName,
+                  Text = p.FirstName + " " + p.LastName,
                   Value = p.Id.ToString(),
               }).ToList();
-
-            if(instructorList == null || instructorList.Count == 0)
+            if (instructorList == null)
             {
-                TempData["Message"] = "There is no Instructor available";
+                ModelState.AddModelError("", "Instructor is not found.");
+                return View("Error");
+                //return RedirectToAction(nameof(InstructorController.Detail));
             }
-
             var model = new AssignInstructorViewModel();
             model.InstructorList = instructorList;
             model.CourseId = id;

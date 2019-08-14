@@ -6,18 +6,18 @@ using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
 using Scheduler_App.Models.ViewModel;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using System.Web.UI.WebControls;
 namespace Scheduler_App.Controllers
 {
     public class StudentsController : Controller
     {
         private ApplicationDbContext DbContext;
         public StudentsController()
-
         {
             DbContext = new ApplicationDbContext();
         }
@@ -37,40 +37,10 @@ namespace Scheduler_App.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent()
         {
-            //var program = DbContext.ProgramDatabase
-            //   .Select(p => new SelectListItem()
-            //   {
-            //       Text = p.Name,
-            //       Value = p.Id.ToString(),
-            //   }).ToList();
-            //ViewBag.program = program;
-            //var course = DbContext.CourseDatabase.Where(p => p.ProgramId == 1).Select(c => new 
-            //SelectListItem
-            //{
-            //    Text = c.Name,
-            //    Value = c.Id.ToString(),
-            //}).ToList();
-
-            //ViewBag.course = course;
-            //var model = new CreateEditStudentViewModel();
-            //model.ProgramList = program;
-            //model.CourseList = course;
-            //;
             return View();
         }
 
-        //public JsonResult GetCourses(int ProgramId, CreateEditStudentViewModel model)
-        //{
-        //    var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
-        //    {
-        //        Name = c.Name,
-        //        Id = c.Id,
-        //    }).ToList();
-
-        //    //ViewBag.c = new MultiSelectList(courseList,"Id", "Name");
-        //    return Json(courseList, JsonRequestBehavior.AllowGet);
-        //}
-
+        //Post : CreateStudent
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public ActionResult CreateStudent(CreateEditStudentViewModel formData)
@@ -80,38 +50,33 @@ namespace Scheduler_App.Controllers
 
         private ActionResult SaveStudent(int? id, CreateEditStudentViewModel formData)
         {
-            //var program = DbContext.ProgramDatabase
-            //   .Select(p => new SelectListItem()
-            //   {
-            //       Text = p.Name,
-            //       Value = p.Id.ToString(),
-            //   }).ToList();
-
             if (!ModelState.IsValid)
             {
-                //formData.ProgramList = program;
                 return View(formData);
             }
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result = userManager.CreateAsync(user, formData.Password);
+            var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var student = Mapper.Map<Student>(formData);
-
+            if (!userManager.IsInRole(user.Id, "Student"))
+            {
+                userManager.AddToRoleAsync(user.Id, "Student");
+            }
             if (!id.HasValue)
             {
                 //student.ProgramName = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId).Name;
                 //student.Program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == formData.ProgramId);
                 //student.CourseName = student.Program.Courses.FirstOrDefault(p => p.Id == formData.CourseId).Name;
 
-                DbContext.Users.Add(user);
+                //DbContext.Users.Add(user);
                 DbContext.StudentDatabase.Add(student);
+                //DbContext.Users.Add(user);
                 DbContext.SaveChanges();
-                return RedirectToAction(nameof(StudentsController.Details), new { id = student.Id });
-                //String code = userManager.GenerateEmailConfirmationToken(user.Id);
-                //var callbackUrl = Url.Action("Changepassword", "Manage", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                //userManager.SendEmail(userId, "Notification",
-                //    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
+                string code = userManager.GenerateEmailConfirmationToken(user.Id);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                userManager.SendEmailAsync(userId, "Notification",
+                    "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
             }
             else
             {
@@ -151,7 +116,8 @@ namespace Scheduler_App.Controllers
 
             return View(model);
         }
-        //POST:
+
+        //POST: EditStudent
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public ActionResult EditStudent(int id, CreateEditStudentViewModel formData)
@@ -159,7 +125,7 @@ namespace Scheduler_App.Controllers
             return SaveStudent(id, formData);
         }
 
-        // GET:
+        // GET: Delete Action for Student
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -174,9 +140,8 @@ namespace Scheduler_App.Controllers
             return View(student);
         }
 
-        // POST: Delete
+        // POST: Delete Action for Student
         [HttpPost, ActionName("Delete")]
-
         public ActionResult DeleteConfirmed(int id)
         {
             Student students = DbContext.StudentDatabase.Find(id);
@@ -208,137 +173,187 @@ namespace Scheduler_App.Controllers
             allStudent.LastName = student.LastName;
             allStudent.Email = student.Email;
             allStudent.Courses = student.Courses;
-            //allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
+            allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
             //var programName = student.Courses.FirstOrDefault(p => p.Id == id).Program.Name;
             //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
             //allStudent.CourseName = student.Course.Name;
             //var programName = allStudent.Courses.FirstOrDefault(p => p.Id == id).ProgramName;
-            if (allStudent.Courses.Count != 0)
-            {
-                //allStudent.ProgramId = program.Id;
-                var programName = allStudent.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
-                programName = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
-                allStudent.ProgramId = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Id;
-                allStudent.ProgramName = programName;
-            }
-            else
-            {
-                allStudent.ProgramName = null;
-                allStudent.ProgramId = null;
-            }
-
             ViewBag.id = id;
             ViewBag.programId = programId;
             return View(allStudent);
         }
+
+        //Get: Create Student through the CSV
         [HttpGet]
         public ActionResult ImportStudent()
         {
             return View(new List<StudentViewModel>());
         }
 
+        //Post: Create Student through the CSV
         [HttpPost]
         public ActionResult ImportStudent(HttpPostedFileBase postedFile)
         {
+            //Upload and save the file  
+            string csvPath = Server.MapPath("~/Uploads/") + Path.GetFileName(postedFile.FileName);
+            postedFile.SaveAs(csvPath);
 
+            //Create a DataTable.  
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[4] { 
+        new DataColumn("FirstName", typeof(string)),
+        new DataColumn("LastName", typeof(string)),
+        new DataColumn("Email", typeof(string)),
+        new DataColumn("ProgramName",typeof(string)) });
+
+            //Read the contents of CSV file.  
             List<Student> student = new List<Student>();
-            string filePath = string.Empty;
-            if (postedFile != null)
+            string csvData = System.IO.File.ReadAllText(csvPath);
+
+            //Execute a loop over the rows.  
+            foreach (string row in csvData.Split('\n'))
             {
-                string path = Server.MapPath("~/Uploads/");
-                if (!Directory.Exists(path))
+                if (!string.IsNullOrEmpty(row))
                 {
-                    Directory.CreateDirectory(path);
-                }
+                    dt.Rows.Add();
+                    int i = 0;
 
-                filePath = path + Path.GetFileName(postedFile.FileName);
-                string extension = Path.GetExtension(postedFile.FileName);
-                postedFile.SaveAs(filePath);
-
-                //Read the contents of CSV file.
-                string csvData = System.IO.File.ReadAllText(filePath);
-
-                //Execute a loop over the rows.
-                foreach (string row in csvData.Split('\n'))
-                {
-                    if (!string.IsNullOrEmpty(row))
+                    //Execute a loop over the columns.  
+                    foreach (string cell in row.Split(','))
                     {
-                        var students = (new Student
+                        //cell.Replace("\r\n", "");
+                        if(cell == "\r" || cell == "\n")
                         {
-                            //Id = Convert.ToInt32(row.Split(',')[0]),
-                            FirstName = row.Split(',')[0],
-                            LastName = row.Split(',')[1],
-                            Email = row.Split(',')[2],
-                            //ProgramName = row.Split(',')[3],
-                        });
-                        var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                        var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
-                        var result = userManager.CreateAsync(user, students.Password);
-                        var userId = user.Id;
-                        DbContext.Users.Add(user);
-                        student.Add(students);
-                        DbContext.StudentDatabase.Add(students);
-                        DbContext.SaveChanges();
+                            return RedirectToAction(nameof(StudentsController.Index));
+                        }
+                        else
+                        {
+                            dt.Rows[dt.Rows.Count - 1][i] = cell;
+                            i++;
+                        }
+                        
                     }
+                    var students = (new Student
+                    {
+                       FirstName = row.Split(',')[0],
+                       LastName = row.Split(',')[1],
+                       Email = row.Split(',')[2],
+                       ProgramName = row.Split(',')[3],
+                    });
+                    var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                    var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
+                    var result = userManager.CreateAsync(user, students.Password);
+                    var userId = user.Id;
+                    //DbContext.Users.Add(user);
+                    student.Add(students);
+
+                    DbContext.StudentDatabase.Add(students);
+                    DbContext.SaveChanges();
                 }
             }
+
+            ////Bind the DataTable.  
+            //BaseDataBoundControl.DataSource = dt;
+            //GridView.DataBind();
+
+            //List<Student> student = new List<Student>();
+            //string filePath = string.Empty;
+            //if (postedFile != null)
+            //{
+            //    string path = Server.MapPath("~/Uploads/");
+            //    if (!Directory.Exists(path))
+            //    {
+            //        Directory.CreateDirectory(path);
+            //    }
+
+            //    filePath = path + Path.GetFileName(postedFile.FileName);
+            //    string extension = Path.GetExtension(postedFile.FileName);
+            //    postedFile.SaveAs(filePath);
+
+            //    //Read the contents of CSV file.
+            //    string csvData = System.IO.File.ReadAllText(filePath);
+
+            //    //Execute a loop over the rows.
+            //    foreach (string row in csvData.Split('\n'))
+            //    {
+            //        if (!string.IsNullOrEmpty(row))
+            //        {                      
+            //                var students = (new Student
+            //                {
+            //                    FirstName = row.Split(',')[0],
+            //                    LastName = row.Split(',')[1],
+            //                    Email = row.Split(',')[2],
+            //                    ProgramName = row.Split(',')[3],
+            //                });
+
+            //var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //var user = new ApplicationUser { UserName = students.Email, Email = students.Email };
+            //var result = userManager.CreateAsync(user, students.Password);
+            //var userId = user.Id;
+            ////DbContext.Users.Add(user);
+            //student.Add(students);
+
+            //DbContext.StudentDatabase.Add(students);
+            //DbContext.SaveChanges();
             return RedirectToAction("Index");
         }
-
+   
+        //Method to get the Courses and program List
         [HttpGet]
-        public ActionResult AssignCourse(int? studentId, int? programId)
+        public ActionResult AssignCourse(int? studentId, int? ProgramId)
         {
-            if (programId == null)
+            if(ProgramId == null)
             {
                 var allPrograms = DbContext.ProgramDatabase
-                    .Select(p => new SelectListItem()
-                    {
-                        Text = p.Name,
-                        Value = p.Id.ToString(),
-                    }).ToList();
-
-                var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+                .Select(p => new SelectListItem()
+                {
+                    Text = p.Name,
+                    Value = p.Id.ToString(),
+                }).ToList();
 
                 ViewBag.allProgram = allPrograms;
-                var model = new AssignCourseToStudentViewModel();
-                model.ProgramList = allPrograms;
-                model.ProgramId = programId;
-                model.StudentId = student.Id;
-                return View(model);
-            }
-            else
-            {
                 if (!studentId.HasValue)
                 {
                     return RedirectToAction(nameof(StudentsController.Index));
                 }
 
-                var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
-                var model = new AssignCourseToStudentViewModel();
-                model.StudentId = student.Id;
-                model.ProgramId = programId;
-                if (programId != null)
-                {
-                    var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == programId);
-                    var courseList = DbContext.CourseDatabase.ToList();
-                    var course = program.Courses.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
-                    {
-                        Text = k.Name,
-                        Value = k.Id.ToString(),
-                    }).ToList();
-
-                    model.AddCourses = course;
-                }
-
-                //model.ProgramList = allPrograms;
-
-                return View(model);
+                var student1 = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+                var model1 = new AssignCourseToStudentViewModel();
+                model1.StudentId = student1.Id;
+                model1.ProgramId = ProgramId;
+                model1.ProgramList = allPrograms;
+                return View(model1);
             }
-            return View();
+            
+
+            if (!studentId.HasValue)
+            {
+                return RedirectToAction(nameof(StudentsController.Index));
+            }
+
+            var student = DbContext.StudentDatabase.FirstOrDefault(p => p.Id == studentId);
+            var model = new AssignCourseToStudentViewModel();
+            model.StudentId = student.Id;
+            model.ProgramId = ProgramId;
+
+            var program = DbContext.ProgramDatabase.FirstOrDefault(p => p.Id == ProgramId);
+            var courseList = DbContext.CourseDatabase.ToList();
+            var course = program.Courses.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
+            {
+                Text = k.Name,
+                Value = k.Id.ToString(),
+            }).ToList();
+
+            model.AddCourses = course;
+            //model.ProgramList = allPrograms;
+
+            return View(model);
         }
-        public JsonResult GetCourses(int programId)
+
+        // Method for get the Courses List
+        public JsonResult GetCourses(int ProgramId)
         {
-            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == programId).Select(c => new
+            var courseList = DbContext.CourseDatabase.Where(c => c.ProgramId == ProgramId).Select(c => new
             {
                 Name = c.Name,
                 Id = c.Id,
@@ -346,6 +361,7 @@ namespace Scheduler_App.Controllers
             return Json(courseList, JsonRequestBehavior.AllowGet);
         }
 
+        // Method for the Assign Course to the Student
         [HttpPost]
         public ActionResult AssignCourse(AssignCourseToStudentViewModel model)
         {

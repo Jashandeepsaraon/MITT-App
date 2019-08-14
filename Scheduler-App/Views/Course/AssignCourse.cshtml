@@ -30,7 +30,6 @@
                         @Html.DropDownListFor(p => p.AddSelectedCourses, Model.AddCourses, "--- Select Course ---", new { @class = "form-control" })
                     </div>
                 }
-
                 <input type="hidden" name="instructorId" value="@Model.InstructorId" />
                 <div class="form-inline row">
                     <div class="text-center col">
@@ -57,4 +56,5 @@
                 alert('Error getting courses!');
             });
         });
-    });</script>
+    });
+</script>
