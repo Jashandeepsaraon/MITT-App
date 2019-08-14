@@ -58,18 +58,19 @@ namespace Scheduler_App.Controllers
 
             var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser { UserName = formData.Email, Email = formData.Email };
-            var result = userManager.CreateAsync(user, formData.Password);
+            var result = userManager.Create(user, formData.Password);
             var userId = user.Id;
             var instructor = Mapper.Map<Instructor>(formData);
 
             if (!id.HasValue)
             {
+                    DbContext.Users.Add(user);
                     DbContext.InstructorDatabase.Add(instructor);
                     DbContext.SaveChanges();
-                if (!userManager.IsInRole(user.Id, "Instructor"))
-                {
-                    userManager.AddToRole(user.Id, "Instructor");
-                }
+                //if (!userManager.IsInRole(user.Id, "Instructor"))
+                //{
+                //    userManager.AddToRole(user.Id, "Instructor");
+                //}
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmailAsync(userId, "Notification",
@@ -130,7 +131,7 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(InstructorController.Index));
             }
-            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var instructor = DbContext.InstructorDatabase.Find(id);
             if (instructor == null)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
@@ -143,14 +144,16 @@ namespace Scheduler_App.Controllers
 
         public ActionResult DeleteConfirmed(int id)
         {
-            Instructor instructor = DbContext.InstructorDatabase.Find(id);
+            var instructor = DbContext.InstructorDatabase.Find(id);
             var courses = DbContext.CourseDatabase.FirstOrDefault(p => p.InstructorId == instructor.Id);
-             if (instructor.Courses == null /*||courses.Instructor != null*/) 
-             {
+            var applicationUser = DbContext.Users.FirstOrDefault(p => p.Email == instructor.Email);
+            if (instructor.Courses == null /*||courses.Instructor != null*/)
+            {
                 courses.Instructor = null;
-             }
+            }
             instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
+            DbContext.Users.Remove(applicationUser);
             DbContext.SaveChanges();
             TempData["Message"] = "You Successfully deleted the Instructor.";
             return RedirectToAction(nameof(InstructorController.Index));
