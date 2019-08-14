@@ -137,7 +137,7 @@ namespace Scheduler_App.Controllers
                         {                          
                             course.StartDate = course.Program.StartDate;
                             var totalDays = Convert.ToInt32(course.Hours / course.DailyHours);
-                         course.EndDate = course.StartDate.AddBusinessDays(totalDays - 1);             /*var hours = Convert.ToDouble(course.DailyHours);*/
+                            course.EndDate = course.StartDate.AddBusinessDays(totalDays - 1);             /*var hours = Convert.ToDouble(course.DailyHours);*/
                             var startTime = course.StartTime  = course.StartDate.TimeOfDay;
                             var remainingHours = course.Hours - (course.DailyHours * (totalDays));
                              var a = remainingHours + startTime.Hours ;
@@ -159,7 +159,6 @@ namespace Scheduler_App.Controllers
                         return RedirectToAction(nameof(CourseController.Details), new { id = course.Id });
                     }
                 }
-
                 else
                 {
                     course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
@@ -239,6 +238,8 @@ namespace Scheduler_App.Controllers
             courseDetail.Instructor = course.Instructor;
             courseDetail.StartDate = course.StartDate;
             courseDetail.EndDate = course.EndDate;
+            courseDetail.StartTime = course.StartTime;
+            courseDetail.EndTime = course.EndTime;
             if (courseDetail.Instructor != null)
             {
                 courseDetail.Instructor.FirstName = course.Instructor.FirstName;
