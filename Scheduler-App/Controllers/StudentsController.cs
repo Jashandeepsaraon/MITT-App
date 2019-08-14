@@ -262,16 +262,20 @@ namespace Scheduler_App.Controllers
             var model = new AssignCourseToStudentViewModel();
             model.StudentId = student.Id;
             model.ProgramId = programId;
-            
+
 
             var courseList = DbContext.CourseDatabase.ToList();
-            var course = DbContext.CourseDatabase.Where(p => p.ProgramId != 0).Select(k => new SelectListItem()
-            {
-                Text = k.Name,
-                Value = k.Id.ToString(),
-            }).ToList();
+            //if (programId != null)
+            //{
 
-            model.AddCourses = course;
+                var course = DbContext.CourseDatabase.Where(p => p.ProgramId != programId).Select(k => new SelectListItem()
+                {
+                    Text = k.Name,
+                    Value = k.Id.ToString(),
+                }).ToList();
+
+                model.AddCourses = course;
+            //}
             model.ProgramList = allPrograms;
 
             return View(model);

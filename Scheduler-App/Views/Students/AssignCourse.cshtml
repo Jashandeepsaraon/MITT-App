@@ -25,17 +25,20 @@
                         </div>
                     </div>
                 }
-
-                @if (Model.AddCourses != null && Model.AddCourses.Any())
-                {
-                    <p>Add course</p>
-                    <div class="input-group input-group-alternative">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="ni ni-app"></i></span>
+                @*@if (Model.ProgramId != null)
+                {*@
+                    @if (Model.AddCourses != null && Model.AddCourses.Any())
+                    {
+                        <p>Add course</p>
+                        <div class="input-group input-group-alternative">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-app"></i></span>
+                            </div>
+                            @Html.DropDownListFor(p => p.AddSelectedCourses, Model.AddCourses, "--- Select Course ---", new { @class = "form-control" })
                         </div>
-                        @Html.DropDownListFor(p => p.AddSelectedCourses, Model.AddCourses, "--- Select Course ---", new { @class = "form-control" })
-                    </div>
-                }
+                    }
+                @*}*@
+
 
                 <input type="hidden" name="studentId" value="@Model.StudentId" />
                 <div class="form-inline row">
@@ -55,6 +58,12 @@
         $('#ProgramId').change(function () {
             $('#AddSelectedCourses option').remove();
             $.getJSON('/Students/GetCourses', { ProgramId: $('#ProgramId').val() }, function (data) {
+            var select = $("#courseList");
+            select.empty();
+            select.append($('<option/>', {
+                value: 0,
+                text: "Select a Physian"
+            }));
                 $.each(data, function () {
                     $('#AddSelectedCourses').append('<option value=' +
                         this.Id + '>' + this.Name + '</option>');
