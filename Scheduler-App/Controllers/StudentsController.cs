@@ -175,6 +175,21 @@ namespace Scheduler_App.Controllers
             allStudent.Email = student.Email;
             allStudent.Courses = student.Courses;
             allStudent.ProgramName = student.Courses.Select(p => p.Program.Name).ToString();
+
+            if (allStudent.Courses.Count != 0)
+            {
+                //allStudent.ProgramId = program.Id;
+                var programName = allStudent.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
+                programName = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Name;
+                allStudent.ProgramId = student.Courses.FirstOrDefault(p => p.Students.Contains(student)).Program.Id;
+                allStudent.ProgramName = programName;
+            }
+            else
+            {
+                allStudent.ProgramName = null;
+                allStudent.ProgramId = null;
+            }
+
             //var programName = student.Courses.FirstOrDefault(p => p.Id == id).Program.Name;
             //allStudent.ProgramList.FirstOrDefault(p => p.Selected == programName.Contains(p.Selected.ToString()));
             //allStudent.CourseName = student.Course.Name;
