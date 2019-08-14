@@ -214,6 +214,11 @@ namespace Scheduler_App.Controllers
             return SaveCourse(id, formData);
         }
 
+
+
+
+
+
         //GET: Details of the Course
         [HttpGet]
         public ActionResult Details(int? id)

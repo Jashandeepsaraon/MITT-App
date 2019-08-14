@@ -160,6 +160,9 @@ namespace Scheduler_App.Controllers
         [HttpPost]
         public ActionResult ProgramCourse(int? id, CreateEditCourseViewModel formData, int? programId)
         {
+
+
+
             if (!ModelState.IsValid)
             {
                 return View(formData);
