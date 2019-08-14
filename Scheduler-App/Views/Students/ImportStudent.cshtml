@@ -7,7 +7,13 @@
 <div class="body-content" style="margin-bottom:480px">
     <div class="card card-stats mb-4 mb-xl-0 shadow--hover">
         <div class="card-header">
-            <h2>Create Instructor through CSV</h2>
+            <h2>Create Student through CSV</h2>
+        </div>
+        <div style="margin-top: 10px">
+            <ul>
+                <li>CSV file requires 4 columns: First Name, Last Name, Email and Program Name</li>
+                <li>CSV file doesn't support Headers</li>
+            </ul>
         </div>
         <div class="card-body" style="margin-top:-15px; width:400px">
             @using (Html.BeginForm("ImportStudent", "Students", FormMethod.Post, new { enctype = "multipart/form-data" }))

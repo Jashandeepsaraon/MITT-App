@@ -33,14 +33,14 @@
                             </div>
                         }
                     </th>
-                    @if (Model.Courses.Count == 0)
-                    {
-                        <td>
+                    @*@if (Model.Courses.Count == 0)
+                    {*@
+                        @*<td>
                             <p><strong>No Program Assigned</strong></p>
-                        </td>
-                    }
+                        </td>*@
+                    @*}
                     else
-                    {
+                    {*@
                         <td>
                             <div style="display:flex; justify-content:flex-start">
                                 <a href="@Url.Action("Details", "Program", new { id = Model.ProgramId } )">
@@ -58,6 +58,7 @@
                     <th style="display:flex; justify-content:flex-start">
                         Courses Enrolled
                         <div>
+                            @*return RedirectToAction("Details", new { id = student.Id, programId = model.ProgramId });*@
                             (<a href="@Url.Action("AssignCourse", "Students", new { studentId = ViewBag.id, programId = ViewBag.programId})">Add Course</a>)
                         </div>
                     </th>
