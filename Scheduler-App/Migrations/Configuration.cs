@@ -71,7 +71,7 @@ namespace Scheduler_App.Migrations
             }
 
             context.SaveChanges();
-        
+
+        }
     }
-}
-}
+    }

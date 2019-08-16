@@ -35,8 +35,6 @@
                         </div>
                         @Html.DropDownListFor(p => p.AddSelectedCourses, Model.AddCourses, "--- Select Course ---", new { @class = "form-control", programId = Model.ProgramId })
                     </div>
-                }
-
                 <input type="hidden" name="studentId" value="@Model.StudentId" />
                 <input type="hidden" name="programId" value="@Model.ProgramId" />
                 <div class="form-inline row">
@@ -44,6 +42,8 @@
                         <button type="submit" class="btn btn-success my-4">Submit</button>
                     </div>
                 </div>
+                }
+
             </form>
         </div>
     </div>

@@ -68,7 +68,7 @@ else
                     <td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id })">
+                            <a href="@Url.Action("EditCourse", "Course", new { id = course.Id, programId = course.ProgramId })">
                                 <i title="Edit Course" class="fas fa-pencil-square-o"></i>
                             </a>
                         }
@@ -82,4 +82,3 @@ else
         </tbody>
     </table>
 }
-

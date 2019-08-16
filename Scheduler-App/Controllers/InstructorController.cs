@@ -4,12 +4,12 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Scheduler_App.Models;
 using Scheduler_App.Models.Domain;
+using Scheduler_App.Models.Enum;
 using Scheduler_App.Models.ViewModel;
-using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -23,7 +23,6 @@ namespace Scheduler_App.Controllers
             DbContext = new ApplicationDbContext();
         }
 
-        //Method to get list of Instructors
         public ActionResult Index()
         {
             var model = DbContext
@@ -33,20 +32,24 @@ namespace Scheduler_App.Controllers
             return View(model);
         }
 
-        //GET : Create Instructor
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         public ActionResult CreateInstructor()
         {
             return View();
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         public ActionResult CreateInstructor(InstructorViewModel formData)
         {
 
             return SaveInstructor(null, formData);
+        }
+
+        public ActionResult EmailError()
+        {
+            return View();
         }
 
         private ActionResult SaveInstructor(int? id, InstructorViewModel formData)
@@ -64,13 +67,24 @@ namespace Scheduler_App.Controllers
 
             if (!id.HasValue)
             {
-                    DbContext.Users.Add(user);
-                    DbContext.InstructorDatabase.Add(instructor);
-                    DbContext.SaveChanges();
-                //if (!userManager.IsInRole(user.Id, "Instructor"))
-                //{
-                //    userManager.AddToRole(user.Id, "Instructor");
-                //}
+                var allInstructors = DbContext.InstructorDatabase.ToList();
+                if (allInstructors.Count != 0)
+                {
+                    if (allInstructors.Any(p => p.Email == instructor.Email))
+                    {
+                        var instructorEmail = DbContext.InstructorDatabase.FirstOrDefault(p => p.Email == instructor.Email).Email;
+                        return RedirectToAction("EmailError");
+                    }
+                }
+
+                DbContext.InstructorDatabase.Add(instructor);
+                DbContext.SaveChanges();
+
+                if (!userManager.IsInRole(user.Id, "Instructor"))
+                {
+                    userManager.AddToRoleAsync(user.Id, "Instructor");
+                }
+
                 string code = userManager.GenerateEmailConfirmationToken(user.Id);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 userManager.SendEmailAsync(userId, "Notification",
@@ -86,25 +100,26 @@ namespace Scheduler_App.Controllers
                     return RedirectToAction(nameof(InstructorController.Index));
                 }
             }
+
             instructor.FirstName = formData.FirstName;
             instructor.LastName = formData.LastName;
             instructor.Email = formData.Email;
             instructor.Courses.Find(p => p.Id == formData.CourseId);
             DbContext.SaveChanges();
+
             return RedirectToAction(nameof(InstructorController.Detail), new { id = instructor.Id });
         }
 
-        //GET: EditProgram
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         public ActionResult EditInstructor(int? id)
         {
             if (!id.HasValue)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
             }
-            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
 
+            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
             if (instructor == null)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
@@ -114,48 +129,50 @@ namespace Scheduler_App.Controllers
             model.FirstName = instructor.FirstName;
             model.LastName = instructor.LastName;
             model.Email = instructor.Email;
+
             return View(model);
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         public ActionResult EditInstructor(int id, InstructorViewModel formData)
         {
             return SaveInstructor(id, formData);
         }
 
-        // GET:
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
             }
+
             var instructor = DbContext.InstructorDatabase.Find(id);
             if (instructor == null)
             {
                 return RedirectToAction(nameof(InstructorController.Index));
             }
+
             return View(instructor);
         }
 
-        // POST: Delete
         [HttpPost, ActionName("Delete")]
-
         public ActionResult DeleteConfirmed(int id)
         {
             var instructor = DbContext.InstructorDatabase.Find(id);
             var courses = DbContext.CourseDatabase.FirstOrDefault(p => p.InstructorId == instructor.Id);
             var applicationUser = DbContext.Users.FirstOrDefault(p => p.Email == instructor.Email);
-            if (instructor.Courses == null /*||courses.Instructor != null*/)
+            if (instructor.Courses == null)
             {
                 courses.Instructor = null;
             }
+
             instructor.Courses = null;
             DbContext.InstructorDatabase.Remove(instructor);
             DbContext.Users.Remove(applicationUser);
             DbContext.SaveChanges();
             TempData["Message"] = "You Successfully deleted the Instructor.";
+
             return RedirectToAction(nameof(InstructorController.Index));
         }
 
@@ -163,11 +180,15 @@ namespace Scheduler_App.Controllers
         public ActionResult Detail(int? id)
         {
             if (!id.HasValue)
+            {
                 return RedirectToAction(nameof(InstructorController.Index));
-            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
+            }
 
+            var instructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id == id);
             if (instructor == null)
+            {
                 return RedirectToAction(nameof(InstructorController.Index));
+            }
 
             var allInstructor = new InstructorViewModel();
             allInstructor.FirstName = instructor.FirstName;
@@ -175,89 +196,138 @@ namespace Scheduler_App.Controllers
             allInstructor.Email = instructor.Email;
             allInstructor.Courses = instructor.Courses;
             ViewBag.id = id;
+
             return View(allInstructor);
         }
 
-        //Get: Create Instructor through the CSV
         [HttpGet]
         public ActionResult ImportInstructor()
         {
             return View(new List<InstructorViewModel>());
         }
 
-        //Post: Create Instructor through the CSV
         [HttpPost]
         public ActionResult ImportInstructor(HttpPostedFileBase postedFile)
         {
-            List<Instructor> instructor = new List<Instructor>();
-            string filePath = string.Empty;
+            List<Instructor> instructors = new List<Instructor>();
+
             if (postedFile != null)
             {
-                string path = Server.MapPath("~/Uploads/");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                filePath = path + Path.GetFileName(postedFile.FileName);
-                string extension = Path.GetExtension(postedFile.FileName);
-                postedFile.SaveAs(filePath);
-
-                //Read the contents of CSV file.
-                string csvData = System.IO.File.ReadAllText(filePath);
-
-                //Execute a loop over the rows.
+                //Upload and save the file  
+                string csvPath = Server.MapPath("~/Uploads/") + Path.GetFileName(postedFile.FileName);
+                postedFile.SaveAs(csvPath);
+                //Create a DataTable.  
+                DataTable dt = new DataTable();
+                dt.Columns.AddRange(new DataColumn[3] {
+                     new DataColumn("FirstName", typeof(string)),
+                     new DataColumn("LastName", typeof(string)),
+                     new DataColumn("Email", typeof(string)),
+                      });
+                string csvData = System.IO.File.ReadAllText(csvPath);
+                //Execute a loop over the rows.  
                 foreach (string row in csvData.Split('\n'))
                 {
-
-
                     if (!string.IsNullOrEmpty(row))
                     {
-                        var instructors = (new Instructor
+                        dt.Rows.Add();
+                        int i = 0;
+
+                        //Execute a loop over the columns.  
+                        foreach (string cell in row.Split(','))
                         {
-                            //Id = Convert.ToInt32(row.Split(',')[0]),
-                            FirstName = row.Split(',')[0],
-                            LastName = row.Split(',')[1],
-                            Email = row.Split(',')[2]
-                        });
-                        var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                        var user = new ApplicationUser { UserName = instructors.Email, Email = instructors.Email };
-                        var result = userManager.CreateAsync(user, instructors.Password);
-                        var userId = user.Id;
-                        DbContext.Users.Add(user);
-                        //instructor.Add(instructors);
-                        DbContext.InstructorDatabase.Add(instructors);
-                        DbContext.SaveChanges();
+                            //cell.Replace("\r\n", "");
+                            if (cell == "\r" || cell == "\n")
+                            {
+                                return RedirectToAction(nameof(StudentsController.Index));
+                            }
+                            else
+                            {
+                                dt.Rows[dt.Rows.Count - 1][i] = cell;
+                                i++;
+                            }
+
+                        }
+
+                        if (dt.Columns.Count == 3)
+                        {
+                            var instructor = (new Instructor
+                            {
+                                FirstName = row.Split(',')[0],
+                                LastName = row.Split(',')[1],
+                                Email = row.Split(',')[2],
+                            });
+
+                            var instr = DbContext.InstructorDatabase.ToList();
+                            if (instr.Count != 0)
+                            {
+                                if (instr.Any(p => p.Email == instructor.Email))
+                                {
+                                    var instructorEmail = DbContext.InstructorDatabase.FirstOrDefault(p => p.Email == instructor.Email).Email;
+                                    return RedirectToAction("EmailError");
+                                }
+                            }
+
+                            var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                            var user = new ApplicationUser { UserName = instructor.Email, Email = instructor.Email };
+                            var result = userManager.Create(user, instructor.Password);
+
+                            instructors.Add(instructor);
+                            DbContext.InstructorDatabase.Add(instructor);
+
+                            var model = new InstructorViewModel();
+                            model.FirstName = instructor.FirstName;
+                            model.LastName = instructor.LastName;
+                            model.Email = instructor.Email;
+                            char[] charsToTrim = { '\r' };
+                            model.Email = instructor.Email.Trim(charsToTrim);
+                            DbContext.SaveChanges();
+
+                            var userId = user.Id;
+                            user.Email = user.Email.Trim(charsToTrim);
+                            DbContext.Users.Add(user);
+                            DbContext.SaveChanges();
+
+                            if (!userManager.IsInRole(user.Id, "Instructor"))
+                            {
+                                userManager.AddToRoleAsync(user.Id, "Instructor");
+                            }
+
+                            string code = userManager.GenerateEmailConfirmationToken(userId);
+                            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                            userManager.SendEmailAsync(userId, "Notification",
+                                "Hello, You are registered as student at MITT.Your current Password is Password-1.Please change your password by clicking <a href=\"" + callbackUrl + "\"> here</a>");
+                        }
                     }
                 }
             }
+
             return RedirectToAction("Index");
         }
 
-        //Method to get the Instructors List 
         [HttpGet]
         public ActionResult AssignInstructor(int id)
         {
             var course = DbContext.CourseDatabase.FirstOrDefault(p => p.Id == id);
             var instructorList = DbContext.InstructorDatabase
-              .Select(p => new SelectListItem()
-              {
-                  Text = p.FirstName + " " + p.LastName,
-                  Value = p.Id.ToString(),
-              }).ToList();
+                .Select(p => new SelectListItem()
+                {
+                    Text = p.FirstName + " " + p.LastName,
+                    Value = p.Id.ToString(),
+                }).ToList();
+
             if (instructorList == null)
             {
                 ModelState.AddModelError("", "Instructor is not found.");
                 return View("Error");
-                //return RedirectToAction(nameof(InstructorController.Detail));
             }
+
             var model = new AssignInstructorViewModel();
             model.InstructorList = instructorList;
             model.CourseId = id;
+
             return View(model);
         }
 
-        // Method for the Assign Instrutor to the Course
         [HttpPost]
         public ActionResult AssignInstructor(AssignInstructorViewModel model)
         {
@@ -270,18 +340,16 @@ namespace Scheduler_App.Controllers
             if (model.AddSelectedInstructor != null)
             {
                 var assignInstructor = DbContext.InstructorDatabase.FirstOrDefault(p => p.Id.ToString() == model.AddSelectedInstructor);
-                //instructorId = model.InstructorId;
                 var courseId = assignInstructor.Courses.FirstOrDefault(p => p.Id == course.Id);
-                //courseId = model.CourseId.;
                 course.Instructor = assignInstructor;
                 assignInstructor.Courses.Add(course);
+
                 DbContext.SaveChanges();
             }
-            return RedirectToAction("Details", "Course", new { id = model.CourseId });
 
+            return RedirectToAction("Details", "Course", new { id = model.CourseId });
         }
 
-        // Method for the Remove Instrutor to the Course
         [HttpPost]
         public ActionResult RemoveInstructor(int? courseId)
         {
@@ -290,12 +358,14 @@ namespace Scheduler_App.Controllers
             {
                 return RedirectToAction(nameof(CourseController.Details));
             }
+
             var instructor = course.Instructor;
             if (instructor != null)
             {
                 course.Instructor = null;
                 DbContext.SaveChanges();
             }
+
             return RedirectToAction("Details", "Course", new { id = courseId });
         }
     }

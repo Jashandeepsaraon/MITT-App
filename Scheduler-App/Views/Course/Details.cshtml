@@ -7,9 +7,7 @@
         <div class="card-header">
             <h2>Details</h2>
         </div>
-        @*<div>
-                <a href="@Url.Action("AssignInstructor", "Instructor", new { id = ViewBag.id})">Add Instructor</a>
-            </div>*@
+      
         <table class="table table-condensed no-border" id="sample-datatables">
             <thead>
                 <tr>
@@ -21,8 +19,21 @@
                     <td>@Model.ProgramName</td>
                 </tr>
                 <tr>
+                    <th>Prerequisite For</th>
+                    @if (Model.PrerequisiteFor != null)
+                    {
+                        <td>@Model.PrerequisiteFor</td>
+                    }
+                </tr>
+                <tr>
+                    <th>Prerequisite Of</th>
+                    @if (Model.PrerequisiteOf != null)
+                    {
+                        <td>@Model.PrerequisiteOf</td>
+                    }
+                </tr>
+                <tr>
                     <th>Start Date</th>
-                    <td>@Model.StartDate</td>
                     <td>@Model.StartDate.ToShortDateString()</td>
                 </tr>
                 <tr>
@@ -31,7 +42,6 @@
                 </tr>
                 <tr>
                     <th>End Date</th>
-                    <td>@Model.EndDate</td>
                     <td>@Model.EndDate.ToShortDateString()</td>
                 </tr>
                 <tr>
@@ -78,5 +88,3 @@
         </div>
     </div>
 </div>
-
-

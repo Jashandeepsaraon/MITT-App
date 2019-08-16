@@ -215,7 +215,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Domain\ClassRoom.cs" />
     <Compile Include="Models\Domain\Course.cs" />
     <Compile Include="Models\Domain\Email.cs" />
     <Compile Include="Models\Domain\Instructor.cs" />
@@ -1156,6 +1155,7 @@
     <Content Include="Views\Students\AssignProgram.cshtml" />
     <Content Include="Views\Calendar\Index.cshtml" />
     <Content Include="Views\Course\Calendar.cshtml" />
+    <Content Include="Views\Instructor\EmailError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

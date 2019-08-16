@@ -11,7 +11,6 @@ namespace Scheduler_App.Models.ViewModel
     public class CourseViewModel
     {
         public int Id { get; set; }
-        [RegularExpression("^[a-zA-Z ]+$", ErrorMessage = "Please Enter Only Alphabets in Name Field")]
         public string Name { get; set; }
         public string ProgramName { get; set; }
         public List<SelectListItem> ProgramList { get; set; }
@@ -23,5 +22,9 @@ namespace Scheduler_App.Models.ViewModel
         public DateTime EndDate { get; internal set; }
         public TimeSpan StartTime { get; internal set; }
         public TimeSpan EndTime { get; internal set; }
+        public int? PrerequisiteForId { get; set; }
+        public int? PrerequisiteOfId { get; set; }
+        public string PrerequisiteFor { get; set; }
+        public string PrerequisiteOf { get; set; }
     }
 }

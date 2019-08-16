@@ -18,15 +18,12 @@
                 url: "/course/GetEvents",
                 success: function (data) {
                     $.each(data, function (i, v) {
-
-
                         console.log(v)
                         events.push({
                             title: v.Name,
-                            start: v.startDate[i.start[v.StartTime]],
+                            start: v.startDate[i],
                             timeZone:v.DailyHours,
-                            //duration:'5.5',
-                            end: v.endDate[i.end[v.EndTime]], 
+                            end: v.endDate[i], 
                             allDay: false,
                         });
                     })

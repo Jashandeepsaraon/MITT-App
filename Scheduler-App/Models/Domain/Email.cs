@@ -26,7 +26,7 @@ namespace Scheduler_App.Models.Domain
         /// <param name="to">The destination of the e-mail</param>
         /// <param name="body">The body of the e-mail</param>
         /// <param name="subject">The subject of the e-mail</param>
-        public void Send(string to,
+        public void Send(string to, 
             string body,
             string subject)
         {
@@ -57,8 +57,6 @@ namespace Scheduler_App.Models.Domain
             //Caling our sync method in a async way.
             return Task.Run(() =>
             Send(message.Destination, message.Body, message.Subject));
-        }
-
-        
+        }  
     }
 }
